@@ -21,12 +21,13 @@ public:
 	ServerClass(const ServerClass &obj);
 	~ServerClass();
 	ServerClass &operator=(const ServerClass &rhs);
-private:
+
 	uint64_t			_port;
-	int					_socket;
-	int 				_epollFd;
+private:
 	struct sockaddr_in	_sockaddr;
 public:
+	int 				_epollFd;
+	int					_socket;
 	const sockaddr_in &getSockaddr() const;
 
 	void setSockaddr(const sockaddr_in &sockaddr);
