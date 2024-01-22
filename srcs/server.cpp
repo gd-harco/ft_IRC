@@ -12,12 +12,12 @@ Server::~Server()
 {
 }
 
-std::map<const std::string &, const Channel &>	Server::GetChannels() const
+std::map<std::string , Channel >	&Server::GetChannels()
 {
 	return (_channels);
 }
 
-std::map<int, const Client &> Server::GetClients() const
+std::map<int, Client > &Server::GetClients()
 {
 	return (_clients);
 }
@@ -26,14 +26,21 @@ int Server::GetPort() const
 {
 	return (_port);
 }
-void Server::AddClient(int key, const Client &client)
+
+void Server::SetPort(int port)
 {
-	_clients.insert(std::make_pair(key, client));
+	_port = port;
 }
 
-void Server::AddChannel(const std::string &name, const Channel &channel)
+
+void Server::AddClient(int key, Client client)
 {
-	_channels.insert(std::make_pair(name, channel));
+	this->_clients[key] = client;
+}
+
+void Server::AddChannel(std::string name, Channel channel)
+{
+	_channels[name] = channel;
 }
 
 void	Server::RemoveChannel(std::string name)
@@ -43,11 +50,11 @@ void	Server::RemoveChannel(std::string name)
 
 void Server::RemoveClient(int key)
 {
-	std::map<int, const Client &>	SaveClient = _clients;
+	std::map<int, Client >	SaveClient = _clients;
 
-	for(std::map<int, const Client &>::iterator it = SaveClient.begin(); it != SaveClient.end(); ++it)
+	for(std::map<int, Client >::iterator it = SaveClient.begin(); it != SaveClient.end(); ++it)
 	{
 		if (key == it->first)
-			_clients.erase(it);
+			_clients.erase(key);
 	}
 }

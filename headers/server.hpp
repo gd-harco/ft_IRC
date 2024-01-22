@@ -12,6 +12,11 @@ class Client;
 
 class	Server
 {
+	private:
+		std::map<int, Client>	_clients;
+		std::map<std::string, Channel>	_channels;
+		int	_port;
+
 	public:
 		//constructor / destructor
 		Server();
@@ -19,21 +24,18 @@ class	Server
 		~Server();
 
 		//getters
-		std::map<int, const Client &>	GetClients() const;
-		std::map<const std::string &, const Channel &>	GetChannels() const;
+		std::map<int, Client >	&GetClients();
+		std::map<std::string , Channel >	&GetChannels();
 		int			GetPort() const;
 
 		//setter
-		void	AddClient(int key, const Client &clent);
-		void	AddChannel(const std::string &name, const Channel &channel);
+		void	AddClient(int key, Client clent);
+		void	AddChannel(std::string name, Channel channel);
 
 		void	RemoveClient(int key);
 		void	RemoveChannel(std::string name);
-	private:
-		std::map<int, const Client &>	_clients;
-		std::map<const std::string &, const Channel &>	_channels;
-		int	_port;
 
+		void	SetPort(int port);
 };
 
 #endif
