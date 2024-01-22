@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <map>
+#include <string>
 #include "client.hpp"
 #include "channel.hpp"
 
@@ -18,13 +19,19 @@ class	Server
 		~Server();
 
 		//getters
-		std::map<int, Client &>	GetClients() const;
-		std::map<const std::string &, Channel &>						GetChannels() const;
+		std::map<int, const Client &>	GetClients() const;
+		std::map<const std::string &, const Channel &>	GetChannels() const;
 		int			GetPort() const;
 
+		//setter
+		void	AddClient(int key, const Client &clent);
+		void	AddChannel(const std::string &name, const Channel &channel);
+
+		void	RemoveClient(int key);
+		void	RemoveChannel(std::string name);
 	private:
-		std::map<int, Client &>	_clients;
-		std::map<const std::string &, Channel &>	_channels;
+		std::map<int, const Client &>	_clients;
+		std::map<const std::string &, const Channel &>	_channels;
 		int	_port;
 
 };

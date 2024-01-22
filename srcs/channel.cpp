@@ -44,9 +44,14 @@ void Channel::SetName(std::string &NewName)
 	_name = NewName;
 }
 
-// void Channel::AddClient(std::string key, int value)
-// {
+void Channel::AddClient(std::string key, int value)
+{
+	_clients.insert(std::make_pair(key, value));
+}
 
-// }
+void Channel::RemoveClient(std::string key)
+{
+	_clients.erase(key);
+}
 
 

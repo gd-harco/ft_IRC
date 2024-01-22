@@ -26,7 +26,7 @@ class	Channel
 		void	SetName(std::string &NewName);
 
 		void	AddClient(std::string key, int value);
-		void	RemoveClient(int key, int value);
+		void	RemoveClient(std::string key);
 
 	private:
 		std::map<std::string, int> _clients;

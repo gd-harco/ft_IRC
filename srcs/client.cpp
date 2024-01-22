@@ -16,3 +16,18 @@ int Client::GetFd() const
 {
 	return (_fd);
 }
+
+bool Client::GetAuthor() const
+{
+	return (_haveAuthor);
+}
+
+std::string Client::GetNickname() const
+{
+	return (_ninckname);
+}
+
+std::string Client::GetUsername() const
+{
+	return (_username);
+}
