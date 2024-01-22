@@ -16,7 +16,7 @@ DEBUG_NAME = ${NAME}_DEBUG
 
 SRC_PATH =	srcs/
 
-SRC =	server.cpp
+SRC =	ServerClass.cpp main.cpp
 
 DIR_INCS =	incs/	srcs/
 
