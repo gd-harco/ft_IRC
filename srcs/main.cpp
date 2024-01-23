@@ -27,14 +27,17 @@ int	main(int argc, char **argv) {
 			perror("epoll wait");
 			exit(1);
 		}
-
 		for (int i = 0; i < nfds; ++i) {
 			int currFd = eventsCaught[i].data.fd;
 			if (currFd == serv->_socket) {
 				//this mean we got a new incoming connection
 				std::cout << "new connection detected" << std::endl;
+				serv->newConnectionRequest(currFd);
 			}
-
+			if (serv->_clientsFd.size() == 1) {
+				close(serv->_clientsFd[0]);
+				exit(0);
+			}
 		}
 	}
 	delete serv;

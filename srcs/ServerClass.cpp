@@ -52,10 +52,10 @@ ServerClass &ServerClass::operator=(const ServerClass &rhs) {
 	return *this;
 }
 
-
-
-
-
-
-
-
+void	ServerClass::newConnectionRequest(int fd) {
+	int	client = accept(fd, NULL, NULL);
+	this->_clientsFd.push_back(client);
+	struct epoll_event event;
+	event.events = EPOLLIN;
+	event.data.fd = client;
+	epoll_ctl(this->_epollFd, EPOLL_CTL_ADD, client, &event);

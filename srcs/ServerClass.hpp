@@ -12,6 +12,7 @@
 #include <errno.h>
 #include <sys/epoll.h>
 
+#include <vector>
 #include <cstdio>
 #include <cstdlib>
 
@@ -25,9 +26,9 @@ public:
 	struct sockaddr_in	_sockaddr;
 	int 				_epollFd;
 	int					_socket;
-	const sockaddr_in &getSockaddr() const;
+	std::vector<int>	_clientsFd;
 
-	void setSockaddr(const sockaddr_in &sockaddr);
+	void	newConnectionRequest(int fd);
 };
 
 
