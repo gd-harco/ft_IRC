@@ -52,10 +52,10 @@ ServerClass &ServerClass::operator=(const ServerClass &rhs) {
 	return *this;
 }
 
-const sockaddr_in &ServerClass::getSockaddr() const {
-	return _sockaddr;
-}
 
-void ServerClass::setSockaddr(const sockaddr_in &sockaddr) {
-	_sockaddr = sockaddr;
-}
+
+
+
+
+
+
