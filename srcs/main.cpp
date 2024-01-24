@@ -34,10 +34,8 @@ int	main(int argc, char **argv) {
 				std::cout << "new connection detected" << std::endl;
 				serv->newConnectionRequest(currFd);
 			}
-			if (serv->_clientsFd.size() == 1) {
-				close(serv->_clientsFd[0]);
-				exit(0);
-			}
+			else
+				std::cout << "todo" << std::endl;
 		}
 	}
 	delete serv;

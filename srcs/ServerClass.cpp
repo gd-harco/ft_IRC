@@ -53,9 +53,14 @@ ServerClass &ServerClass::operator=(const ServerClass &rhs) {
 }
 
 void	ServerClass::newConnectionRequest(int fd) {
-	int	client = accept(fd, NULL, NULL);
-	this->_clientsFd.push_back(client);
-	struct epoll_event event;
-	event.events = EPOLLIN;
-	event.data.fd = client;
-	epoll_ctl(this->_epollFd, EPOLL_CTL_ADD, client, &event);
+		struct sockaddr_in	new_addr;
+		int					addrLen = sizeof(new_addr);
+
+		int	client = accept(fd, (struct sockaddr*)&new_addr,
+			(socklen_t*)&addrLen);
+		this->_clientsFd.push_back(client);
+		struct epoll_event event;
+		event.events = EPOLLIN;
+		event.data.fd = client;
+		epoll_ctl(this->_epollFd, EPOLL_CTL_ADD, client, &event);
+	}
