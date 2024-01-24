@@ -29,6 +29,7 @@ public:
 	std::vector<int>	_clientsFd;
 
 	void	newConnectionRequest(int fd);
+	void	handleMessage(int fd);
 };
 
 

@@ -31,7 +31,7 @@ DEBUGFLAGS	=	-fsanitize=address -g3
 DEPSFLAGS	=	-MMD -MP
 RM			=	rm -rf
 AR			=	ar rcs
-CXX			=	g++
+CXX			=	c++
 
 .PHONY:		all
 all:

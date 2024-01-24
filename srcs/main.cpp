@@ -34,8 +34,14 @@ int	main(int argc, char **argv) {
 				std::cout << "new connection detected" << std::endl;
 				serv->newConnectionRequest(currFd);
 			}
-			else
-				std::cout << "todo" << std::endl;
+			else {
+				//si le read fail, alors le client a ete deco
+				try {
+					serv->handleMessage(currFd);
+				} catch (std::exception &e) {
+					;
+				}
+			}
 		}
 	}
 	delete serv;
