@@ -64,15 +64,22 @@ void	ServerClass::newConnectionRequest(int fd) {
 		epoll_ctl(this->_epollFd, EPOLL_CTL_ADD, client, &event);
 	}
 
+#define BUFFER_SIZE 20
 void	ServerClass::handleMessage(int fd) {
-	// todo virer ce while 1, voire si epoll
-	char buf[10 + 1];
+	char buf[BUFFER_SIZE + 1];
 	std::string	msg;
-	while(int ret_data = recv(fd, buf, 10, 0) != 0) {
-
-		std::memset(buf, 0, 11);
-		msg = msg + std::string(buf);
-		std::cout << "curr string : " << msg << std::endl;
+	const std::string delimeter("\r\n");
+	while (1){
+		std::memset(buf, 0, BUFFER_SIZE + 1);
+		ssize_t ret_data = recv(fd, buf, BUFFER_SIZE, 0);
+		if (ret_data <= 0){
+			std::cout << "Client disconnected" << std::endl;
+			break;
+		}
+		msg.append(std::string(buf));
+		if (msg.find(delimeter) != msg.npos) {
+			std::cout << "full string : " << msg << std::endl;
+			return;
+		}
 	}
-	std::cout << msg << std::endl;
 }
