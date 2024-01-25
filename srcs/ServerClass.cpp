@@ -59,7 +59,7 @@ void	ServerClass::newConnectionRequest(int fd) {
 			(socklen_t*)&addrLen);
 		this->_clientsFd.push_back(client);
 		struct epoll_event event;
-		event.events = EPOLLIN | EPOLLET;
+		event.events = EPOLLIN;
 		event.data.fd = client;
 		epoll_ctl(this->_epollFd, EPOLL_CTL_ADD, client, &event);
 	}
@@ -72,8 +72,7 @@ void	ServerClass::handleMessage(int fd) {
 	std::memset(buf, 0, BUFFER_SIZE + 1);
 	ssize_t ret_data = recv(fd, buf, BUFFER_SIZE, 0);
 	if (ret_data <= 0){
-		std::cout << "Client disconnected" << std::endl;
-		throw std::exception();
+		throw std::invalid_argument("Client disconnected");
 	}
 	msg.append(std::string(buf));
 	if (msg.find(delimeter) != msg.npos) {

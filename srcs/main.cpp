@@ -39,7 +39,9 @@ int	main(int argc, char **argv) {
 				try {
 					serv->handleMessage(currFd);
 				} catch (std::exception &e) {
-					;
+					std::cout << e.what() << std::endl;
+					epoll_ctl(serv->_epollFd, EPOLL_CTL_DEL, currFd, 0);
+					close(currFd);
 				}
 			}
 		}
