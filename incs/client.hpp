@@ -36,6 +36,7 @@ class	Client
 	public:
 		//constructor / destructor
 		Client();
+		Client(int fd);
 		Client(std::string username, std::string nickname);
 		~Client();
 

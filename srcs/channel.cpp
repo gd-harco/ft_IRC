@@ -1,4 +1,4 @@
-#include "../headers/channel.hpp"
+#include "channel.hpp"
 
 Channel::Channel()
 {}

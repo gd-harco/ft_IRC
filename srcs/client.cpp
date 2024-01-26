@@ -1,8 +1,11 @@
-#include "../headers/client.hpp"
+#include "client.hpp"
 
 Client::Client()
 {
 }
+
+Client::Client(int fd): _fd(fd)
+{}
 
 Client::Client(std::string username, std::string nickname): _ninckname(nickname) ,_username(username)
 {

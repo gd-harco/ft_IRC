@@ -1,4 +1,4 @@
-#include "../headers/client.hpp"
+#include "client.hpp"
 
 // bool Client::error(Channel &channel)
 // {

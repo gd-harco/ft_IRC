@@ -1,2 +1,9 @@
 # ft_IRC
-This project is about creating your own IRC server. You will use an actual IRC client to connect to your server and test it.
+
+## Introduction
+This project involves the development of an IRC (Internet Relay Chat) server in C++98. The server is designed to handle multiple clients simultaneously, and all I/O operations must be non-blocking. The server uses a single poll (or equivalent) to manage read, write, listen, and other operations.
+
+## Usage
+Run the IRC server with the following command:
+```shell
+./ircserv <port> <password>

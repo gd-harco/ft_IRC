@@ -1,38 +1,67 @@
-NAME = FT_IRC
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: gd-harco <gd-harco@student.42lyon.fr>      +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2023/10/07 20:23:57 by gd-harco          #+#    #+#              #
+#    Updated: 2023/12/01 17:42:27 by gd-harco         ###   ########lyon.fr    #
+#                                                                              #
+# **************************************************************************** #
 
-SRC = ./srcs/channel.cpp ./srcs/client.cpp ./srcs/server.cpp ./srcs/commands.cpp main.cpp
+NAME =	irc
 
-HEADER = headers/server.hpp headers/channel.hpp headers/client.hpp
+DEBUG_NAME = ${NAME}_DEBUG
 
-OBJ = $(SRC:%.cpp=%.zizi)
+SRC_PATH =	srcs/
 
-RM = rm -rf
+SRC = main.cpp channel.cpp client.cpp server.cpp commands.cpp
 
-CFLAGS = -Wall -Werror -Wextra -std=c++98 -g3 -MD -MP
+DIR_INCS =	incs/
 
-DEPENDS = $(OBJ:.zizi=.d)
+INCLUDES =\
+	$(addprefix -I , $(DIR_INCS))
 
-CC = c++
+DIR_BUILD	=	.build/
+OBJS		=	$(patsubst %.cpp, $(DIR_BUILD)%.zizi, $(SRC))
+DEPS		=	$(patsubst %.cpp, $(DIR_BUILD)%.d, $(SRC))
+CPPFLAGS	=	-Wall -Wextra -Werror -std=c++98 -glldb -fsanitize=address
+DEBUGFLAGS	=	-fsanitize=address -g3
+DEPSFLAGS	=	-MMD -MP
+RM			=	rm -rf
+AR			=	ar rcs
+CXX			=	c++
 
-all: $(NAME)
+.PHONY:		all
+all:
+			$(MAKE) $(NAME)
 
-%.zizi: %.cpp $(HEADER) Makefile
-	@$(CC) $(CFLAGS) -c $< -o $@
-	@printf	"\033[1;33m \r\033[2KCreating -c $< -o $\n \033[0m"
 
-$(NAME): $(OBJ) $(HEADER) Makefile
-	@$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
-	@printf	"\033[1;32m \r\033[2K Compiling $(NAME) : DONE \033[0m\n"
--include $(DEPENDS)
+$(NAME):	$(OBJS)
+			$(CXX) $(CPPFLAGS) $(INCLUDES) $(OBJS) -o $(NAME) -v
+			@printf	"\033[1;32m \r\033[2K Compiling $(NAME) : DONE \033[0m\n"
 
+.PHONY:	bonus
+bonus:	all
+
+.PHONY:	clean
 clean:
-	@$(RM) $(OBJ) $(TEMPLATE_OBJ) $(DEPENDS)
-	@printf	"\033[1;31m \r\033[2KDeleting objects : DONE \033[0m\n"
+		$(RM) $(DIR_BUILD)
+		@printf	"\033[1;31m \r\033[2KDeleting objects : DONE \033[0m\n"
 
-fclean: clean
-	@$(RM) $(NAME)
-	@printf "\033[1;31m \r\033[2KDeleting executable : DONE \033[0m\n\n"
+.PHONY:	fclean
+fclean:	clean
+		$(RM) $(NAME)
+		@printf "\033[1;31m \r\033[2KDeleting executable : DONE \033[0m\n"
 
-re: fclean all
+.PHONY:	re
+re:		fclean
+		$(MAKE) all
 
-.PHONY: all clean fclean re
+-include $(DEPS)
+
+$(DIR_BUILD)%.zizi : $(SRC_PATH)%.cpp
+		@mkdir -p $(shell dirname $@)
+		$(CXX) $(CPPFLAGS) $(DEPSFLAGS) $(INCLUDES) -c $< -o $@
+		@printf	"\033[1;33m \r\033[2KCreating -c $< -o $\n \033[0m"
