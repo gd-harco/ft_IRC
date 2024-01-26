@@ -25,7 +25,7 @@ int	main(int argc, char **argv)
 	struct epoll_event eventsCaught[MAX_EVENT];
 	//loop
 	while (true) {
-		int nfds = epoll_wait(serv->_epollFd, eventsCaught, MAX_EVENT, -1);
+		int nfds = epoll_wait(serv->GetEpollFd(), eventsCaught, MAX_EVENT, -1);
 		if (nfds == -1){
 			perror("epoll wait");
 			exit(1);
@@ -43,6 +43,8 @@ int	main(int argc, char **argv)
 					serv->HandleMessage(currFd);
 				} catch (std::exception &e) {
 					std::cout << e.what() << std::endl;
+					//parcourir les channels pour voir si il y a le fd et le suppr
+					serv->RemoveClient(currFd);
 					epoll_ctl(serv->GetEpollFd(), EPOLL_CTL_DEL, currFd, 0);
 					close(currFd);
 				}

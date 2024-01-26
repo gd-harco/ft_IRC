@@ -39,7 +39,7 @@ all:
 
 
 $(NAME):	$(OBJS)
-			$(CXX) $(CPPFLAGS) $(INCLUDES) $(OBJS) -o $(NAME) -v
+			$(CXX) $(CPPFLAGS) $(INCLUDES) $(OBJS) -o $(NAME)
 			@printf	"\033[1;32m \r\033[2K Compiling $(NAME) : DONE \033[0m\n"
 
 .PHONY:	bonus

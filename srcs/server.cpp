@@ -65,9 +65,8 @@ void Server::HandleMessage(int fd)
 	const std::string delimeter("\r\n");
 	std::memset(buf, 0, BUFFER_READ_SIZE + 1);
 	ssize_t ret_data = recv(fd, buf, BUFFER_READ_SIZE, 0);
-	if (ret_data <= 0){
+	if (ret_data <= 0)
 		throw std::invalid_argument("Client disconnected");
-	}
 	msg.append(std::string(buf));
 	if (msg.find(delimeter) != msg.npos) {
 		std::cout << "full string : " << msg << std::endl;

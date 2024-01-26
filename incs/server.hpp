@@ -48,7 +48,6 @@ class	Server
 		//connection
 		void	NewConnectionRequest(int fd);
 		void	HandleMessage(int fd);
-		int 				_epollFd;
 
 	private:
 		std::map<int, Client>	_clients;
@@ -56,6 +55,7 @@ class	Server
 		uint64_t			_port;
 		struct sockaddr_in	_sockaddr;
 		int					_socket;
+		int 				_epollFd;
 };
 
 #endif
