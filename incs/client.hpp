@@ -2,6 +2,7 @@
 #define CLIENT_HPP
 
 #include <iostream>
+#include <list>
 #include <map>
 #include "channel.hpp"
 
@@ -63,6 +64,7 @@ class	Client
 		bool		_haveAuthor;
 		std::string	_ninckname;
 		std::string	_username;
+		std::list<std::string>	_msgToSend;
 		
 };
 

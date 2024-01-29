@@ -68,7 +68,8 @@ void Server::HandleMessage(int fd)
 	if (ret_data <= 0)
 		throw std::invalid_argument("Client disconnected");
 	msg.append(std::string(buf));
-	if (msg.find(delimeter) != msg.npos) {
+	if (msg.find(delimeter) != msg.npos)
+	{
 		std::cout << "full string : " << msg << std::endl;
 		msg.clear();
 	}
@@ -122,12 +123,12 @@ void Server::SetPort(uint64_t port)
 
 void Server::AddClient(int key, Client client)
 {
-	this->_clients[key] = client;
+	_clients.insert(std::make_pair(key, client));
 }
 
 void Server::AddChannel(std::string name, Channel channel)
 {
-	_channels[name] = channel;
+	_channels.insert(std::make_pair(name, channel));
 }
 
 void	Server::RemoveChannel(std::string name)
@@ -137,11 +138,5 @@ void	Server::RemoveChannel(std::string name)
 
 void Server::RemoveClient(int key)
 {
-	std::map<int, Client >	SaveClient = _clients;
-
-	for(std::map<int, Client >::iterator it = SaveClient.begin(); it != SaveClient.end(); ++it)
-	{
-		if (key == it->first)
-			_clients.erase(key);
-	}
+	_clients.erase(key);
 }
