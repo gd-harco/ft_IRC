@@ -4,6 +4,8 @@
 #include <iostream>
 #include <list>
 #include <map>
+#include <sys/epoll.h>
+
 #include "channel.hpp"
 
 
@@ -62,8 +64,10 @@ class	Client
 	private:
 		int			_fd;
 		bool		_haveAuthor;
-		std::string	_ninckname;
-		std::string	_username;
+
+		struct epoll_event		_clientEpollevent;
+		std::string				_ninckname;
+		std::string				_username;
 		std::list<std::string>	_msgToSend;
 };
 

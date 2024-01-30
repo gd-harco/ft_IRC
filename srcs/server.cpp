@@ -47,14 +47,10 @@ void Server::NewConnectionRequest(int fd)
 	struct sockaddr_in	new_addr;
 	int					addrLen = sizeof(new_addr);
 
-	int	client = accept(fd, (struct sockaddr*)&new_addr,
+	int	clientFd = accept(fd, (struct sockaddr*)&new_addr,
 		(socklen_t*)&addrLen);
-	Client	NewClient(client);
-	AddClient(client, NewClient);
-	struct epoll_event event;
-	event.events = EPOLLIN;
-	event.data.fd = client;
-	epoll_ctl(this->_epollFd, EPOLL_CTL_ADD, client, &event);
+	Client	NewClient(clientFd);
+	AddClient(clientFd, NewClient);
 }
 
 void Server::HandleMessage(int fd)
@@ -122,9 +118,10 @@ void Server::SetPort(uint64_t port)
 }
 
 
-void Server::AddClient(int key, Client client)
+void Server::AddClient(int key, Client clientToAdd)
 {
-	_clients.insert(std::make_pair(key, client));
+	clientToAdd.updateClientStatus(this->_epollFd);
+	_clients.insert(std::make_pair(key, clientToAdd));
 }
 
 void Server::AddChannel(std::string name, Channel channel)
