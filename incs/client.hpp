@@ -65,7 +65,6 @@ class	Client
 		std::string	_ninckname;
 		std::string	_username;
 		std::list<std::string>	_msgToSend;
-		
 };
 
 #endif

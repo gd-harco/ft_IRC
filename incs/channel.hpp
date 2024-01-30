@@ -6,6 +6,8 @@
 #include <string>
 #include "client.hpp"
 
+typedef std::map<std::string, int> stringClientMap;
+
 class	Channel
 {
 	public:
@@ -15,24 +17,25 @@ class	Channel
 		~Channel();
 
 		//getters
-		std::string	GetPassword() const;
-		std::string	GetTopics() const;
-		std::string	GetName() const;
-		std::map<std::string, int>	GetClients() const;
+		std::string		GetPassword() const;
+		std::string		GetTopics() const;
+		std::string		GetName() const;
+		stringClientMap	GetClients() const;
 
 		//setters
 		void	SetPassword(std::string &NewPassword);
 		void	SetTopics(std::string &NewTopic);
 		void	SetName(std::string &NewName);
 
+		//members functions
 		void	AddClient(std::string key, int value);
 		void	RemoveClient(std::string key);
 
 	private:
-		std::map<std::string, int> _clients;
-		std::string	_password;
-		std::string	_topic;
-		std::string _name;
+		stringClientMap	_clients;
+		std::string		_password;
+		std::string		_topic;
+		std::string 	_name;
 
 };
 

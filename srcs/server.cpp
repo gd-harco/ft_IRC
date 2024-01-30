@@ -70,6 +70,8 @@ void Server::HandleMessage(int fd)
 	msg.append(std::string(buf));
 	if (msg.find(delimeter) != msg.npos)
 	{
+		//TODO: iterer dans la liste des clients : passer le client en mode EPOLLOUT
+		// et ajouter le message a la liste du client
 		std::cout << "full string : " << msg << std::endl;
 		msg.clear();
 	}
@@ -84,12 +86,12 @@ Server &Server::operator=(const Server &server)
 	return (*this);
 }
 
-std::map<std::string , Channel >	&Server::GetChannels()
+channelMap & Server::GetChannels()
 {
 	return (_channels);
 }
 
-std::map<int, Client > &Server::GetClients()
+fdClientMap & Server::GetClients()
 {
 	return (_clients);
 }

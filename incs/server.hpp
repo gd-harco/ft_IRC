@@ -14,6 +14,9 @@
 #include "client.hpp"
 #include "channel.hpp"
 
+typedef std::map<int, Client> fdClientMap;
+typedef std::map<std::string, Channel> channelMap;
+
 class Channel;
 class Client;
 
@@ -29,8 +32,8 @@ class	Server
 		Server &operator=(const Server &server);
 
 		//getters
-		std::map<int, Client >	&GetClients();
-		std::map<std::string , Channel >	&GetChannels();
+		fdClientMap			&GetClients();
+		channelMap			& GetChannels();
 		uint64_t			GetPort() const;
 		int					GetEpollFd() const;
 		int					GetScocket() const;
@@ -50,8 +53,8 @@ class	Server
 		void	HandleMessage(int fd);
 
 	private:
-		std::map<int, Client>	_clients;
-		std::map<std::string, Channel>	_channels;
+		fdClientMap			_clients;
+		channelMap			_channels;
 		uint64_t			_port;
 		struct sockaddr_in	_sockaddr;
 		int					_socket;
