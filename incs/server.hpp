@@ -53,6 +53,7 @@ class	Server
 		void	HandleMessage(int fd);
 
 	private:
+		struct epoll_event	_servEpollEvent;
 		fdClientMap			_clients;
 		channelMap			_channels;
 		uint64_t			_port;

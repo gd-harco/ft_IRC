@@ -34,10 +34,9 @@ Server::Server(uint64_t port)
 		throw std::runtime_error("Failed to create epoll file descriptor");
 	}
 
-	struct epoll_event event;
-	event.events = EPOLLIN;
-	event.data.fd = this->_socket;
-	epoll_ctl(this->_epollFd, EPOLL_CTL_ADD, this->_socket, &event);
+	this->_servEpollEvent.events = EPOLLIN;
+	this->_servEpollEvent.data.fd = this->_socket;
+	epoll_ctl(this->_epollFd, EPOLL_CTL_ADD, this->_socket, &this->_servEpollEvent);
 }
 
 Server::~Server()
