@@ -1,4 +1,4 @@
-#include "client.hpp"
+#include "server.hpp"
 
 // bool Client::error(Channel &channel)
 // {
@@ -20,11 +20,11 @@
 // }
 
 
-bool Client::join(Channel &channel)
-{
-	channel.AddClient(_username, _fd);
-	return (true);
-}
+//bool Server::join(Channel &channel)
+//{
+//	channel.AddClient(_username, _fd);
+//	return (true);
+//}
 
 
 // bool Client::privmsg(const std::string &msg, Channel &channel)

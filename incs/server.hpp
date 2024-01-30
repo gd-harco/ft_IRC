@@ -11,6 +11,7 @@
 #include <bits/stdc++.h>
 #include <cstdio>
 #include <cstdlib>
+#include <sstream>
 #include "client.hpp"
 #include "channel.hpp"
 
@@ -33,7 +34,7 @@ class	Server
 
 		//getters
 		fdClientMap			&GetClients();
-		channelMap			& GetChannels();
+		channelMap			&GetChannels();
 		uint64_t			GetPort() const;
 		int					GetEpollFd() const;
 		int					GetScocket() const;
@@ -41,8 +42,8 @@ class	Server
 		std::string			GetPasswod() const;
 
 		//setter
-		void	AddClient(int key, Client clent);
-		void	AddChannel(std::string name, Channel channel);
+		void	AddClient(int key, Client &clent);
+		void	AddChannel(std::string name, Channel &channel);
 
 		void	RemoveClient(int key);
 		void	RemoveChannel(std::string name);
@@ -53,6 +54,19 @@ class	Server
 		void	NewConnectionRequest(int fd);
 		void	HandleMessage(int fd);
 
+		void	HandleCommand(std::string const &msg, Client &client);
+
+		//commands
+		bool	kick(const std::string &args);
+		bool	invite(const std::string &args);
+		bool	topic(const std::string &args);
+		bool	mode(const std::string &args);
+		bool	privmsg(const std::string &args);
+		bool	join(const std::string &args);
+		bool	quit(const std::string &args);
+		bool	ping(const std::string &args);
+		bool	pong(const std::string &args);
+		bool	error(const std::string &args);
 	private:
 		fdClientMap			_clients;
 		channelMap			_channels;

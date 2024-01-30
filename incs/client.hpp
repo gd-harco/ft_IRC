@@ -5,6 +5,7 @@
 #include <list>
 #include <map>
 #include "channel.hpp"
+#include <sys/epoll.h>
 
 
 // Numeric Replies:
@@ -37,34 +38,32 @@ class	Client
 	public:
 		//constructor / destructor
 		Client();
-		Client(int fd);
-		Client(std::string username, std::string nickname);
+		Client(int fd, int epoll_fd);
 		~Client();
-
-		//commands
-		bool	kick(const std::string &KickUser);
-		bool	invite(const std::string &InvitUser);
-		bool	topic(const std::string &Channel);
-		bool	mode(const unsigned char type, const std::string &Channel);
-		bool	privmsg(const std::string &msg, Channel &channel);
-		bool	join(Channel &channel);
-		bool	quit(Channel &channel);
-		bool	ping(Channel &channel);
-		bool	pong(Channel &channel);
-		bool	error(Channel &channel);
 
 		//getters
 		int			GetFd() const;
 		bool		GetAuthor() const;
+		bool		GetPassword() const;
 		std::string	GetNickname() const;
 		std::string	GetUsername() const;
 
+		//setters
+		void	SetPassword();
+		void	SetHaveAuthor(int author);
+		void	SetNickname(std::string nickname);
+		void	SetUsername(std::string username);
+		void	AddMsgToSend(std::string msg);
+
 	private:
-		int			_fd;
-		bool		_haveAuthor;
-		std::string	_ninckname;
-		std::string	_username;
+		int						_fd;
+		int						_epollFd;
+		bool					_password;
+		int						_haveAuthor;
+		std::string				_ninckname;
+		std::string				_username;
 		std::list<std::string>	_msgToSend;
+		struct epoll_event		_event;
 };
 
 #endif
