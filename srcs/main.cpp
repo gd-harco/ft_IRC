@@ -7,14 +7,15 @@
 
 int	main(int argc, char **argv)
 {
-	if (argc != 2){
-		std::cout << "Wrong number of argument" << std::endl;
+	if (argc != 3){
+		std::cout << "Wrong number of argument, usage ./irc <port> <passowrd>" << std::endl;
 		return 1;
 	}
 	uint64_t port = std::strtol(argv[1], NULL, 10);
+	std::string	password(argv[2]);
 	Server *serv;
 	try {
-		serv = new Server(port);
+		serv = new Server(port, password);
 	} catch (std::exception &e){
 		std::cout << e.what() << std::endl;
 		perror(NULL);

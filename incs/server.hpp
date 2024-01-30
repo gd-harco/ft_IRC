@@ -25,7 +25,7 @@ class	Server
 	public:
 		//constructor / destructor
 		Server();
-		Server(uint64_t port);
+		Server(uint64_t port, std::string password);
 		Server(const Server &server);
 		~Server();
 
@@ -38,6 +38,7 @@ class	Server
 		int					GetEpollFd() const;
 		int					GetScocket() const;
 		struct sockaddr_in	GetSockAddr() const;
+		std::string			GetPasswod() const;
 
 		//setter
 		void	AddClient(int key, Client clent);
@@ -59,6 +60,7 @@ class	Server
 		struct sockaddr_in	_sockaddr;
 		int					_socket;
 		int 				_epollFd;
+		std::string			_password;
 };
 
 #endif

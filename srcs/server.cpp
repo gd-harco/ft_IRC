@@ -9,9 +9,10 @@ Server::Server(const Server &server)
 	*this = server;
 }
 
-Server::Server(uint64_t port)
+Server::Server(uint64_t port, std::string password)
 {
 	_port = port;
+	_password = password;
 	_socket = socket(AF_INET, SOCK_STREAM, 0);
 	if (_socket == -1) {
 		throw std::runtime_error("Failed to create socket");
