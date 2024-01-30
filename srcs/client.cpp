@@ -49,3 +49,7 @@ void	Client::updateClientStatus(const int &epollFd) {
 		this->_clientEpollevent.events = EPOLLIN | EPOLLOUT;
 	epoll_ctl(epollFd, EPOLL_CTL_MOD, this->_fd, &this->_clientEpollevent);
 }
+
+void Client::addMessageToSendbox(std::string message) {
+	this->_msgToSend.push_back(message);
+}

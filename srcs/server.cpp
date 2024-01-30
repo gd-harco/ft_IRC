@@ -65,9 +65,10 @@ void Server::HandleMessage(int fd)
 	msg.append(std::string(buf));
 	if (msg.find(delimeter) != msg.npos)
 	{
-		//TODO: iterer dans la liste des clients : passer le client en mode EPOLLOUT
-		// et ajouter le message a la liste du client
-		std::cout << "full string : " << msg << std::endl;
+		for (fdClientMap::iterator cur = _clients.begin(); cur != _clients.end(); ++cur){
+			cur->second.addMessageToSendbox(msg);
+			cur->second.updateClientStatus(this->_epollFd);
+		}
 		msg.clear();
 	}
 }

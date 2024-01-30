@@ -52,14 +52,18 @@ class	Client
 		bool	join(Channel &channel);
 		bool	quit(Channel &channel);
 		bool	ping(Channel &channel);
-		bool	pong(Channel &channel);
+		bool	pong(Channel &channel)	;
 		bool	error(Channel &channel);
 
+		void	updateClientStatus(const int &epollFd);
+		void	addClientToEpoll(const int &epollFd);
+		void	addMessageToSendbox(std::string message);
 		//getters
 		int			GetFd() const;
 		bool		GetAuthor() const;
 		std::string	GetNickname() const;
 		std::string	GetUsername() const;
+
 
 	private:
 		int			_fd;

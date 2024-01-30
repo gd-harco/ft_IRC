@@ -40,7 +40,7 @@ class	Server
 		struct sockaddr_in	GetSockAddr() const;
 
 		//setter
-		void	AddClient(int key, Client clent);
+		void	AddClient(int key, Client clientToAdd);
 		void	AddChannel(std::string name, Channel channel);
 
 		void	RemoveClient(int key);
