@@ -8,6 +8,7 @@
 #include <sys/epoll.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <cstring>
 
 #include "channel.hpp"
 

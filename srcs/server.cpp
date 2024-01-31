@@ -33,7 +33,7 @@ Server::Server(uint64_t port)
 	if (_epollFd == -1) {
 		throw std::runtime_error("Failed to create epoll file descriptor");
 	}
-
+	bzero(&this->_servEpollEvent, sizeof(struct epoll_event));
 	this->_servEpollEvent.events = EPOLLIN;
 	this->_servEpollEvent.data.fd = this->_socket;
 	epoll_ctl(this->_epollFd, EPOLL_CTL_ADD, this->_socket, &this->_servEpollEvent);
@@ -67,6 +67,8 @@ void Server::HandleEvent(int fd)
 	if (msg.find(delimeter) != msg.npos)
 	{
 		for (fdClientMap::iterator cur = _clients.begin(); cur != _clients.end(); ++cur){
+			if (cur->first == fd)
+				continue;
 			cur->second->addMessageToSendbox(msg);
 			cur->second->updateClientStatus(this->_epollFd);
 		}
@@ -148,5 +150,12 @@ void	Server::RemoveChannel(std::string name)
 
 void Server::RemoveClient(int key)
 {
+	fdClientMap::iterator toRemove = _clients.find(key);
+	if (toRemove == _clients.end())
+	{
+		std::cout << "Client to remove not found" << std::endl;
+		return;
+	}
+	delete toRemove->second;
 	_clients.erase(key);
 }
