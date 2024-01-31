@@ -3,8 +3,11 @@
 
 #include <iostream>
 #include <list>
+#include <queue>
 #include <map>
 #include <sys/epoll.h>
+#include <sys/types.h>
+#include <sys/socket.h>
 
 #include "channel.hpp"
 
@@ -64,6 +67,7 @@ class	Client
 		std::string	GetNickname() const;
 		std::string	GetUsername() const;
 
+		void	receiveMsg();
 
 	private:
 		int			_fd;
@@ -73,7 +77,7 @@ class	Client
 		struct epoll_event		_clientEpollevent;
 		std::string				_ninckname;
 		std::string				_username;
-		std::list<std::string>	_msgToSend;
+		std::queue<std::string>	_msgToSend;
 };
 
 #endif

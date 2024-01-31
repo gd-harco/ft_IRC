@@ -49,11 +49,12 @@ void Server::NewConnectionRequest(int fd)
 
 	int	clientFd = accept(fd, (struct sockaddr*)&new_addr,
 		(socklen_t*)&addrLen);
+	std::cerr << "new connection accepted on " << clientFd << std::endl;
 	Client *addedClient = new Client(clientFd);
 	AddClient(clientFd, addedClient);
 }
 
-void Server::HandleMessage(int fd)
+void Server::HandleEvent(int fd)
 {
 	char buf[BUFFER_READ_SIZE + 1];
 	static std::string	msg;
@@ -71,6 +72,16 @@ void Server::HandleMessage(int fd)
 		}
 		msg.clear();
 	}
+}
+
+void	Server::sendMsg(int fd)
+{
+	fdClientMap::iterator client =	this->_clients.find(fd);
+	if (client == this->_clients.end()){
+		std::cerr << "Client not found, that's a problem" << std::endl;
+	}
+	client->second->receiveMsg();
+	client->second->updateClientStatus(this->_epollFd);
 }
 
 Server &Server::operator=(const Server &server)
@@ -122,10 +133,7 @@ void Server::SetPort(uint64_t port)
 void Server::AddClient(int key, Client *clientToAdd)
 {
 	clientToAdd->updateClientStatus(this->_epollFd);
-	std::pair<int, Client *> pair;
-	pair.first = key;
-	pair.second = clientToAdd;
-	_clients.insert(pair);
+	_clients[key] = clientToAdd;
 }
 
 void Server::AddChannel(std::string name, Channel channel)

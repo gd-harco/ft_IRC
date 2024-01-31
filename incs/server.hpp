@@ -50,7 +50,8 @@ class	Server
 
 		//connection
 		void	NewConnectionRequest(int fd);
-		void	HandleMessage(int fd);
+		void	sendMsg(int fd);
+		void	HandleEvent(int fd);
 
 	private:
 		struct epoll_event	_servEpollEvent;

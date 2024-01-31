@@ -38,15 +38,20 @@ int	main(int argc, char **argv)
 				serv->NewConnectionRequest(currFd);
 			}
 			else {
-				//si le read fail, alors le client a ete deco
-				try {
-					serv->HandleMessage(currFd);
-				} catch (std::exception &e) {
-					std::cout << e.what() << std::endl;
-					//parcourir les channels pour voir si il y a le fd et le suppr
-					serv->RemoveClient(currFd);
-					epoll_ctl(serv->GetEpollFd(), EPOLL_CTL_DEL, currFd, 0);
-					close(currFd);
+				if (eventsCaught[i].events & EPOLLOUT) {
+					serv->sendMsg(eventsCaught[i].data.fd);
+				}
+				if (eventsCaught[i].events & EPOLLIN) {
+					//si le read fail, alors le client a ete deco
+					try {
+						serv->HandleEvent(currFd);
+					} catch (std::exception &e) {
+						std::cout << e.what() << std::endl;
+						//parcourir les channels pour voir si il y a le fd et le suppr
+						serv->RemoveClient(currFd);
+						epoll_ctl(serv->GetEpollFd(), EPOLL_CTL_DEL, currFd, 0);
+						close(currFd);
+					}
 				}
 			}
 		}
