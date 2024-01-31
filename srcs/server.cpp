@@ -76,7 +76,7 @@ void Server::HandleEvent(int fd)
 				cur->second->updateClientStatus(this->_epollFd);
 			}
 		}
-		std::cout << _clients[fd]->GetUsername() << ", " << _clients[fd]->GetNickname() << ": " << "full string : " << msg;
+		std::cout << _clients[fd]->GetUsername() << ", " << _clients[fd]->GetNickname() << ": " << msg;
 		msg.clear();
 	}
 }
@@ -106,40 +106,23 @@ bool	Server::HandleCommand(std::string const &msg, Client *client)
 	std::istringstream	SepMsg(msg);
 	std::string			Command;
 	std::string			Args;
-	(void)client;
 
 	SepMsg >> Command >> Args;
 
 	//TODO send numeric reply to client
 	if (Command == "PASS" &&  client->GetPassword() == false)
 	{
-		if (Args == _password && client->GetPassword() == false)
-		{
-			std::cout << client->GetNickname() << " " << client->GetUsername() << " " << client->GetFd() << ": " << "have right password" << std::endl;
-			client->SetPassword();
-			return false;
-		}
-		else if (Args != _password && client->GetPassword() == false)
-		{
-			std::cout << client->GetNickname() << " " << client->GetUsername() << " " << client->GetFd() << ": " << "have bad password" << std::endl;
-			return false;
-		}
-		else if (client->GetPassword() == true)
-		{
-			std::cout << client->GetNickname() << " " << client->GetUsername() << " " << client->GetFd() << ": " << "have already right password" << std::endl;
-			return false;
-		}
+		pass(Args, client);
+		return false;
 	}
 	else if (Command == "NICK")
 	{
-		client->SetNickname(Args);
-		std::cout << client->GetNickname() << " " << client->GetUsername() << " " << client->GetFd() << ": " << "have new nickname" << std::endl;
+		nick(Args, client);
 		return false;
 	}
 	else if (Command == "USER")
 	{
-		client->SetUsername(Args);
-		std::cout << client->GetNickname() << " " << client->GetUsername() << " " << client->GetFd() << ": " << "have new username" << std::endl;
+		user(Args, client);
 		return false;
 	}
 	return true;

@@ -56,16 +56,19 @@ class	Server
 
 
 		//commands
-		bool	kick(const std::string &args);
-		bool	invite(const std::string &args);
-		bool	topic(const std::string &args);
-		bool	mode(const std::string &args);
-		bool	privmsg(const std::string &args);
-		bool	join(const std::string &args);
-		bool	quit(const std::string &args);
-		bool	ping(const std::string &args);
-		bool	pong(const std::string &args);
-		bool	error(const std::string &args);
+		bool	pass(const std::string &args, Client *client);
+		bool	user(const std::string &args, Client *client);
+		bool	nick(const std::string &args, Client *client);
+		bool	kick(const std::string &args, Client *client);
+		bool	invite(const std::string &args, Client *client);
+		bool	topic(const std::string &args, Client *client);
+		bool	mode(const std::string &args, Client *client);
+		bool	privmsg(const std::string &args, Client *client);
+		bool	join(const std::string &args, Client *client);
+		bool	quit(const std::string &args, Client *client);
+		bool	ping(const std::string &args, Client *client);
+		bool	pong(const std::string &args, Client *client);
+		bool	error(const std::string &args, Client *client);
 
 	private:
 		std::string			_password;

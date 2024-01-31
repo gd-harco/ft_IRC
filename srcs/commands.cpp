@@ -1,54 +1,38 @@
 #include "server.hpp"
 
-// bool Client::error(Channel &channel)
-// {
-// }
+bool Server::pass(const std::string &args, Client *client)
+{
 
+	if (args == _password && client->GetPassword() == false)
+	{
+		std::cout << client->GetNickname() << " " << client->GetUsername() << " " << client->GetFd() << ": " << "have right password" << std::endl;
+		client->SetPassword();
+		return false;
+	}
+	else if (args != _password && client->GetPassword() == false)
+	{
+		std::cout << client->GetNickname() << " " << client->GetUsername() << " " << client->GetFd() << ": " << "have bad password" << std::endl;
+		return false;
+	}
+	else if (client->GetPassword() == true)
+	{
+		std::cout << client->GetNickname() << " " << client->GetUsername() << " " << client->GetFd() << ": " << "have already right password" << std::endl;
+		return false;
+	}
+	return (true);
+}
 
-// bool Client::pong(Channel &channel)
-// {
-// }
+bool Server::nick(const std::string &args, Client *client)
+{
+	client->SetNickname(args);
+	std::cout << client->GetNickname() << " " << client->GetUsername() << " " << client->GetFd() << ": " << "have new nickname" << std::endl;
+	return (true);
+}
 
-
-// bool Client::ping(Channel &channel)
-// {
-// }
-
-
-// bool Client::quit(Channel &channel)
-// {
-// }
-
-
-//bool Server::join(Channel &channel)
-//{
-//	channel.AddClient(_username, _fd);
-//	return (true);
-//}
-
-
-// bool Client::privmsg(const std::string &msg, Channel &channel)
-// {
-// }
-
-
-// bool Client::mode(const unsigned char type, const std::string &Channel)
-// {
-// }
-
-
-// bool Client::topic(const std::string &Channel)
-// {
-// }
-
-
-// bool Client::invite(const std::string &InvitUser)
-// {
-// }
-
-
-// bool Client::kick(const std::string &KickUser)
-// {
-// }
-
+bool Server::user(const std::string &args, Client *client)
+{
+	client->SetUsername(args);
+	std::cout << client->GetNickname() << " " << client->GetUsername() << " " << client->GetFd() << ": " << "have new username" << std::endl;
+	return (true);
+}
 
