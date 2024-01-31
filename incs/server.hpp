@@ -53,6 +53,8 @@ class	Server
 		void	sendMsg(int fd);
 		void	HandleEvent(int fd);
 
+		void	deleteClient(fdClientMap::iterator toDelete) const;
+		void	exitservClean();
 	private:
 		struct epoll_event	_servEpollEvent;
 		fdClientMap			_clients;
