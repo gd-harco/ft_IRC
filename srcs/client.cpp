@@ -6,7 +6,7 @@ Client::Client()
 
 Client::Client(int fd): _fd(fd), _isInEpoll(false), _ninckname("johny")
 {
-	bzero(&this->_clientEpollevent, sizeof (struct epoll_event));
+	memset(&this->_clientEpollevent, '\0', sizeof (struct epoll_event));
 	this->_clientEpollevent.events = EPOLLIN;
 	this->_clientEpollevent.data.fd = fd;
 }
