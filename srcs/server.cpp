@@ -94,12 +94,28 @@ void	Server::HandleCommand(std::string const &msg, Client &client)
 	SepMsg >> Command >> Args;
 
 	//TODO send numeric reply to client
-	if (Command == "PASS" && Args == _password && client.GetPassword() == false)
-		client.SetPassword();
+	if (Command == "PASS" &&  client.GetPassword() == false)
+	{
+		if (Args == _password && client.GetPassword() == false)
+		{
+			std::cout << client.GetNickname() << " " << client.GetUsername() << " " << client.GetFd() << ": " << "have right password" << std::endl;
+			client.SetPassword();
+		}
+		else if (Args != _password && client.GetPassword() == false)
+			std::cout << client.GetNickname() << " " << client.GetUsername() << " " << client.GetFd() << ": " << "have bad password" << std::endl;
+		else if (client.GetPassword() == true)
+			std::cout << client.GetNickname() << " " << client.GetUsername() << " " << client.GetFd() << ": " << "have already right password" << std::endl;
+	}
 	else if (Command == "NICK")
+	{
 		client.SetNickname(Args);
+		std::cout << client.GetNickname() << " " << client.GetUsername() << " " << client.GetFd() << ": " << "have new nickname" << std::endl;
+	}
 	else if (Command == "USER")
+	{
 		client.SetUsername(Args);
+		std::cout << client.GetNickname() << " " << client.GetUsername() << " " << client.GetFd() << ": " << "have new username" << std::endl;
+	}
 }
 
 
