@@ -67,6 +67,8 @@ void Server::HandleEvent(int fd)
 	if (msg.find(delimeter) != msg.npos)
 	{
 		for (fdClientMap::iterator cur = _clients.begin(); cur != _clients.end(); ++cur){
+			if (cur->first == fd)
+				continue;
 			cur->second->addMessageToSendbox(msg);
 			cur->second->updateClientStatus(this->_epollFd);
 		}
