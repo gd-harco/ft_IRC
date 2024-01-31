@@ -148,5 +148,12 @@ void	Server::RemoveChannel(std::string name)
 
 void Server::RemoveClient(int key)
 {
+	fdClientMap::iterator toRemove = _clients.find(key);
+	if (toRemove == _clients.end())
+	{
+		std::cout << "Client to remove not found" << std::endl;
+		return;
+	}
+	delete toRemove->second;
 	_clients.erase(key);
 }
