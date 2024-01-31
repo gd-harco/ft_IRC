@@ -2,8 +2,13 @@
 #include "client.hpp"
 #include "channel.hpp"
 
+#include <csignal>
 #include <unistd.h>
 #define MAX_EVENT 5
+
+Server *serv;
+
+void	handleSigInt(int sig);
 
 int	main(int argc, char **argv)
 {
@@ -12,7 +17,6 @@ int	main(int argc, char **argv)
 		return 1;
 	}
 	uint64_t port = std::strtol(argv[1], NULL, 10);
-	Server *serv;
 	try {
 		serv = new Server(port);
 	} catch (std::exception &e){
@@ -20,6 +24,8 @@ int	main(int argc, char **argv)
 		perror(NULL);
 		return (errno);
 	}
+
+	signal(SIGINT, handleSigInt);
 
 	std::cout << "Waiting for incoming connection on port " << serv->GetPort() << std::endl;
 	struct epoll_event eventsCaught[MAX_EVENT];
@@ -56,6 +62,12 @@ int	main(int argc, char **argv)
 			}
 		}
 	}
+}
+
+void	handleSigInt(int sig)
+{
+	serv->exitservClean();
 	delete serv;
-	return 0;
+	std::cout << "exiting du to catching SIGNAL " << sig << std::endl;
+	exit(0);
 }

@@ -1,5 +1,6 @@
 #include "server.hpp"
 
+#include <unistd.h>
 Server::Server()
 {
 }
@@ -158,4 +159,24 @@ void Server::RemoveClient(int key)
 	}
 	delete toRemove->second;
 	_clients.erase(key);
+}
+
+void Server::deleteClient(fdClientMap::iterator toDelete) const {
+	epoll_ctl(this->_epollFd, EPOLL_CTL_DEL, toDelete->first, NULL);
+	close(toDelete->first);
+	delete toDelete->second;
+}
+
+void Server::exitservClean() {
+	if (!_clients.empty()){
+		for (fdClientMap::iterator cur = _clients.begin(); cur != _clients.end(); cur++)
+			deleteClient(cur);
+		_clients.clear();
+	}
+	if (!_channels.empty()){
+		//TODO clean channels
+		_channels.empty();
+	}
+	close(this->_epollFd);
+	close(this->_socket);
 }

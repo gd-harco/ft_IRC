@@ -26,8 +26,7 @@ INCLUDES =\
 DIR_BUILD	=	.build/
 OBJS		=	$(patsubst %.cpp, $(DIR_BUILD)%.zizi, $(SRC))
 DEPS		=	$(patsubst %.cpp, $(DIR_BUILD)%.d, $(SRC))
-CPPFLAGS	=	-Wall -Wextra -Werror -std=c++98 -glldb -fsanitize=address
-DEBUGFLAGS	=	-fsanitize=address -g3
+CPPFLAGS	=	-Wall -Wextra -Werror -std=c++98 -glldb
 DEPSFLAGS	=	-MMD -MP
 RM			=	rm -rf
 AR			=	ar rcs
