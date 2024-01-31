@@ -33,7 +33,7 @@ Server::Server(uint64_t port)
 	if (_epollFd == -1) {
 		throw std::runtime_error("Failed to create epoll file descriptor");
 	}
-	bzero(&this->_servEpollEvent, sizeof(struct epoll_event));
+	memset(&this->_servEpollEvent, '\0', sizeof(struct epoll_event));
 	this->_servEpollEvent.events = EPOLLIN;
 	this->_servEpollEvent.data.fd = this->_socket;
 	epoll_ctl(this->_epollFd, EPOLL_CTL_ADD, this->_socket, &this->_servEpollEvent);
