@@ -4,7 +4,7 @@ Client::Client()
 {
 }
 
-Client::Client(int fd): _fd(fd)
+Client::Client(int fd): _fd(fd), _isInEpoll(false), _ninckname("johny")
 {
 	this->_clientEpollevent.events = EPOLLIN;
 	this->_clientEpollevent.data.fd = fd;
@@ -43,6 +43,12 @@ void	Client::addClientToEpoll(const int &epollFd) {
 }
 
 void	Client::updateClientStatus(const int &epollFd) {
+	if (!_isInEpoll)
+	{
+		epoll_ctl(epollFd, EPOLL_CTL_ADD, this->_fd, &this->_clientEpollevent);
+		_isInEpoll = true;
+		return;
+	}
 	if (this->_msgToSend.empty())
 		this->_clientEpollevent.events = EPOLLIN;
 	else

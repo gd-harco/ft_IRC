@@ -68,6 +68,7 @@ class	Client
 	private:
 		int			_fd;
 		bool		_haveAuthor;
+		bool		_isInEpoll;
 
 		struct epoll_event		_clientEpollevent;
 		std::string				_ninckname;
