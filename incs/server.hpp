@@ -14,7 +14,7 @@
 #include "client.hpp"
 #include "channel.hpp"
 
-typedef std::map<int, Client> fdClientMap;
+typedef std::map<int, Client *> fdClientMap;
 typedef std::map<std::string, Channel> channelMap;
 
 class Channel;
@@ -40,7 +40,7 @@ class	Server
 		struct sockaddr_in	GetSockAddr() const;
 
 		//setter
-		void	AddClient(int key, Client clientToAdd);
+		void	AddClient(int key, Client *clientToAdd);
 		void	AddChannel(std::string name, Channel channel);
 
 		void	RemoveClient(int key);

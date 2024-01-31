@@ -49,8 +49,8 @@ void Server::NewConnectionRequest(int fd)
 
 	int	clientFd = accept(fd, (struct sockaddr*)&new_addr,
 		(socklen_t*)&addrLen);
-	Client	NewClient(clientFd);
-	AddClient(clientFd, NewClient);
+	Client *addedClient = new Client(clientFd);
+	AddClient(clientFd, addedClient);
 }
 
 void Server::HandleMessage(int fd)
@@ -66,8 +66,8 @@ void Server::HandleMessage(int fd)
 	if (msg.find(delimeter) != msg.npos)
 	{
 		for (fdClientMap::iterator cur = _clients.begin(); cur != _clients.end(); ++cur){
-			cur->second.addMessageToSendbox(msg);
-			cur->second.updateClientStatus(this->_epollFd);
+			cur->second->addMessageToSendbox(msg);
+			cur->second->updateClientStatus(this->_epollFd);
 		}
 		msg.clear();
 	}
@@ -119,10 +119,13 @@ void Server::SetPort(uint64_t port)
 }
 
 
-void Server::AddClient(int key, Client clientToAdd)
+void Server::AddClient(int key, Client *clientToAdd)
 {
-	clientToAdd.updateClientStatus(this->_epollFd);
-	_clients.insert(std::make_pair(key, clientToAdd));
+	clientToAdd->updateClientStatus(this->_epollFd);
+	std::pair<int, Client *> pair;
+	pair.first = key;
+	pair.second = clientToAdd;
+	_clients.insert(pair);
 }
 
 void Server::AddChannel(std::string name, Channel channel)
