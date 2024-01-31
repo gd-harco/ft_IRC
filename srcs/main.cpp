@@ -8,14 +8,13 @@
 int	main(int argc, char **argv)
 {
 	if (argc != 3){
-		std::cout << "Wrong number of argument, usage ./irc <port> <passowrd>" << std::endl;
+		std::cout << "Wrong number of argument, usage: ./irc <port> <password>" << std::endl;
 		return 1;
 	}
 	uint64_t port = std::strtol(argv[1], NULL, 10);
-	std::string	password(argv[2]);
 	Server *serv;
 	try {
-		serv = new Server(port, password);
+		serv = new Server(port, std::string(argv[2]));
 	} catch (std::exception &e){
 		std::cout << e.what() << std::endl;
 		perror(NULL);
@@ -39,15 +38,20 @@ int	main(int argc, char **argv)
 				serv->NewConnectionRequest(currFd);
 			}
 			else {
-				//si le read fail, alors le client a ete deco
-				try {
-					serv->HandleMessage(currFd);
-				} catch (std::exception &e) {
-					std::cout << e.what() << std::endl;
-					//parcourir les channels pour voir si il y a le fd et le suppr
-					serv->RemoveClient(currFd);
-					epoll_ctl(serv->GetEpollFd(), EPOLL_CTL_DEL, currFd, 0);
-					close(currFd);
+				if (eventsCaught[i].events & EPOLLOUT) {
+					serv->sendMsg(eventsCaught[i].data.fd);
+				}
+				if (eventsCaught[i].events & EPOLLIN) {
+					//si le read fail, alors le client a ete deco
+					try {
+						serv->HandleEvent(currFd);
+					} catch (std::exception &e) {
+						std::cout << e.what() << std::endl;
+						//parcourir les channels pour voir si il y a le fd et le suppr
+						serv->RemoveClient(currFd);
+						epoll_ctl(serv->GetEpollFd(), EPOLL_CTL_DEL, currFd, 0);
+						close(currFd);
+					}
 				}
 			}
 		}

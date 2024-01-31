@@ -34,11 +34,10 @@ Server::Server(uint64_t port, std::string password)
 	if (_epollFd == -1) {
 		throw std::runtime_error("Failed to create epoll file descriptor");
 	}
-
-	struct epoll_event event;
-	event.events = EPOLLIN;
-	event.data.fd = this->_socket;
-	epoll_ctl(this->_epollFd, EPOLL_CTL_ADD, this->_socket, &event);
+	memset(&this->_servEpollEvent, '\0', sizeof(struct epoll_event));
+	this->_servEpollEvent.events = EPOLLIN;
+	this->_servEpollEvent.data.fd = this->_socket;
+	epoll_ctl(this->_epollFd, EPOLL_CTL_ADD, this->_socket, &this->_servEpollEvent);
 }
 
 Server::~Server()
@@ -49,13 +48,14 @@ void Server::NewConnectionRequest(int fd)
 	struct sockaddr_in	new_addr;
 	int					addrLen = sizeof(new_addr);
 
-	int	client = accept(fd, (struct sockaddr*)&new_addr,
+	int	clientFd = accept(fd, (struct sockaddr*)&new_addr,
 		(socklen_t*)&addrLen);
-	Client	NewClient (client, this->_epollFd);
-	AddClient(client, NewClient);
+	std::cerr << "new connection accepted on " << clientFd << std::endl;
+	Client *addedClient = new Client(clientFd);
+	AddClient(clientFd, addedClient);
 }
 
-void Server::HandleMessage(int fd)
+void Server::HandleEvent(int fd)
 {
 	char buf[BUFFER_READ_SIZE + 1];
 	static std::string	msg;
@@ -67,12 +67,29 @@ void Server::HandleMessage(int fd)
 	msg.append(std::string(buf));
 	if (msg.find(delimeter) != msg.npos)
 	{
-		//TODO: iterer dans la liste des clients : passer le client en mode EPOLLOUT
-		// et ajouter le message a la liste du client
-		HandleCommand(msg, _clients[fd]);
-		std::cout << _clients[fd].GetUsername() << ", " << _clients[fd].GetNickname() << ": " << "full string : " << msg << std::endl;
+		if (HandleCommand(msg, _clients[fd]) == true && _clients[fd]->GetPassword() == true && !_clients[fd]->GetNickname().empty() && !_clients[fd]->GetUsername().empty())
+		{
+			for (fdClientMap::iterator cur = _clients.begin(); cur != _clients.end(); ++cur){
+				if (cur->first == fd)
+					continue;
+				cur->second->addMessageToSendbox(msg);
+				cur->second->updateClientStatus(this->_epollFd);
+			}
+		}
+		std::cout << _clients[fd]->GetUsername() << ", " << _clients[fd]->GetNickname() << ": " << "full string : " << msg;
 		msg.clear();
 	}
+}
+
+void	Server::sendMsg(int fd)
+{
+	fdClientMap::iterator client =	this->_clients.find(fd);
+	if (client == this->_clients.end()){
+		std::cerr << "Client not found, that's a problem" << std::endl;
+		return ;
+	}
+	client->second->receiveMsg();
+	client->second->updateClientStatus(this->_epollFd);
 }
 
 Server &Server::operator=(const Server &server)
@@ -84,7 +101,7 @@ Server &Server::operator=(const Server &server)
 	return (*this);
 }
 
-void	Server::HandleCommand(std::string const &msg, Client &client)
+bool	Server::HandleCommand(std::string const &msg, Client *client)
 {
 	std::istringstream	SepMsg(msg);
 	std::string			Command;
@@ -94,32 +111,40 @@ void	Server::HandleCommand(std::string const &msg, Client &client)
 	SepMsg >> Command >> Args;
 
 	//TODO send numeric reply to client
-	if (Command == "PASS" &&  client.GetPassword() == false)
+	if (Command == "PASS" &&  client->GetPassword() == false)
 	{
-		if (Args == _password && client.GetPassword() == false)
+		if (Args == _password && client->GetPassword() == false)
 		{
-			std::cout << client.GetNickname() << " " << client.GetUsername() << " " << client.GetFd() << ": " << "have right password" << std::endl;
-			client.SetPassword();
+			std::cout << client->GetNickname() << " " << client->GetUsername() << " " << client->GetFd() << ": " << "have right password" << std::endl;
+			client->SetPassword();
+			return false;
 		}
-		else if (Args != _password && client.GetPassword() == false)
-			std::cout << client.GetNickname() << " " << client.GetUsername() << " " << client.GetFd() << ": " << "have bad password" << std::endl;
-		else if (client.GetPassword() == true)
-			std::cout << client.GetNickname() << " " << client.GetUsername() << " " << client.GetFd() << ": " << "have already right password" << std::endl;
+		else if (Args != _password && client->GetPassword() == false)
+		{
+			std::cout << client->GetNickname() << " " << client->GetUsername() << " " << client->GetFd() << ": " << "have bad password" << std::endl;
+			return false;
+		}
+		else if (client->GetPassword() == true)
+		{
+			std::cout << client->GetNickname() << " " << client->GetUsername() << " " << client->GetFd() << ": " << "have already right password" << std::endl;
+			return false;
+		}
 	}
 	else if (Command == "NICK")
 	{
-		client.SetNickname(Args);
-		std::cout << client.GetNickname() << " " << client.GetUsername() << " " << client.GetFd() << ": " << "have new nickname" << std::endl;
+		client->SetNickname(Args);
+		std::cout << client->GetNickname() << " " << client->GetUsername() << " " << client->GetFd() << ": " << "have new nickname" << std::endl;
+		return false;
 	}
 	else if (Command == "USER")
 	{
-		client.SetUsername(Args);
-		std::cout << client.GetNickname() << " " << client.GetUsername() << " " << client.GetFd() << ": " << "have new username" << std::endl;
+		client->SetUsername(Args);
+		std::cout << client->GetNickname() << " " << client->GetUsername() << " " << client->GetFd() << ": " << "have new username" << std::endl;
+		return false;
 	}
+	return true;
 }
 
-
-//getters
 channelMap & Server::GetChannels()
 {
 	return (_channels);
@@ -150,18 +175,20 @@ sockaddr_in Server::GetSockAddr() const
 	return (_sockaddr);
 }
 
+
 void Server::SetPort(uint64_t port)
 {
 	_port = port;
 }
 
 
-void Server::AddClient(int key, Client &client)
+void Server::AddClient(int key, Client *clientToAdd)
 {
-	_clients.insert(std::make_pair(key, client));
+	clientToAdd->updateClientStatus(this->_epollFd);
+	_clients[key] = clientToAdd;
 }
 
-void Server::AddChannel(std::string name, Channel &channel)
+void Server::AddChannel(std::string name, Channel channel)
 {
 	_channels.insert(std::make_pair(name, channel));
 }
@@ -173,11 +200,12 @@ void	Server::RemoveChannel(std::string name)
 
 void Server::RemoveClient(int key)
 {
+	fdClientMap::iterator toRemove = _clients.find(key);
+	if (toRemove == _clients.end())
+	{
+		std::cout << "Client to remove not found" << std::endl;
+		return;
+	}
+	delete toRemove->second;
 	_clients.erase(key);
 }
-
-std::string Server::GetPasswod() const
-{
-	return (_password);
-}
-

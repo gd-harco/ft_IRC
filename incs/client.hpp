@@ -3,9 +3,14 @@
 
 #include <iostream>
 #include <list>
+#include <queue>
 #include <map>
-#include "channel.hpp"
 #include <sys/epoll.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <cstring>
+
+#include "channel.hpp"
 
 
 // Numeric Replies:
@@ -38,32 +43,38 @@ class	Client
 	public:
 		//constructor / destructor
 		Client();
-		Client(int fd, int epoll_fd);
+		Client(int fd);
+		Client(std::string username, std::string nickname);
 		~Client();
+
+		void	updateClientStatus(const int &epollFd);
+		void	addClientToEpoll(const int &epollFd);
+		void	addMessageToSendbox(std::string message);
 
 		//getters
 		int			GetFd() const;
 		bool		GetAuthor() const;
-		bool		GetPassword() const;
 		std::string	GetNickname() const;
 		std::string	GetUsername() const;
+		bool		GetPassword() const;
 
 		//setters
 		void	SetPassword();
-		void	SetHaveAuthor(int author);
-		void	SetNickname(std::string nickname);
-		void	SetUsername(std::string username);
-		void	AddMsgToSend(std::string msg);
+		void	SetUsername(std::string const &username);
+		void	SetNickname(std::string const &nickname);
+
+		void	receiveMsg();
 
 	private:
-		int						_fd;
-		int						_epollFd;
-		bool					_password;
-		int						_haveAuthor;
-		std::string				_ninckname;
+		int			_fd;
+		bool		_haveAuthor;
+		bool		_isInEpoll;
+		bool		_password;
+
+		struct epoll_event		_clientEpollevent;
+		std::string				_nickname;
 		std::string				_username;
-		std::list<std::string>	_msgToSend;
-		struct epoll_event		_event;
+		std::queue<std::string>	_msgToSend;
 };
 
 #endif
