@@ -21,7 +21,7 @@ class	Client
 		Client(int fd);
 		Client(std::string username, std::string nickname);
 		~Client();
-  
+
 		void	updateClientStatus(const int &epollFd);
 		void	addClientToEpoll(const int &epollFd);
 		void	addMessageToSendbox(std::string message);
@@ -37,8 +37,6 @@ class	Client
 		void	SetPassword();
 		void	SetUsername(std::string const &username);
 		void	SetNickname(std::string const &nickname);
-
-		void	receiveMsg();
 
 		void	receiveMsg();
 
