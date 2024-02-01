@@ -1,17 +1,24 @@
 #include "server.hpp"
 
-bool Server::pass(const std::string &args, Client *client)
+bool Server::pass(std::vector<std::string> args, Client *client)
 {
 
-	if (args == _password && client->GetPassword() == false)
+	if (args.size() != 2)
+	{
+		std::cout << client->GetNickname() << " " << client->GetUsername() << " " << client->GetFd() << ": " << "invalid arg number" << std::endl;
+		return false;
+	}
+	if (args[0] == _password && client->GetPassword() == false)
 	{
 		std::cout << client->GetNickname() << " " << client->GetUsername() << " " << client->GetFd() << ": " << "have right password" << std::endl;
 		client->SetPassword();
-		return false;
+		return true;
 	}
-	else if (args != _password && client->GetPassword() == false)
+	else if (args[0] != _password && client->GetPassword() == false)
 	{
 		std::cout << client->GetNickname() << " " << client->GetUsername() << " " << client->GetFd() << ": " << "have bad password" << std::endl;
+		std::cout << "socket " << client->GetFd() << " has been closed and associated client deleted" << std::endl;
+		this->RemoveClient(client->GetFd());
 		return false;
 	}
 	else if (client->GetPassword() == true)
@@ -19,19 +26,29 @@ bool Server::pass(const std::string &args, Client *client)
 		std::cout << client->GetNickname() << " " << client->GetUsername() << " " << client->GetFd() << ": " << "have already right password" << std::endl;
 		return false;
 	}
-	return (true);
+	return false;
 }
 
-bool Server::nick(const std::string &args, Client *client)
+bool Server::nick(std::vector<std::string> args, Client *client)
 {
-	client->SetNickname(args);
+	if (args.size() > 2)
+	{
+		std::cout << client->GetNickname() << " " << client->GetUsername() << " " << client->GetFd() << ": " << "invalid arg number" << std::endl;
+		return false;
+	}
+	client->SetNickname(args[0]);
 	std::cout << client->GetNickname() << " " << client->GetUsername() << " " << client->GetFd() << ": " << "have new nickname" << std::endl;
 	return (true);
 }
 
-bool Server::user(const std::string &args, Client *client)
+bool Server::user(std::vector<std::string> args, Client *client)
 {
-	client->SetUsername(args);
+	if (args.size() < 2)
+	{
+		std::cout << client->GetNickname() << " " << client->GetUsername() << " " << client->GetFd() << ": " << "invalid arg number" << std::endl;
+		return false;
+	}
+	client->SetUsername(args.back());
 	std::cout << client->GetNickname() << " " << client->GetUsername() << " " << client->GetFd() << ": " << "have new username" << std::endl;
 	return (true);
 }
