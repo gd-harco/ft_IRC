@@ -57,6 +57,7 @@ void Server::SetMap()
 	// _commands["MODE"] = &Server::mode;
 	_commands["PRIVMSG"] = &Server::privmsg;
 	_commands["JOIN"] = &Server::join;
+	_commands["PART"] = &Server::part;
 	// _commands["QUIT"] = &Server::quit;
 	// _commands["PING"] = &Server::ping;
 	// _commands["PONG"] = &Server::pong;
@@ -127,7 +128,7 @@ bool	Server::HandleCommand(std::string const &msg, Client *client)
 	std::istringstream		SepMsg(msg);
 	std::string				Command;
 	std::string				pushBackArgs;
-	std::vector<std::string>	Args;
+	vectorCommand	Args;
 
 	SepMsg >> Command;
 	while (!SepMsg.eof())
