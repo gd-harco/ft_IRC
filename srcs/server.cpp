@@ -10,9 +10,10 @@ Server::Server(const Server &server)
 	*this = server;
 }
 
-Server::Server(uint64_t port)
+Server::Server(uint64_t port, std::string password)
 {
 	_port = port;
+	_password = password;
 	_socket = socket(AF_INET, SOCK_STREAM, 0);
 	if (_socket == -1) {
 		throw std::runtime_error("Failed to create socket");
@@ -38,10 +39,30 @@ Server::Server(uint64_t port)
 	this->_servEpollEvent.events = EPOLLIN;
 	this->_servEpollEvent.data.fd = this->_socket;
 	epoll_ctl(this->_epollFd, EPOLL_CTL_ADD, this->_socket, &this->_servEpollEvent);
+	SetMap();
+
 }
 
 Server::~Server()
 {}
+
+void Server::SetMap()
+{
+	_commands["PASS"] = &Server::pass;
+	_commands["USER"] = &Server::user;
+	_commands["NICK"] = &Server::nick;
+	// _commands["KICK"] = &Server::kick;
+	// _commands["INVITE"] = &Server::invite;
+	// _commands["TOPIC"] = &Server::topic;
+	// _commands["MODE"] = &Server::mode;
+	// _commands["PRIVMSG"] = &Server::privmsg;
+	// _commands["JOIN"] = &Server::join;
+	// _commands["QUIT"] = &Server::quit;
+	// _commands["PING"] = &Server::ping;
+	// _commands["PONG"] = &Server::pong;
+	// _commands["ERROR"] = &Server::error;
+}
+
 
 void Server::NewConnectionRequest(int fd)
 {
@@ -67,11 +88,15 @@ void Server::HandleEvent(int fd)
 	msg.append(std::string(buf));
 	if (msg.find(delimeter) != msg.npos)
 	{
-		for (fdClientMap::iterator cur = _clients.begin(); cur != _clients.end(); ++cur){
-			if (cur->first == fd)
-				continue;
-			cur->second->addMessageToSendbox(msg);
-			cur->second->updateClientStatus(this->_epollFd);
+		if (HandleCommand(msg, _clients[fd]) == true && _clients[fd]->GetPassword() == true && !_clients[fd]->GetNickname().empty() && !_clients[fd]->GetUsername().empty())
+		{
+			for (fdClientMap::iterator cur = _clients.begin(); cur != _clients.end(); ++cur){
+				if (cur->first == fd)
+					continue;
+				cur->second->addMessageToSendbox(msg);
+				cur->second->updateClientStatus(this->_epollFd);
+			}
+
 		}
 		msg.clear();
 	}
@@ -82,6 +107,7 @@ void	Server::sendMsg(int fd)
 	fdClientMap::iterator client =	this->_clients.find(fd);
 	if (client == this->_clients.end()){
 		std::cerr << "Client not found, that's a problem" << std::endl;
+		return ;
 	}
 	client->second->receiveMsg();
 	client->second->updateClientStatus(this->_epollFd);
@@ -94,6 +120,41 @@ Server &Server::operator=(const Server &server)
 		// faire jai la flemme de lefaire maintenant
 	}
 	return (*this);
+}
+
+bool	Server::HandleCommand(std::string const &msg, Client *client)
+{
+	std::istringstream		SepMsg(msg);
+	std::string				Command;
+	std::string				pushBackArgs;
+	std::vector<std::string>	Args;
+
+	SepMsg >> Command;
+	while (!SepMsg.eof())
+	{
+		SepMsg >> pushBackArgs;
+		Args.push_back(pushBackArgs);
+	}
+
+	if (Command == "USER")
+		Args.push_back(msg.substr(msg.find(":") + 1, msg.size() - msg.find(":") - 3));
+	try
+	{
+		Handler	function = _commands.at(Command);
+		(this->*function)(Args, client);
+		Args.clear();
+		if (Command != "PASS")
+			std::cout << client->GetUsername() << ", " << client->GetNickname() << ": " << msg;
+
+		return (false);
+	}
+	catch (std::exception &e)
+	{
+		std::cout << "404 cmd not found" << std::endl;
+		Args.clear();
+		return (true);
+	}
+	//TODO send numeric reply to client
 }
 
 channelMap & Server::GetChannels()
@@ -157,6 +218,7 @@ void Server::RemoveClient(int key)
 		std::cout << "Client to remove not found" << std::endl;
 		return;
 	}
+	close(key);
 	delete toRemove->second;
 	_clients.erase(key);
 }

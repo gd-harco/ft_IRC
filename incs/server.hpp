@@ -10,6 +10,7 @@
 #include <sys/epoll.h>
 #include <bits/stdc++.h>
 #include <cstdio>
+#include <cstring>
 #include <cstdlib>
 #include "client.hpp"
 #include "channel.hpp"
@@ -23,11 +24,15 @@ class Client;
 class	Server
 {
 	public:
+	typedef bool (Server::*Handler)(std::vector<std::string> args, Client *client);
+
 		//constructor / destructor
 		Server();
-		Server(uint64_t port);
+		Server(uint64_t port, std::string password);
 		Server(const Server &server);
 		~Server();
+
+		void	SetMap();
 
 		Server &operator=(const Server &server);
 
@@ -52,10 +57,30 @@ class	Server
 		void	NewConnectionRequest(int fd);
 		void	sendMsg(int fd);
 		void	HandleEvent(int fd);
+		bool	HandleCommand(std::string const &msg, Client *client);
+
+		//commands
+		bool	pass(std::vector<std::string> args, Client *client);
+		bool	user(std::vector<std::string> args, Client *client);
+		bool	nick(std::vector<std::string> args, Client *client);
+		bool	kick(std::vector<std::string> args, Client *client);
+		bool	invite(std::vector<std::string> args, Client *client);
+		bool	topic(std::vector<std::string> args, Client *client);
+		bool	mode(std::vector<std::string> args, Client *client);
+		bool	privmsg(std::vector<std::string> args, Client *client);
+		bool	join(std::vector<std::string> args, Client *client);
+		bool	quit(std::vector<std::string> args, Client *client);
+		bool	ping(std::vector<std::string> args, Client *client);
+		bool	pong(std::vector<std::string> args, Client *client);
+		bool	error(std::vector<std::string> args, Client *client);
+
 
 		void	deleteClient(fdClientMap::iterator toDelete) const;
 		void	exitservClean();
+  
 	private:
+		std::map<std::string, Handler>	_commands;
+		std::string			_password;
 		struct epoll_event	_servEpollEvent;
 		fdClientMap			_clients;
 		channelMap			_channels;
