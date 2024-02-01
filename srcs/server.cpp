@@ -55,8 +55,8 @@ void Server::SetMap()
 	// _commands["INVITE"] = &Server::invite;
 	// _commands["TOPIC"] = &Server::topic;
 	// _commands["MODE"] = &Server::mode;
-	// _commands["PRIVMSG"] = &Server::privmsg;
-	// _commands["JOIN"] = &Server::join;
+	_commands["PRIVMSG"] = &Server::privmsg;
+	_commands["JOIN"] = &Server::join;
 	// _commands["QUIT"] = &Server::quit;
 	// _commands["PING"] = &Server::ping;
 	// _commands["PONG"] = &Server::pong;
@@ -136,7 +136,7 @@ bool	Server::HandleCommand(std::string const &msg, Client *client)
 		Args.push_back(pushBackArgs);
 	}
 
-	if (Command == "USER")
+	if (Command == "USER" || Command == "PRIVMSG")
 		Args.push_back(msg.substr(msg.find(":") + 1, msg.size() - msg.find(":") - 3));
 	try
 	{
@@ -150,8 +150,14 @@ bool	Server::HandleCommand(std::string const &msg, Client *client)
 	}
 	catch (std::exception &e)
 	{
+		while (!Args.empty())
+		{
+			std::cout << Args.back() << std::endl;
+			Args.pop_back();
+		}
 		std::cout << "404 cmd not found" << std::endl;
 		Args.clear();
+		std::cout << client->GetUsername() << ", " << client->GetNickname() << ": " << msg;
 		return (true);
 	}
 	//TODO send numeric reply to client
@@ -200,9 +206,9 @@ void Server::AddClient(int key, Client *clientToAdd)
 	_clients[key] = clientToAdd;
 }
 
-void Server::AddChannel(std::string name, Channel channel)
+void Server::AddChannel(std::string name, Channel *channel)
 {
-	_channels.insert(std::make_pair(name, channel));
+	_channels[name] = channel;
 }
 
 void	Server::RemoveChannel(std::string name)
@@ -229,6 +235,12 @@ void Server::deleteClient(fdClientMap::iterator toDelete) const {
 	delete toDelete->second;
 }
 
+void Server::deleteChannel(channelMap::iterator toDelete)
+{
+	delete toDelete->second;
+}
+
+
 void Server::exitservClean() {
 	if (!_clients.empty()){
 		for (fdClientMap::iterator cur = _clients.begin(); cur != _clients.end(); cur++)
@@ -236,8 +248,9 @@ void Server::exitservClean() {
 		_clients.clear();
 	}
 	if (!_channels.empty()){
-		//TODO clean channels
-		_channels.empty();
+		for (channelMap::iterator cur = _channels.begin(); cur != _channels.end(); cur++)
+			deleteChannel(cur);
+		_channels.clear();
 	}
 	close(this->_epollFd);
 	close(this->_socket);

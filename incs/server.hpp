@@ -16,7 +16,7 @@
 #include "channel.hpp"
 
 typedef std::map<int, Client *> fdClientMap;
-typedef std::map<std::string, Channel> channelMap;
+typedef std::map<std::string, Channel *> channelMap;
 
 class Channel;
 class Client;
@@ -46,7 +46,7 @@ class	Server
 
 		//setter
 		void	AddClient(int key, Client *clientToAdd);
-		void	AddChannel(std::string name, Channel channel);
+		void	AddChannel(std::string name, Channel *channel);
 
 		void	RemoveClient(int key);
 		void	RemoveChannel(std::string name);
@@ -76,6 +76,7 @@ class	Server
 
 
 		void	deleteClient(fdClientMap::iterator toDelete) const;
+		void	deleteChannel(channelMap::iterator toDelete);
 		void	exitservClean();
   
 	private:

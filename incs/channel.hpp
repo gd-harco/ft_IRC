@@ -13,7 +13,8 @@ class	Channel
 	public:
 		//constructor / destructor
 		Channel();
-		Channel(const std::string	&topic, const std::string &name);
+		Channel(const std::string &name);
+		Channel(const std::string &topic, const std::string &name);
 		~Channel();
 
 		//getters
@@ -21,6 +22,7 @@ class	Channel
 		std::string		GetTopics() const;
 		std::string		GetName() const;
 		stringClientMap	GetClients() const;
+		bool			GetHavePassword() const;
 
 		//setters
 		void	SetPassword(std::string &NewPassword);
@@ -36,6 +38,7 @@ class	Channel
 		std::string		_password;
 		std::string		_topic;
 		std::string 	_name;
+		bool			_havePassword;
 
 };
 
