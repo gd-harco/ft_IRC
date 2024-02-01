@@ -59,7 +59,6 @@ class	Server
 		void	HandleEvent(int fd);
 		bool	HandleCommand(std::string const &msg, Client *client);
 
-
 		//commands
 		bool	pass(std::vector<std::string> args, Client *client);
 		bool	user(std::vector<std::string> args, Client *client);
@@ -75,6 +74,10 @@ class	Server
 		bool	pong(std::vector<std::string> args, Client *client);
 		bool	error(std::vector<std::string> args, Client *client);
 
+
+		void	deleteClient(fdClientMap::iterator toDelete) const;
+		void	exitservClean();
+  
 	private:
 		std::map<std::string, Handler>	_commands;
 		std::string			_password;

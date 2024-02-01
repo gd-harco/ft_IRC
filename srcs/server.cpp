@@ -1,5 +1,6 @@
 #include "server.hpp"
 
+#include <unistd.h>
 Server::Server()
 {
 }
@@ -39,6 +40,7 @@ Server::Server(uint64_t port, std::string password)
 	this->_servEpollEvent.data.fd = this->_socket;
 	epoll_ctl(this->_epollFd, EPOLL_CTL_ADD, this->_socket, &this->_servEpollEvent);
 	SetMap();
+
 }
 
 Server::~Server()
@@ -94,6 +96,7 @@ void Server::HandleEvent(int fd)
 				cur->second->addMessageToSendbox(msg);
 				cur->second->updateClientStatus(this->_epollFd);
 			}
+
 		}
 		msg.clear();
 	}
@@ -218,4 +221,24 @@ void Server::RemoveClient(int key)
 	close(key);
 	delete toRemove->second;
 	_clients.erase(key);
+}
+
+void Server::deleteClient(fdClientMap::iterator toDelete) const {
+	epoll_ctl(this->_epollFd, EPOLL_CTL_DEL, toDelete->first, NULL);
+	close(toDelete->first);
+	delete toDelete->second;
+}
+
+void Server::exitservClean() {
+	if (!_clients.empty()){
+		for (fdClientMap::iterator cur = _clients.begin(); cur != _clients.end(); cur++)
+			deleteClient(cur);
+		_clients.clear();
+	}
+	if (!_channels.empty()){
+		//TODO clean channels
+		_channels.empty();
+	}
+	close(this->_epollFd);
+	close(this->_socket);
 }
