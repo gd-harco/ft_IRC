@@ -16,7 +16,8 @@
 #include "channel.hpp"
 
 typedef std::map<int, Client *> fdClientMap;
-typedef std::map<std::string, Channel> channelMap;
+typedef std::map<std::string, Channel *> channelMap;
+typedef std::vector<std::string> vectorCommand;
 
 class Channel;
 class Client;
@@ -24,7 +25,7 @@ class Client;
 class	Server
 {
 	public:
-	typedef bool (Server::*Handler)(std::vector<std::string> args, Client *client);
+	typedef bool (Server::*Handler)(vectorCommand args, Client *client);
 
 		//constructor / destructor
 		Server();
@@ -46,7 +47,7 @@ class	Server
 
 		//setter
 		void	AddClient(int key, Client *clientToAdd);
-		void	AddChannel(std::string name, Channel channel);
+		void	AddChannel(std::string name, Channel *channel);
 
 		void	RemoveClient(int key);
 		void	RemoveChannel(std::string name);
@@ -60,22 +61,24 @@ class	Server
 		bool	HandleCommand(std::string const &msg, Client *client);
 
 		//commands
-		bool	pass(std::vector<std::string> args, Client *client);
-		bool	user(std::vector<std::string> args, Client *client);
-		bool	nick(std::vector<std::string> args, Client *client);
-		bool	kick(std::vector<std::string> args, Client *client);
-		bool	invite(std::vector<std::string> args, Client *client);
-		bool	topic(std::vector<std::string> args, Client *client);
-		bool	mode(std::vector<std::string> args, Client *client);
-		bool	privmsg(std::vector<std::string> args, Client *client);
-		bool	join(std::vector<std::string> args, Client *client);
-		bool	quit(std::vector<std::string> args, Client *client);
-		bool	ping(std::vector<std::string> args, Client *client);
-		bool	pong(std::vector<std::string> args, Client *client);
-		bool	error(std::vector<std::string> args, Client *client);
+		bool	pass(vectorCommand args, Client *client);
+		bool	user(vectorCommand args, Client *client);
+		bool	nick(vectorCommand args, Client *client);
+		bool	kick(vectorCommand args, Client *client);
+		bool	invite(vectorCommand args, Client *client);
+		bool	topic(vectorCommand args, Client *client);
+		bool	mode(vectorCommand args, Client *client);
+		bool	privmsg(vectorCommand args, Client *client);
+		bool	join(vectorCommand args, Client *client);
+		bool	quit(vectorCommand args, Client *client);
+		bool	ping(vectorCommand args, Client *client);
+		bool	pong(vectorCommand args, Client *client);
+		bool	error(vectorCommand args, Client *client);
+		bool	part(vectorCommand args, Client *client);
 
 
 		void	deleteClient(fdClientMap::iterator toDelete) const;
+		void	deleteChannel(channelMap::iterator toDelete);
 		void	exitservClean();
   
 	private:

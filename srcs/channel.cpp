@@ -6,6 +6,9 @@ Channel::Channel()
 Channel::~Channel()
 {}
 
+Channel::Channel(const std::string &name): _name(name), _havePassword(false)
+{}
+
 Channel::Channel(const std::string &topic, const std::string &name): _topic(topic), _name(name)
 {}
 
@@ -29,8 +32,15 @@ std::string Channel::GetTopics() const
 	return (_topic);
 }
 
+bool Channel::GetHavePassword() const
+{
+	return (_havePassword);
+}
+
+
 void Channel::SetPassword(std::string &NewPassword)
 {
+	_havePassword = true;
 	_password = NewPassword;
 }
 
