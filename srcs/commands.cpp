@@ -74,6 +74,7 @@ bool Server::join(vectorCommand args, Client *client)
 	if (args[0].find("#") != 0)
 	{
 		std::cout << "cannot create channel" << std::endl;
+		return (false);
 	}
 	std::string RealNameChannel(args[0].substr(1));
 	if (_channels.find(RealNameChannel) == _channels.end())
