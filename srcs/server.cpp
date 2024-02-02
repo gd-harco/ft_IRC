@@ -118,7 +118,7 @@ Server &Server::operator=(const Server &server)
 {
 	if (this != &server)
 	{
-		// faire jai la flemme de lefaire maintenant
+		//TODO faire jai la flemme de lefaire maintenant
 	}
 	return (*this);
 }

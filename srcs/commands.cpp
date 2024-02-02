@@ -1,6 +1,11 @@
 #include "server.hpp"
 
 
+
+//TODO mettre chaques fonctions dans son fichier pour pouvoir fair des sous fonction et pas galerer apres pour debug
+
+//TODO check le nombre d'args quand le parsing sera fait
+
 bool Server::pass(vectorCommand args, Client *client)
 {
 
@@ -62,7 +67,7 @@ bool Server::join(vectorCommand args, Client *client)
 		std::cout << client->GetFd() << " is not authenticate" << std::endl;
 		return (false);
 	}
-	std::cout << args.size() << std::endl;
+
 	// if (args.size() != 1)
 	// {
 	// 	std::cout << "invalid number of args" << std::endl;
@@ -110,6 +115,8 @@ bool Server::privmsg(vectorCommand args, Client *client)
 					return (true);
 				}
 			}
+			std::cout << "client: " << UserToSend << "not found 404" << std::endl;
+			return (true);
 		}
 		catch (std::exception &e)
 		{
@@ -122,10 +129,16 @@ bool Server::privmsg(vectorCommand args, Client *client)
 	{
 		if (_channels.empty())
 			return (false);
-		stringClientMap Clients = this->_channels[ChannelName]->GetClients();
+		channelMap::iterator	SearchChannel = _channels.find(ChannelName);
+		if (SearchChannel == _channels.end())
+		{
+			std::cout << "you cannot send message to " << args[0] << " channel not create" << std::endl;
+			return (false);
+		}
+		stringClientMap Clients = SearchChannel->second->GetClients();
 		if (Clients.find(client->GetUsername()) == Clients.end())
 		{
-			std::cout << "you cannot send message to " << args[0] << "you are not in the channel" << std::endl;
+			std::cout << "you cannot send message to " << args[0] << " you are not in the channel" << std::endl;
 			return (false);
 		}
 		for (stringClientMap::iterator it = Clients.begin(); it != Clients.end(); it++)
@@ -152,21 +165,40 @@ bool Server::privmsg(vectorCommand args, Client *client)
 
 bool Server::part(vectorCommand args, Client *client)
 {
-	(void)args;
-	(void)client;
-	// try
-	// {
-	// 	std::string const ChannelName(args[0].substr(1));
-	// 	channelMap::iterator ChannelIt =  _channels.find(ChannelName);
-	// 	if (ChannelIt != _channels.end)
-	// 	{
-	// 		ChannelIt->second
-	// 	}
-	// }
-	// catch(std::exception &e)
-	// {
-	// 	std::cout << e.what() << std::endl;
-	// }
+	try
+	{
+		if (args[0][0] != '#')
+		{
+			std::cout << args[0] << " is not a channel" << std::endl;
+		}
+		std::string const ChannelName(args[0].substr(1));
+		const channelMap::iterator ChannelIt =  _channels.find(ChannelName);
+		if (ChannelIt == _channels.end())
+		{
+			std::cout << "channel: " << ChannelName << " not found" << std::endl;
+			return (false);
+		}
+		stringClientMap ClientMap = ChannelIt->second->GetClients();
+		const stringClientMap::iterator ClientMapIt = ClientMap.find(client->GetUsername());
+		if (ClientMapIt == ClientMap.end())
+		{
+			std::cout << client->GetUsername() << " are not in the channel: " << ChannelName << std::endl;
+			return (false);
+		}
+		ClientMap.erase(client->GetUsername());
+		std::cout << client->GetUsername() << " leave channel: " << ChannelName << std::endl;
+		if (ClientMap.empty())
+		{
+			delete _channels[ChannelName];
+			_channels.erase(ChannelName);
+			std::cout << "delete: #" << ChannelName << std::endl;
+		}
+		return (true);
+	}
+	catch(std::exception &e)
+	{
+		std::cout << e.what() << std::endl;
+	}
 	return (true);
 }
 
