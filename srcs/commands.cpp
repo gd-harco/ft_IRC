@@ -8,8 +8,6 @@
 
 bool Server::pass(vectorCommand args, Client *client)
 {
-
-	std::cout << client->GetPassword() << std::endl;
 	if (args.size() != 2)
 	{
 		std::cout << client->GetNickname() << " " << client->GetUsername() << " " << client->GetFd() << ": " << "invalid arg number" << std::endl;
