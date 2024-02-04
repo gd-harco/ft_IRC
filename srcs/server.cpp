@@ -149,6 +149,18 @@ bool	Server::HandleCommand(std::string const &msg, Client *client)
 
 		return (false);
 	}
+	catch (NeedMoreParams &e)
+	{
+		std::cout << e.what() << std::endl;
+	}
+	catch (BadPassword &e)
+	{
+		std::cout << e.what() << std::endl;
+	}
+	catch (AlreadyRegistred &e)
+	{
+		std::cout << e.what() << std::endl;
+	}
 	catch (std::exception &e)
 	{
 		while (!Args.empty())
@@ -162,6 +174,7 @@ bool	Server::HandleCommand(std::string const &msg, Client *client)
 		return (true);
 	}
 	//TODO send numeric reply to client
+	return (true);
 }
 
 channelMap & Server::GetChannels()

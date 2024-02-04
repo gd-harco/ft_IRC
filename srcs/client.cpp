@@ -4,10 +4,8 @@ Client::Client()
 {
 }
 
-Client::Client(int fd): _fd(fd), _isInEpoll(false)
+Client::Client(int fd): _fd(fd), _haveAuthor(false), _isInEpoll(false), _password(false)
 {
-	_password = false;
-	_haveAuthor = false;
 	memset(&this->_clientEpollevent, '\0', sizeof (struct epoll_event));
 	this->_clientEpollevent.events = EPOLLIN;
 	this->_clientEpollevent.data.fd = fd;
