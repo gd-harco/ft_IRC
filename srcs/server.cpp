@@ -149,17 +149,60 @@ bool	Server::HandleCommand(std::string const &msg, Client *client)
 
 		return (false);
 	}
+	catch (NotAuthenticate &e)
+	{
+		std::cout << e.what() << std::endl;
+		return (false);
+	}
 	catch (NeedMoreParams &e)
 	{
 		std::cout << e.what() << std::endl;
+		return (false);
 	}
 	catch (BadPassword &e)
 	{
 		std::cout << e.what() << std::endl;
+		return (false);
 	}
 	catch (AlreadyRegistred &e)
 	{
 		std::cout << e.what() << std::endl;
+		return (false);
+	}
+	catch (UnableToCreateChannel &e)
+	{
+		std::cout << e.what() << std::endl;
+		return (false);
+	}
+	catch (NotAChannel &e)
+	{
+		std::cout << e.what() << std::endl;
+		return (false);
+	}
+	catch (UserAlreadyExist &e)
+	{
+		std::cout << e.what() << std::endl;
+		return (false);
+	}
+	catch (NickAlreadyExist &e)
+	{
+		std::cout << e.what() << std::endl;
+		return (false);
+	}
+	catch (ChannelNotFound &e)
+	{
+		std::cout << e.what() << std::endl;
+		return (false);
+	}
+	catch (ClientNotFound &e)
+	{
+		std::cout << e.what() << std::endl;
+		return (false);
+	}
+	catch (NotInTheChannel &e)
+	{
+		std::cout << e.what() << std::endl;
+		return (false);
 	}
 	catch (std::exception &e)
 	{
