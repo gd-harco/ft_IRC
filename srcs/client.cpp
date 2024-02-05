@@ -66,6 +66,9 @@ void	Client::handleString(const std::string &toParse) {
 	while (!toProcess.empty()) {
 		if (toProcess.front().find(DELIMITER) == std::string::npos) {
 			this->_clientBuffer = toProcess.front();
+			toProcess.pop();
+			if (!toProcess.empty())
+				throw std::runtime_error("Message are left in the queue after a non-terminated message");
 			return;
 		}
 

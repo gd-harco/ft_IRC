@@ -85,7 +85,12 @@ void Server::HandleEvent(int fd)
 	ssize_t ret_data = recv(fd, buf, BUFFER_READ_SIZE, 0);
 	if (ret_data <= 0)
 		throw std::invalid_argument("Client disconnected");
-	curClient->second->handleString(std::string(buf));
+	try{
+		curClient->second->handleString(std::string(buf));
+	} catch (std::exception &e) {
+		std::cout << e.what() << std::endl;
+		throw std::runtime_error("");
+	}
 }
 
 void	Server::sendMsg(int fd)
