@@ -73,9 +73,9 @@ void Server::NewConnectionRequest(int fd)
 	int	clientFd = accept(fd, (struct sockaddr*)&new_addr,
 		(socklen_t*)&addrLen);
 	std::cerr << "new connection accepted on " << clientFd << std::endl;
-	Client *addedClient = new Client(clientFd, "zorkz", "Doe");
-	addedClient->updateClientStatus(this->_epollFd);
+	Client *addedClient = new Client(clientFd);
 	addedClient->addMessageToSendbox(":irc.localhost 001 " + addedClient->GetUsername() + " :Welcome to the " + "networkName" + " Network, " + addedClient->GetUsername() + "!\r\n");
+	addedClient->updateClientStatus(this->_epollFd);
 	AddClient(clientFd, addedClient);
 
 }
