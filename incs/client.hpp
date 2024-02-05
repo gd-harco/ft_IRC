@@ -9,7 +9,6 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <cstring>
-#include "numericsReply.hpp"
 #include "channel.hpp"
 class Channel;
 
@@ -19,7 +18,7 @@ class	Client
 		//constructor / destructor
 		Client();
 		Client(int fd);
-		Client(std::string username, std::string nickname);
+		Client(int fd, std::string username, std::string nickname);
 		~Client();
 
 		void	updateClientStatus(const int &epollFd);

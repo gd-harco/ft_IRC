@@ -11,8 +11,13 @@ Client::Client(int fd): _fd(fd), _haveAuthor(false), _isInEpoll(false), _passwor
 	this->_clientEpollevent.data.fd = fd;
 }
 
-Client::Client(std::string username, std::string nickname): _nickname(nickname) ,_username(username)
+Client::Client(int fd, std::string username, std::string nickname): _fd(fd), _nickname(nickname) ,_username(username)
 {
+	_isInEpoll = false;
+	_password = true;
+	memset(&this->_clientEpollevent, '\0', sizeof (struct epoll_event));
+	this->_clientEpollevent.events = EPOLLIN;
+	this->_clientEpollevent.data.fd = fd;
 }
 
 Client::~Client()

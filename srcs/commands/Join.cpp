@@ -23,6 +23,11 @@ void Server::join(vectorCommand args, Client *client)
 		Channel *NewChannel = new Channel(RealNameChannel);
 		NewChannel->AddClient(client->GetUsername(), client->GetFd());
 		AddChannel(RealNameChannel, NewChannel);
+		client->addMessageToSendbox(":irc.localhost 353 " + client->GetUsername() +"user = #" + RealNameChannel + " :" + client->GetNickname() + "\r\n");
+		client->addMessageToSendbox(":irc.localhost 366 " + client->GetUsername() +" #" + RealNameChannel + " :End of /NAMES list.\r\n");
+		client->addMessageToSendbox(":" + client->GetUsername() + " JOIN #" + RealNameChannel + "\r\n");
+		client->updateClientStatus(_epollFd);
+
 		return ;
 	}
 	_channels[RealNameChannel]->AddClient(client->GetUsername(), client->GetFd());
