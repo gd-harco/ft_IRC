@@ -16,7 +16,7 @@ DEBUG_NAME = ${NAME}_DEBUG
 
 SRC_PATH =	srcs/
 
-SRC = main.cpp channel.cpp client.cpp server.cpp commands.cpp
+SRC = main.cpp channel.cpp client.cpp server.cpp commands.cpp utility.cpp
 
 DIR_INCS =	incs/
 

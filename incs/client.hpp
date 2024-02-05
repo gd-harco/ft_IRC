@@ -11,6 +11,9 @@
 #include <cstring>
 #include "numericsReply.hpp"
 #include "channel.hpp"
+
+#define DELIMITER "\r\n"
+
 class Channel;
 
 class	Client
@@ -39,12 +42,15 @@ class	Client
 		void	SetNickname(std::string const &nickname);
 
 		void	receiveMsg();
+		void	handleString(const std::string &toParse);
 
 	private:
 		int			_fd;
 		bool		_haveAuthor;
 		bool		_isInEpoll;
 		bool		_password;
+
+		std::string				_clientBuffer;
 		struct epoll_event		_clientEpollevent;
 		std::string				_nickname;
 		std::string				_username;
