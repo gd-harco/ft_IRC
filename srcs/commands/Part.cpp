@@ -19,6 +19,10 @@ void Server::part(vectorCommand args, Client *client)
 		if (ClientMapIt == ClientMap.end())
 			throw(NotInTheChannel());
 		ClientMap.erase(client->GetUsername());
+		//:aaaa!zizi@localhost PART #a
+		client->addMessageToSendbox(RPL_PART(user_id(client->GetNickname(), client->GetUsername()), ChannelName));
+		client->addMessageToSendbox("caca : zizi");
+		client->updateClientStatus(_epollFd);
 		std::cout << client->GetUsername() << " leave channel: " << ChannelName << std::endl;
 		if (ClientMap.empty())
 		{

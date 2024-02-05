@@ -90,7 +90,7 @@ void Server::ChannelPrivMsg(vectorCommand args, Client *client)
 				{
 					std::ostringstream message;
 					std::cout << "message " << args[args.size() - 1] << "send to " << _clients[it->second]->GetUsername() << std::endl;
-					message << client->GetUsername() << " : " << args[args.size() - 1] << std::endl;
+					message << user_id(client->GetNickname(), client->GetUsername()) << " PRIVMSG #" << ChannelName << " : " << args[args.size() - 1] << std::endl;
 					_clients[it->second]->addMessageToSendbox(message.str());
 					_clients[it->second]->updateClientStatus(this->_epollFd);
 				}

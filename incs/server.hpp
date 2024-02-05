@@ -15,6 +15,7 @@
 #include <cstdlib>
 #include "client.hpp"
 #include "channel.hpp"
+#include "NumericsReply.hpp"
 
 typedef std::map<int, Client *> fdClientMap;
 typedef std::map<std::string, Channel *> channelMap;

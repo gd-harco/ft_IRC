@@ -4,6 +4,7 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <sstream>
 #include "client.hpp"
 
 typedef std::map<std::string, int> stringClientMap;
@@ -23,6 +24,7 @@ class	Channel
 		std::string		GetName() const;
 		stringClientMap	GetClients() const;
 		bool			GetHavePassword() const;
+		std::string		GetAllNickname();
 
 		//setters
 		void	SetPassword(std::string &NewPassword);

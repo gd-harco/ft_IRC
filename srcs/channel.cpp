@@ -64,4 +64,13 @@ void Channel::RemoveClient(std::string key)
 	_clients.erase(key);
 }
 
+std::string Channel::GetAllNickname()
+{
+	std::ostringstream	str;
+	for (stringClientMap::iterator it = _clients.begin(); it != _clients.end(); it++)
+	{
+		str << " " << it->first;
+	}
+	return (str.str());
+}
 
