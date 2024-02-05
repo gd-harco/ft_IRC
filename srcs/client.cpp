@@ -1,5 +1,8 @@
 #include "client.hpp"
 #include "utility.hpp"
+#include "server.hpp"
+
+extern Server *serv;
 
 Client::Client()
 {
@@ -59,11 +62,11 @@ void Client::addMessageToSendbox(std::string message) {
 	this->_msgToSend.push(message);
 }
 
-//TODO: take this back here
 void	Client::handleString(const std::string &toParse) {
 	this->_clientBuffer.append(toParse);
 	std::queue<std::string> toProcess = split(this->_clientBuffer, DELIMITER);
 	while (!toProcess.empty()) {
+		//si c'est le dernier message mais qui n'as pas de delimiter, on le met dans le buffer
 		if (toProcess.front().find(DELIMITER) == std::string::npos) {
 			this->_clientBuffer = toProcess.front();
 			toProcess.pop();
@@ -71,21 +74,12 @@ void	Client::handleString(const std::string &toParse) {
 				throw std::runtime_error("Message are left in the queue after a non-terminated message");
 			return;
 		}
-
+		//TODO this is evil, move all chec in the HandelCommand logic please ?
+		if (serv->HandleCommand(toProcess.front(), this) && this->GetPassword() && !this->GetNickname().empty() && !this->GetUsername().empty()) {
+			std::cout << "dealt string: " << toProcess.front() << std::endl;
+		}
+		toProcess.pop();
 	}
-	// {
-	// 	if (HandleCommand(msg, _clients[fd]) == true && _clients[fd]->GetPassword() == true && !_clients[fd]->GetNickname().empty() && !_clients[fd]->GetUsername().empty())
-	// 	{
-	// 		for (fdClientMap::iterator cur = _clients.begin(); cur != _clients.end(); ++cur){
-	// 			if (cur->first == fd)
-	// 				continue;
-	// 			cur->second->addMessageToSendbox(msg);
-	// 			cur->second->updateClientStatus(this->_epollFd);
-	// 		}
-	//
-	// 	}
-	// 	msg.clear();
-	// }
 }
 
 

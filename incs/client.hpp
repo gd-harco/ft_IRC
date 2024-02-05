@@ -43,6 +43,7 @@ class	Client
 
 		void	receiveMsg();
 		void	handleString(const std::string &toParse);
+
 	private:
 		int			_fd;
 		bool		_haveAuthor;
