@@ -74,11 +74,19 @@ void Server::NewConnectionRequest(int fd)
 		(socklen_t*)&addrLen);
 	std::cerr << "new connection accepted on " << clientFd << std::endl;
 	Client *addedClient = new Client(clientFd);
-	addedClient->addMessageToSendbox(":irc.localhost 001 " + addedClient->GetUsername() + " :Welcome to the " + "networkName" + " Network, " + addedClient->GetUsername() + "!\r\n");
-	addedClient->updateClientStatus(this->_epollFd);
 	AddClient(clientFd, addedClient);
-
 }
+
+void Server::CheckConnection(Client *client)
+{
+
+	if (client->GetPassword() && !client->GetNickname().empty() && !client->GetUsername().empty())
+	{
+		client->SetAuthenticate();client->addMessageToSendbox(":irc.localhost 001 " + client->GetUsername() + " :Welcome to the " + "networkName" + " Network, " + client->GetUsername() + "!\r\n");
+		client->updateClientStatus(this->_epollFd);
+	}
+}
+
 
 void Server::HandleEvent(int fd)
 {
@@ -129,13 +137,15 @@ bool	Server::HandleCommand(std::string const &msg, Client *client)
 		SepMsg >> pushBackArgs;
 		Args.push_back(pushBackArgs);
 	}
-
 	if (Command == "USER" || Command == "PRIVMSG")
 		Args.push_back(msg.substr(msg.find(":") + 1, msg.size() - msg.find(":") - 3));
 	try
 	{
+
 		Handler	function = _commands.at(Command);
 		(this->*function)(Args, client);
+		if (!client->IsAuthenticate())
+			CheckConnection(client);
 		Args.clear();
 		if (Command != "PASS")
 			std::cout << client->GetUsername() << ", " << client->GetNickname() << ": " << msg;

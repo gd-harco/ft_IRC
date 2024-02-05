@@ -34,11 +34,14 @@ class	Client
 		std::string	GetNickname() const;
 		std::string	GetUsername() const;
 		bool		GetPassword() const;
+		bool		IsAuthenticate() const;
+
 
 		//setters
 		void	SetPassword();
 		void	SetUsername(std::string const &username);
 		void	SetNickname(std::string const &nickname);
+		void	SetAuthenticate(void);
 
 		void	receiveMsg();
 		void	handleString(const std::string &toParse);
@@ -48,6 +51,7 @@ class	Client
 		bool		_haveAuthor;
 		bool		_isInEpoll;
 		bool		_password;
+		bool		_authenticate;
 
 		std::string				_clientBuffer;
 		struct epoll_event		_clientEpollevent;

@@ -60,6 +60,7 @@ class	Server
 		void	sendMsg(int fd);
 		void	HandleEvent(int fd);
 		bool	HandleCommand(std::string const &msg, Client *client);
+		void	CheckConnection(Client *client);
 
 		//commands
 		void	pass(vectorCommand args, Client *client);
