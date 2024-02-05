@@ -1,6 +1,6 @@
 #include "server.hpp"
-
 #include <unistd.h>
+
 Server::Server()
 {
 }
@@ -82,27 +82,17 @@ void Server::NewConnectionRequest(int fd)
 
 void Server::HandleEvent(int fd)
 {
-	char buf[BUFFER_READ_SIZE + 1];
-	static std::string	msg;
-	const std::string delimeter("\r\n");
-	std::memset(buf, 0, BUFFER_READ_SIZE + 1);
+	fdClientMap::iterator curClient = _clients.find(fd);
+	char buf[BUFFER_READ_SIZE + 1] = {0};
+	// std::memset(buf, 0, BUFFER_READ_SIZE + 1);
 	ssize_t ret_data = recv(fd, buf, BUFFER_READ_SIZE, 0);
 	if (ret_data <= 0)
 		throw std::invalid_argument("Client disconnected");
-	msg.append(std::string(buf));
-	if (msg.find(delimeter) != msg.npos)
-	{
-		if (HandleCommand(msg, _clients[fd]) == true && _clients[fd]->GetPassword() == true && !_clients[fd]->GetNickname().empty() && !_clients[fd]->GetUsername().empty())
-		{
-			for (fdClientMap::iterator cur = _clients.begin(); cur != _clients.end(); ++cur){
-				if (cur->first == fd)
-					continue;
-				cur->second->addMessageToSendbox(msg);
-				cur->second->updateClientStatus(this->_epollFd);
-			}
-
-		}
-		msg.clear();
+	try{
+		curClient->second->handleString(std::string(buf));
+	} catch (std::exception &e) {
+		std::cout << e.what() << std::endl;
+		throw std::runtime_error("");
 	}
 }
 
