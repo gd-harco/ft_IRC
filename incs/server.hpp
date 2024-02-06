@@ -35,6 +35,8 @@ class	Server
 
 		void	SetMap();
 
+		int launch_server(void);
+
 		Server &operator=(const Server &server);
 
 		//getters

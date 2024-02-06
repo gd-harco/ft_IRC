@@ -1,6 +1,9 @@
 #include "server.hpp"
 
 #include <unistd.h>
+#include <csignal>
+#define MAX_EVENT 5
+
 Server::Server()
 {
 }
@@ -10,6 +13,48 @@ Server::Server(const Server &server)
 	*this = server;
 }
 
+void	handleSigInt(int sig);
+
+int Server::launch_server(void)
+{
+		signal(SIGINT, handleSigInt);
+
+	std::cout << "Waiting for incoming connection on port " << this->GetPort() << std::endl;
+	struct epoll_event eventsCaught[MAX_EVENT];
+	//loop
+	while (true) {
+		int nfds = epoll_wait(this->GetEpollFd(), eventsCaught, MAX_EVENT, -1);
+		if (nfds == -1){
+			perror("epoll wait");
+			exit(1);
+		}
+		for (int i = 0; i < nfds; ++i) {
+			int currFd = eventsCaught[i].data.fd;
+			if (currFd == this->GetScocket()) {
+				//this mean we got a new incoming connection
+				std::cout << "new connection detected" << std::endl;
+				this->NewConnectionRequest(currFd);
+			}
+			else {
+				if (eventsCaught[i].events & EPOLLOUT) {
+					this->sendMsg(eventsCaught[i].data.fd);
+				}
+				if (eventsCaught[i].events & EPOLLIN) {
+					//si le read fail, alors le client a ete deco
+					try {
+						this->HandleEvent(currFd);
+					} catch (std::exception &e) {
+						std::cout << e.what() << std::endl;
+						//parcourir les channels pour voir si il y a le fd et le suppr
+						this->RemoveClient(currFd);
+						epoll_ctl(this->GetEpollFd(), EPOLL_CTL_DEL, currFd, 0);
+						close(currFd);
+					}
+				}
+			}
+		}
+	}
+}
 Server::Server(uint64_t port, std::string password)
 {
 	_port = port;
