@@ -17,6 +17,6 @@
 # define ERR_BADCHANNELKEY(client, channel) ("475 " + client + " #" + channel + " :Cannot join channel (+k)\r\n")
 
 // PART
-# define RPL_PART(user, channel) (user + " PART #" + channel + " leaving\r\n")
+# define RPL_PART(user, channel) (user + " PART #" + channel + " Leaving\r\n")
 
 #endif //NUMERICSREPLY_HPP

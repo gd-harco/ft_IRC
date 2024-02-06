@@ -33,6 +33,7 @@ class	Client
 		bool		GetAuthor() const;
 		std::string	GetNickname() const;
 		std::string	GetUsername() const;
+		std::string		GetRealname() const;
 		bool		GetPassword() const;
 		bool		IsAuthenticate() const;
 
@@ -41,6 +42,7 @@ class	Client
 		void	SetPassword();
 		void	SetUsername(std::string const &username);
 		void	SetNickname(std::string const &nickname);
+		void	SetRealname(std::string const &realname);
 		void	SetAuthenticate(void);
 
 		void	receiveMsg();
@@ -57,6 +59,7 @@ class	Client
 		struct epoll_event		_clientEpollevent;
 		std::string				_nickname;
 		std::string				_username;
+		std::string				_realname;
 		std::queue<std::string>	_msgToSend;
 };
 

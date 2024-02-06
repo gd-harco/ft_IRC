@@ -25,7 +25,7 @@ void Server::join(vectorCommand args, Client *client)
 	{
 		std::cout << client->GetUsername() << " create channel " << RealNameChannel << std::endl;
 		Channel *NewChannel = new Channel(RealNameChannel);
-		NewChannel->AddClient(client->GetUsername(), client->GetFd());
+		NewChannel->AddClient(client->GetNickname(), client->GetFd());
 		AddChannel(RealNameChannel, NewChannel);
 		client->addMessageToSendbox(RPL_JOIN(client->GetUsername(), RealNameChannel));
 		client->addMessageToSendbox(RPL_NAMREPLY(client->GetUsername(), RealNameChannel, NewChannel->GetAllNickname()));
@@ -34,7 +34,7 @@ void Server::join(vectorCommand args, Client *client)
 
 		return ;
 	}
-	_channels[RealNameChannel]->AddClient(client->GetUsername(), client->GetFd());
+	_channels[RealNameChannel]->AddClient(client->GetNickname(), client->GetFd());
 	stringClientMap	ClientChannel = _channels[RealNameChannel]->GetClients();
 	for (stringClientMap::iterator it = ClientChannel.begin(); it != ClientChannel.end(); it++)
 	{

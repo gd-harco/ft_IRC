@@ -51,11 +51,11 @@ void Server::ClientPrivMsg(vectorCommand args, Client *client)
 	{
 		for(fdClientMap::iterator it = _clients.begin(); it != _clients.end(); it++)
 		{
-			if (it->second->GetUsername() == UserToSend)
+			if (it->second->GetNickname() == UserToSend)
 			{
 				std::ostringstream message;
 				std::cout << "message " << args[args.size() - 1] << "send to " << it->second->GetUsername() << std::endl;
-				message << client->GetUsername() << " : " << args[args.size() - 1] << std::endl;
+				message << client->GetRealname() << " : " << args[args.size() - 1] << std::endl;
 				it->second->addMessageToSendbox(message.str());
 				it->second->updateClientStatus(this->_epollFd);
 				return ;
@@ -80,7 +80,7 @@ void Server::ChannelPrivMsg(vectorCommand args, Client *client)
 		if (SearchChannel == _channels.end())
 			throw(ChannelNotFound());
 		stringClientMap Clients = SearchChannel->second->GetClients();
-		if (Clients.find(client->GetUsername()) == Clients.end())
+		if (Clients.find(client->GetNickname()) == Clients.end())
 			throw (NotInTheChannel());
 		for (stringClientMap::iterator it = Clients.begin(); it != Clients.end(); it++)
 		{

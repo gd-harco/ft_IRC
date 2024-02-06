@@ -15,11 +15,9 @@ void Server::part(vectorCommand args, Client *client)
 		if (ChannelIt == _channels.end())
 			throw (ChannelNotFound());
 		stringClientMap ClientMap = ChannelIt->second->GetClients();
-		const stringClientMap::iterator ClientMapIt = ClientMap.find(client->GetUsername());
+		const stringClientMap::iterator ClientMapIt = ClientMap.find(client->GetNickname());
 		if (ClientMapIt == ClientMap.end())
 			throw(NotInTheChannel());
-		//:aaaa!zizi@localhost PART #a
-
 		stringClientMap	ClientChannel = _channels[ChannelName]->GetClients();
 		for (stringClientMap::iterator it = ClientChannel.begin(); it != ClientChannel.end(); it++)
 		{
@@ -29,8 +27,8 @@ void Server::part(vectorCommand args, Client *client)
 				_clients[it->second]->updateClientStatus(_epollFd);
 			}
 		}
-		this->_channels.find(ChannelName)->second->RemoveClient(client->GetUsername());
-		ClientMap.erase(client->GetUsername());
+		this->_channels.find(ChannelName)->second->RemoveClient(client->GetNickname());
+		ClientMap.erase(client->GetNickname());
 		std::cout << RPL_PART(user_id(client->GetNickname(), client->GetUsername()), ChannelName) << std::endl;
 		if (ClientMap.empty())
 		{
