@@ -21,8 +21,8 @@ int	main(int argc, char **argv)
 		return (errno);
 	}
 
-	return(serv->launch_server());
-
+	serv->launchServer();
+	return (0);
 }
 
 void	handleSigInt(int sig)

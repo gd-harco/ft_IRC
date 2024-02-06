@@ -15,6 +15,8 @@
 #include "client.hpp"
 #include "channel.hpp"
 
+#define MAX_EVENT 5
+
 typedef std::map<int, Client *> fdClientMap;
 typedef std::map<std::string, Channel *> channelMap;
 typedef std::vector<std::string> vectorCommand;
@@ -35,7 +37,11 @@ class	Server
 
 		void	SetMap();
 
-		int launch_server(void);
+		void launchServer(void);
+		void waitLoop(struct epoll_event eventsCaught[MAX_EVENT]);
+		void handleEvent(struct epoll_event event);
+		void handleExistingConnection(struct epoll_event event, int currFd);
+		void handleEventEpollin(struct epoll_event event, int currFd);
 
 		Server &operator=(const Server &server);
 
