@@ -42,7 +42,7 @@ all:
 
 
 $(NAME):	$(OBJS)
-			$(CXX) $(CPPFLAGS) $(INCLUDES) $(OBJS) -o $(NAME)
+			@$(CXX) $(CPPFLAGS) $(INCLUDES) $(OBJS) -o $(NAME)
 			@printf	"\033[1;32m \r\033[2K Compiling $(NAME) : DONE \033[0m\n"
 
 .PHONY:	bonus
@@ -50,12 +50,12 @@ bonus:	all
 
 .PHONY:	clean
 clean:
-		$(RM) $(DIR_BUILD)
+		@$(RM) $(DIR_BUILD)
 		@printf	"\033[1;31m \r\033[2KDeleting objects : DONE \033[0m\n"
 
 .PHONY:	fclean
 fclean:	clean
-		$(RM) $(NAME)
+		@$(RM) $(NAME)
 		@printf "\033[1;31m \r\033[2KDeleting executable : DONE \033[0m\n"
 
 .PHONY:	re
@@ -66,5 +66,5 @@ re:		fclean
 
 $(DIR_BUILD)%.zizi : $(SRC_PATH)%.cpp
 		@mkdir -p $(shell dirname $@)
-		$(CXX) $(CPPFLAGS) $(DEPSFLAGS) $(INCLUDES) -c $< -o $@
+		@$(CXX) $(CPPFLAGS) $(DEPSFLAGS) $(INCLUDES) -c $< -o $@
 		@printf	"\033[1;33m \r\033[2KCreating -c $< -o $\n \033[0m"

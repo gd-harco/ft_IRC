@@ -113,6 +113,12 @@ void Client::SetUsername(std::string const &username)
 	_username = username;
 }
 
+void Client::SetRealname(std::string const &realname)
+{
+	_realname = realname;
+}
+
+
 bool Client::GetPassword() const
 {
 	return (_password);
@@ -142,4 +148,10 @@ bool Client::IsAuthenticate() const
 {
 	return (_authenticate);
 }
+
+std::string Client::GetRealname() const
+{
+	return (_realname);
+}
+
 

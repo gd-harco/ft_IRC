@@ -169,11 +169,14 @@ bool	Server::HandleCommand(std::string const &msg, Client *client)
 	}
 	catch (AlreadyRegistred &e)
 	{
+		client->addMessageToSendbox(client->GetUsername() + " :You may not reregister\r\n");
+		client->updateClientStatus(_epollFd);
 		std::cout << e.what() << std::endl;
 		return (false);
 	}
 	catch (UnableToCreateChannel &e)
 	{
+
 		std::cout << e.what() << std::endl;
 		return (false);
 	}
