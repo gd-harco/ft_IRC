@@ -8,17 +8,21 @@ Client::Client()
 {
 }
 
-Client::Client(int fd): _fd(fd), _isInEpoll(false)
+Client::Client(int fd): _fd(fd), _haveAuthor(false), _isInEpoll(false), _password(false), _authenticate(false)
 {
-	_password = false;
-	_haveAuthor = false;
 	memset(&this->_clientEpollevent, '\0', sizeof (struct epoll_event));
 	this->_clientEpollevent.events = EPOLLIN;
 	this->_clientEpollevent.data.fd = fd;
 }
 
-Client::Client(std::string username, std::string nickname): _nickname(nickname) ,_username(username)
+Client::Client(int fd, std::string username, std::string nickname): _fd(fd), _nickname(nickname) ,_username(username)
 {
+	_isInEpoll = false;
+	_password = true;
+	_authenticate = false;
+	memset(&this->_clientEpollevent, '\0', sizeof (struct epoll_event));
+	this->_clientEpollevent.events = EPOLLIN;
+	this->_clientEpollevent.data.fd = fd;
 }
 
 Client::~Client()
@@ -89,6 +93,12 @@ void Client::receiveMsg() {
 	_msgToSend.pop();
 }
 
+void Client::SetAuthenticate()
+{
+	_authenticate = true;
+}
+
+
 void Client::SetPassword()
 {
 	_password = true;
@@ -127,3 +137,9 @@ std::string Client::GetNickname() const
 {
 	return (_nickname);
 }
+
+bool Client::IsAuthenticate() const
+{
+	return (_authenticate);
+}
+

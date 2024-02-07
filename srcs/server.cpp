@@ -1,6 +1,6 @@
 #include "server.hpp"
-
 #include <unistd.h>
+
 Server::Server()
 {
 }
@@ -77,6 +77,17 @@ void Server::NewConnectionRequest(int fd)
 	AddClient(clientFd, addedClient);
 }
 
+void Server::CheckConnection(Client *client)
+{
+
+	if (client->GetPassword() && !client->GetNickname().empty() && !client->GetUsername().empty())
+	{
+		client->SetAuthenticate();client->addMessageToSendbox(":irc.localhost 001 " + client->GetUsername() + " :Welcome to the " + "networkName" + " Network, " + client->GetUsername() + "!\r\n");
+		client->updateClientStatus(this->_epollFd);
+	}
+}
+
+
 void Server::HandleEvent(int fd)
 {
 	fdClientMap::iterator curClient = _clients.find(fd);
@@ -126,17 +137,74 @@ bool	Server::HandleCommand(std::string const &msg, Client *client)
 		SepMsg >> pushBackArgs;
 		Args.push_back(pushBackArgs);
 	}
-
 	if (Command == "USER" || Command == "PRIVMSG")
 		Args.push_back(msg.substr(msg.find(":") + 1, msg.size() - msg.find(":") - 3));
 	try
 	{
+
 		Handler	function = _commands.at(Command);
 		(this->*function)(Args, client);
+		if (!client->IsAuthenticate())
+			CheckConnection(client);
 		Args.clear();
 		if (Command != "PASS")
 			std::cout << client->GetUsername() << ", " << client->GetNickname() << ": " << msg;
 
+		return (false);
+	}
+	catch (NotAuthenticate &e)
+	{
+		std::cout << e.what() << std::endl;
+		return (false);
+	}
+	catch (NeedMoreParams &e)
+	{
+		std::cout << e.what() << std::endl;
+		return (false);
+	}
+	catch (BadPassword &e)
+	{
+		std::cout << e.what() << std::endl;
+		return (false);
+	}
+	catch (AlreadyRegistred &e)
+	{
+		std::cout << e.what() << std::endl;
+		return (false);
+	}
+	catch (UnableToCreateChannel &e)
+	{
+		std::cout << e.what() << std::endl;
+		return (false);
+	}
+	catch (NotAChannel &e)
+	{
+		std::cout << e.what() << std::endl;
+		return (false);
+	}
+	catch (UserAlreadyExist &e)
+	{
+		std::cout << e.what() << std::endl;
+		return (false);
+	}
+	catch (NickAlreadyExist &e)
+	{
+		std::cout << e.what() << std::endl;
+		return (false);
+	}
+	catch (ChannelNotFound &e)
+	{
+		std::cout << e.what() << std::endl;
+		return (false);
+	}
+	catch (ClientNotFound &e)
+	{
+		std::cout << e.what() << std::endl;
+		return (false);
+	}
+	catch (NotInTheChannel &e)
+	{
+		std::cout << e.what() << std::endl;
 		return (false);
 	}
 	catch (std::exception &e)
@@ -152,6 +220,7 @@ bool	Server::HandleCommand(std::string const &msg, Client *client)
 		return (true);
 	}
 	//TODO send numeric reply to client
+	return (true);
 }
 
 channelMap & Server::GetChannels()

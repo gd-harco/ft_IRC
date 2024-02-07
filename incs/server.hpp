@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <map>
+#include <exception>
 #include <string>
 #include <netinet/in.h>
 #include <sys/epoll.h>
@@ -25,7 +26,7 @@ class Client;
 class	Server
 {
 	public:
-	typedef bool (Server::*Handler)(vectorCommand args, Client *client);
+		typedef void (Server::*Handler)(vectorCommand args, Client *client);
 
 		//constructor / destructor
 		Server();
@@ -59,23 +60,81 @@ class	Server
 		void	sendMsg(int fd);
 		void	HandleEvent(int fd);
 		bool	HandleCommand(std::string const &msg, Client *client);
+		void	CheckConnection(Client *client);
 
 		//commands
-		bool	pass(vectorCommand args, Client *client);
-		bool	user(vectorCommand args, Client *client);
-		bool	nick(vectorCommand args, Client *client);
-		bool	kick(vectorCommand args, Client *client);
-		bool	invite(vectorCommand args, Client *client);
-		bool	topic(vectorCommand args, Client *client);
-		bool	mode(vectorCommand args, Client *client);
-		bool	privmsg(vectorCommand args, Client *client);
-		bool	join(vectorCommand args, Client *client);
-		bool	quit(vectorCommand args, Client *client);
-		bool	ping(vectorCommand args, Client *client);
-		bool	pong(vectorCommand args, Client *client);
-		bool	error(vectorCommand args, Client *client);
-		bool	part(vectorCommand args, Client *client);
+		void	pass(vectorCommand args, Client *client);
+		void	user(vectorCommand args, Client *client);
+		void	nick(vectorCommand args, Client *client);
+		void	kick(vectorCommand args, Client *client);
+		void	invite(vectorCommand args, Client *client);
+		void	topic(vectorCommand args, Client *client);
+		void	mode(vectorCommand args, Client *client);
+		void	privmsg(vectorCommand args, Client *client);
+		void	ClientPrivMsg(vectorCommand args, Client *client);
+		void	ChannelPrivMsg(vectorCommand args, Client *client);
+		void	join(vectorCommand args, Client *client);
+		void	quit(vectorCommand args, Client *client);
+		void	ping(vectorCommand args, Client *client);
+		void	pong(vectorCommand args, Client *client);
+		void	error(vectorCommand args, Client *client);
+		void	part(vectorCommand args, Client *client);
 
+		class NeedMoreParams : public std::exception
+		{
+		public:
+			virtual const char *what() const throw();
+		};
+		class BadPassword : public std::exception
+		{
+		public:
+			virtual const char *what() const throw();
+		};
+		class AlreadyRegistred : public std::exception
+		{
+		public:
+			virtual const char *what() const throw();
+		};
+		class UserAlreadyExist : public std::exception
+		{
+		public:
+			virtual const char *what() const throw();
+		};
+		class NickAlreadyExist : public std::exception
+		{
+		public:
+			virtual const char *what() const throw();
+		};
+		class NotAuthenticate : public std::exception
+		{
+		public:
+			virtual const char *what() const throw();
+		};
+		class ChannelNotFound : public std::exception
+		{
+		public:
+			virtual const char *what() const throw();
+		};
+		class ClientNotFound : public std::exception
+		{
+		public:
+			virtual const char *what() const throw();
+		};
+		class UnableToCreateChannel : public std::exception
+		{
+		public:
+			virtual const char *what() const throw();
+		};
+		class NotAChannel : public std::exception
+		{
+		public:
+			virtual const char *what() const throw();
+		};
+		class NotInTheChannel : public std::exception
+		{
+		public:
+			virtual const char *what() const throw();
+		};
 
 		void	deleteClient(fdClientMap::iterator toDelete) const;
 		void	deleteChannel(channelMap::iterator toDelete);
