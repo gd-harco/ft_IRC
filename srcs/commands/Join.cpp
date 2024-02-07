@@ -36,11 +36,11 @@ void Server::join(vectorCommand args, Client *client)
 	}
 	_channels[RealNameChannel]->AddClient(client->GetNickname(), client->GetFd());
 	stringClientMap	ClientChannel = _channels[RealNameChannel]->GetClients();
+	client->addMessageToSendbox(RPL_JOIN(client->GetUsername(), RealNameChannel));
 	for (stringClientMap::iterator it = ClientChannel.begin(); it != ClientChannel.end(); it++)
 	{
 		if (this->_clients.find(it->second) != _clients.end())
 		{
-			_clients[it->second]->addMessageToSendbox(RPL_JOIN(_clients[it->second]->GetUsername(), RealNameChannel));
 			_clients[it->second]->addMessageToSendbox(RPL_NAMREPLY(_clients[it->second]->GetUsername(), RealNameChannel, _channels.find(RealNameChannel)->second->GetAllNickname()));
 			_clients[it->second]->addMessageToSendbox(RPL_ENDOFNAMES(_clients[it->second]->GetUsername(), RealNameChannel));
 			_clients[it->second]->updateClientStatus(_epollFd);
