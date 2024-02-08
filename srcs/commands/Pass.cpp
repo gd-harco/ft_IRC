@@ -18,7 +18,6 @@ void Server::pass(vectorCommand args, Client *client)
 	{
 		std::cout << client->GetNickname() << " " << client->GetUsername() << " " << client->GetFd() << ": " << "have bad password" << std::endl;
 		std::cout << "socket " << client->GetFd() << " has been closed and associated client deleted" << std::endl;
-		this->RemoveClient(client->GetFd());
 		throw (BadPassword());
 	}
 	else if (client->GetPassword() == true)

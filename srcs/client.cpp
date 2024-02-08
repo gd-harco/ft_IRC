@@ -78,9 +78,14 @@ void	Client::handleString(const std::string &toParse) {
 				throw std::runtime_error("Message are left in the queue after a non-terminated message");
 			return;
 		}
-		//TODO this is evil, move all chec in the HandelCommand logic please ?
-		if (serv->HandleCommand(toProcess.front(), this) && this->GetPassword() && !this->GetNickname().empty() && !this->GetUsername().empty()) {
-			std::cout << "dealt string: " << toProcess.front() << std::endl;
+		//TODO this is evil, move all check in the HandelCommand logic please ?
+		try {
+			if (serv->HandleCommand(toProcess.front(), this) && this->GetPassword() && !this->GetNickname().empty() &&
+				!this->GetUsername().empty()) {
+				std::cout << "dealt string: " << toProcess.front() << std::endl;
+			}
+		} catch (Server::BadPassword &e) {
+			throw e;
 		}
 		toProcess.pop();
 	}
@@ -153,5 +158,3 @@ std::string Client::GetRealname() const
 {
 	return (_realname);
 }
-
-

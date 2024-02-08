@@ -166,8 +166,7 @@ bool	Server::HandleCommand(std::string const &msg, Client *client)
 	}
 	catch (BadPassword &e)
 	{
-		std::cout << e.what() << std::endl;
-		return (false);
+		throw BadPassword();
 	}
 	catch (AlreadyRegistred &e)
 	{
