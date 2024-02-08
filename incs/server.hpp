@@ -1,7 +1,7 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-#define BUFFER_READ_SIZE 5
+#define BUFFER_READ_SIZE 512
 
 #include <iostream>
 #include <map>
@@ -140,7 +140,7 @@ class	Server
 		void	deleteClient(fdClientMap::iterator toDelete) const;
 		void	deleteChannel(channelMap::iterator toDelete);
 		void	exitservClean();
-  
+
 	private:
 		std::map<std::string, Handler>	_commands;
 		std::string			_password;
