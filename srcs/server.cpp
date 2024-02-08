@@ -12,12 +12,14 @@ Server::Server(const Server &server)
 
 Server::Server(uint64_t port, std::string password)
 {
+	int	option = 1;
 	_port = port;
 	_password = password;
 	_socket = socket(AF_INET, SOCK_STREAM, 0);
 	if (_socket == -1) {
 		throw std::runtime_error("Failed to create socket");
 	}
+	setsockopt(this->_socket, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
 	std::cout << "Created a socket with fd: " << this->_socket << std::endl;
 	_sockaddr.sin_family = AF_INET;
 	_sockaddr.sin_port =htons(this->_port);
