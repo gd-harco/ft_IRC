@@ -288,6 +288,15 @@ void Server::RemoveClient(int key)
 		std::cout << "Client to remove not found" << std::endl;
 		return;
 	}
+	for (channelMap::iterator it = _channels.begin(); it != _channels.end(); it++)
+	{
+		if (it->second->IsInChannel(toRemove->second->GetNickname()))
+		{
+			vectorCommand	PartCommand;
+			PartCommand.push_back("#" + it->first);
+			part(PartCommand, toRemove->second);
+		}
+	}
 	close(key);
 	delete toRemove->second;
 	_clients.erase(key);
