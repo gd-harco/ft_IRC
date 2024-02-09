@@ -24,7 +24,7 @@ void Server::join(vectorCommand args, Client *client)
 	if (_channels.find(RealNameChannel) == _channels.end())
 	{
 		std::cout << client->GetUsername() << " create channel " << RealNameChannel << std::endl;
-		Channel *NewChannel = new Channel(RealNameChannel);
+		Channel *NewChannel = new Channel(RealNameChannel, client->GetNickname());
 		NewChannel->AddClient(client->GetNickname(), client->GetFd());
 		AddChannel(RealNameChannel, NewChannel);
 		client->addMessageToSendbox(RPL_JOIN(client->GetUsername(), RealNameChannel));

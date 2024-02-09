@@ -6,11 +6,10 @@ Channel::Channel()
 Channel::~Channel()
 {}
 
-Channel::Channel(const std::string &name): _name(name), _havePassword(false)
-{}
-
-Channel::Channel(const std::string &topic, const std::string &name): _topic(topic), _name(name)
-{}
+Channel::Channel(const std::string &name, const std::string &opName): _name(name), _havePassword(false)
+{
+	this->SetOp(opName);
+}
 
 std::string Channel::GetName() const
 {
@@ -61,6 +60,9 @@ void Channel::AddClient(std::string key, int value)
 
 void Channel::RemoveClient(std::string key)
 {
+	std::vector<std::string>::iterator	ToFind = std::find(_op.begin(), _op.end(), key);
+	if (ToFind != _op.end())
+		_op.erase(ToFind);
 	_clients.erase(key);
 }
 
@@ -69,8 +71,27 @@ std::string Channel::GetAllNickname()
 	std::ostringstream	str;
 	for (stringClientMap::iterator it = _clients.begin(); it != _clients.end(); it++)
 	{
+		if (std::find(_op.begin(), _op.end(), it->first) != _op.end())
+			str << " @" << it->first;
 		str << " " << it->first;
 	}
 	return (str.str());
+}
+
+const std::vector<std::string> &Channel::GetOp() const
+{
+	return (_op);
+}
+
+void Channel::SetOp(std::string const &op)
+{
+	_op.push_back(op);
+}
+
+bool Channel::IsInChannel(std::string const &user) const
+{
+	if (_clients.find(user) != _clients.end())
+		return (true);
+	return (false);
 }
 

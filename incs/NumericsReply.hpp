@@ -19,4 +19,8 @@
 // PART
 # define RPL_PART(user, channel) (user + " PART #" + channel + " Leaving\r\n")
 
+// TOPIC
+# define RPL_TOPIC(client, channel, topic) (":localhost 332 " + client + " #" + channel + " " + topic + "\r\n")
+# define RPL_NOTOPIC(client, channel) (":localhost 331 " + client + " #" + channel + " :No topic is set\r\n")
+
 #endif //NUMERICSREPLY_HPP
