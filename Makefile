@@ -18,7 +18,7 @@ SRC_PATH =	srcs/
 
 SRC =	main.cpp channel.cpp client.cpp server.cpp commands/CommandsExceptions.cpp \
 		commands/User.cpp commands/Pass.cpp commands/Nick.cpp commands/Join.cpp \
-		commands/Privmsg.cpp commands/Part.cpp utility.cpp
+		commands/Privmsg.cpp commands/Part.cpp utility.cpp NumericReplies.cpp
 
 DIR_INCS =	incs/
 
@@ -28,7 +28,7 @@ INCLUDES =\
 DIR_BUILD	=	.build/
 OBJS		=	$(patsubst %.cpp, $(DIR_BUILD)%.zizi, $(SRC))
 DEPS		=	$(patsubst %.cpp, $(DIR_BUILD)%.d, $(SRC))
-CPPFLAGS	=	-Wall -Wextra -Werror -std=c++98 -g3
+CPPFLAGS	=	-Wall -Wextra -Werror -std=c++98 -glldb
 DEBUGFLAGS	=	-fsanitize=address -g3
 
 DEPSFLAGS	=	-MMD -MP

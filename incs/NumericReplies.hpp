@@ -2,8 +2,37 @@
 // Created by zorkz on 05/02/24.
 //
 
-#ifndef NUMERICSREPLY_HPP
-#define NUMERICSREPLY_HPP
+#ifndef NUMERICREPLIES_HPP
+#define NUMERICREPLIES_HPP
+
+#include <string>
+
+#include "client.hpp"
+
+#define NETWORK_NAME "irc-si-si la famille"
+
+#define RPL_WELCOME		"001"
+//#define	RPL_NOTOPIC		"331"
+//#define	RPL_TOPIC		"332"
+//#define	PRL_NAMREPLY	"353"
+//#define	RPL_ENDOFNAME	"366"
+//
+//#define ERR_NICKNAMEINUSE	"433"
+//#define	ERR_BANNEDFROMCHAN	"474"
+//#define ERR_BADCHANNELKEY	"475"
+
+class NumericReplies {
+public:
+	class reply {
+	public:
+		static void welcome(Client &client);
+	};
+
+	static std::string constructHeader(const std::string &numericID, const std::string &hostName);
+
+};
+
+
 
 #define user_id(nickname, username) (":" + nickname + "!" + username + "@localhost")
 
@@ -23,4 +52,6 @@
 # define RPL_TOPIC(client, channel, topic) (":localhost 332 " + client + " #" + channel + " " + topic + "\r\n")
 # define RPL_NOTOPIC(client, channel) (":localhost 331 " + client + " #" + channel + " :No topic is set\r\n")
 
-#endif //NUMERICSREPLY_HPP
+
+// NICK
+#endif //NUMERICREPLIES_HPP
