@@ -14,8 +14,8 @@
 #define RPL_WELCOME		"001"
 //#define	RPL_NOTOPIC		"331"
 //#define	RPL_TOPIC		"332"
-//#define	PRL_NAMREPLY	"353"
-//#define	RPL_ENDOFNAME	"366"
+#define	RPL_NAMREPLY	"353"
+#define	RPL_ENDOFNAME	"366"
 //
 //#define ERR_NICKNAMEINUSE	"433"
 //#define	ERR_BANNEDFROMCHAN	"474"
@@ -25,11 +25,13 @@ class NumericReplies {
 public:
 	class reply {
 	public:
-		static void welcome(Client &client);
+		static void	welcome(Client &client);
+		static void	nameInCHannel(Client &client, const std::string &channName, const std::string &allNick);
+		static void	endOfName(Client &client, const std::string &channName);
+		static void	joinConfirm(Client &client, const std::string &channName);
 	};
 
 	static std::string constructHeader(const std::string &numericID, const std::string &hostName);
-
 };
 
 
@@ -37,11 +39,11 @@ public:
 #define user_id(nickname, username) (":" + nickname + "!" + username + "@localhost")
 
 // NAMES
-# define RPL_NAMREPLY(client, channel, list_of_nicks) (":localhost 353 " + client +"user = #" + channel + " :" + list_of_nicks + "\r\n")
-# define RPL_ENDOFNAMES(client, channel) (":localhost 366 " + client + " #" + channel + " :End of /NAMES list.\r\n")
+//# define RPL_NAMREPLY(client, channel, list_of_nicks) (":localhost 353 " + client +"user = #" + channel + " :" + list_of_nicks + "\r\n")
+//# define RPL_ENDOFNAMES(client, channel) (":localhost 366 " + client + " #" + channel + " :End of /NAMES list.\r\n")
 
 // JOIN
-# define RPL_JOIN(user, channel) (":" + user + " JOIN #" + channel + "\r\n")
+//# define RPL_JOIN(user, channel) (":" + user + " JOIN #" + channel + "\r\n")
 # define ERR_BANNEDFROMCHAN(client, channel) ("474 " + client + " #" + channel + " :Cannot join channel (+b)\r\n")
 # define ERR_BADCHANNELKEY(client, channel) ("475 " + client + " #" + channel + " :Cannot join channel (+k)\r\n")
 
