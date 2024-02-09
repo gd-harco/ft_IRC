@@ -6,11 +6,10 @@ Channel::Channel()
 Channel::~Channel()
 {}
 
-Channel::Channel(const std::string &name): _name(name), _havePassword(false)
-{}
-
-Channel::Channel(const std::string &topic, const std::string &name): _topic(topic), _name(name)
-{}
+Channel::Channel(const std::string &name, const std::string &opName): _name(name), _havePassword(false)
+{
+	this->SetOp(opName);
+}
 
 std::string Channel::GetName() const
 {
@@ -79,7 +78,7 @@ std::string Channel::GetAllNickname()
 	return (str.str());
 }
 
-std::vector<std::string> Channel::GetOp() const
+const std::vector<std::string> &Channel::GetOp() const
 {
 	return (_op);
 }

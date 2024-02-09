@@ -17,8 +17,7 @@ class	Channel
 	public:
 		//constructor / destructor
 		Channel();
-		Channel(const std::string &name);
-		Channel(const std::string &topic, const std::string &name);
+		Channel(const std::string &name, const std::string &opName);
 		~Channel();
 
 		//getters
@@ -28,7 +27,7 @@ class	Channel
 		stringClientMap	GetClients() const;
 		bool			GetHavePassword() const;
 		std::string		GetAllNickname();
-		std::vector<std::string>		GetOp() const;
+		const std::vector<std::string>		&GetOp() const;
 		bool			IsInChannel(std::string const &user) const;
 
 		//setters
