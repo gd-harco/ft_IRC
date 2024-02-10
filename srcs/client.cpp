@@ -93,9 +93,11 @@ void	Client::handleString(const std::string &toParse) {
 
 
 void Client::receiveMsg() {
-	std::string toSend = _msgToSend.front();
-	send(this->_fd, toSend.c_str(), toSend.size(), 0);
-	_msgToSend.pop();
+	while (!_msgToSend.empty()) {
+		std::string toSend = _msgToSend.front();
+		send(this->_fd, toSend.c_str(), toSend.size(), 0);
+		_msgToSend.pop();
+	}
 }
 
 void Client::SetAuthenticate()
