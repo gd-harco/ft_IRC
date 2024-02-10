@@ -49,6 +49,17 @@ void	NumericReplies::Error::bannedFromChan(Client &client, const std::string &ch
 	client.addMessageToSendbox(reply.str());
 }
 
+//# define ERR_BADCHANNELKEY(client, channel) ("475 " + client + " #" + channel + " :Cannot join channel (+k)\r\n")
+void	NumericReplies::Error::badChannelKey(Client &client, const std::string &channName) {
+	std::stringstream reply;
+
+	reply << constructNumericReplyHeader(ERR_BANNEDFROMCHAN, SERVER_NAME)
+			<< client.GetUsername() << " #"
+			<< channName
+			<< " :Cannot join channel (+k)" << DELIMITER;
+	client.addMessageToSendbox(reply.str());
+}
+
 //TODO: remove this when implementing notification in respective command file
 
 // # define RPL_JOIN(user, channel) (":" + user + " JOIN #" + channel + "\r\n")

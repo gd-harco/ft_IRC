@@ -19,7 +19,7 @@
 //
 //#define ERR_NICKNAMEINUSE	"433"
 #define	ERR_BANNEDFROMCHAN	"474"
-//#define ERR_BADCHANNELKEY	"475"
+#define ERR_BADCHANNELKEY	"475"
 
 class NumericReplies {
 public:
@@ -38,8 +38,8 @@ public:
 
 	class Error {
 	public:
-//# define ERR_BANNEDFROMCHAN(client, channel) ("474 " + client + " #" + channel + " :Cannot join channel (+b)\r\n")
-			static void	bannedFromChan(Client &client, const std::string &channName);
+		static void	bannedFromChan(Client &client, const std::string &channName);
+		static void	badChannelKey(Client &client, const std::string &channName);
 	};
 
 	static std::string constructNumericReplyHeader(const std::string &numericID, const std::string &hostName);
@@ -55,12 +55,12 @@ public:
 
 // JOIN
 //# define ERR_BANNEDFROMCHAN(client, channel) ("474 " + client + " #" + channel + " :Cannot join channel (+b)\r\n")
-# define ERR_BADCHANNELKEY(client, channel) ("475 " + client + " #" + channel + " :Cannot join channel (+k)\r\n")
+//# define ERR_BADCHANNELKEY(client, channel) ("475 " + client + " #" + channel + " :Cannot join channel (+k)\r\n")
 
 
 // TOPIC
-# define RPL_TOPIC(client, channel, topic) (":localhost 332 " + client + " #" + channel + " " + topic + "\r\n")
 # define RPL_NOTOPIC(client, channel) (":localhost 331 " + client + " #" + channel + " :No topic is set\r\n")
+# define RPL_TOPIC(client, channel, topic) (":localhost 332 " + client + " #" + channel + " " + topic + "\r\n")
 
 
 //TODO: not a NumericReply but a notification, moove it in the corresponding command file
