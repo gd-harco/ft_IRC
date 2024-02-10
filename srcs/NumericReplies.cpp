@@ -17,6 +17,28 @@ void NumericReplies::reply::welcome(Client &client)
 	client.addMessageToSendbox(reply.str());
 }
 
+//# define RPL_NOTOPIC(client, channel) (":localhost 331 " + client + " #" + channel + " :No topic is set\r\n")
+void NumericReplies::reply::noTopic(Client &client, const std::string &channName) {
+	std::stringstream reply;
+
+	reply << constructNumericReplyHeader(RPL_NOTOPIC, SERVER_NAME)
+			<< client.GetUsername() << " #"
+			<< channName
+			<< " :No topic is set" << DELIMITER;
+	client.addMessageToSendbox(reply.str());
+}
+
+//# define RPL_TOPIC(client, channel, topic) (":localhost 332 " + client + " #" + channel + " " + topic + "\r\n")
+void NumericReplies::reply::topic(Client &client, const std::string &channName, const std::string &topic) {
+	std::stringstream reply;
+
+	reply << constructNumericReplyHeader(RPL_TOPIC, SERVER_NAME)
+			<< client.GetUsername() << " #"
+			<< channName << " "
+			<< topic << DELIMITER;
+	client.addMessageToSendbox(reply.str());
+}
+
 //#define RPL_NAMREPLY(client, channel, list_of_nicks) (":localhost 353 " + client +"user = #" + channel + " :" + list_of_nicks + "\r\n")
 void	NumericReplies::reply::nameInChannel(Client &client, const std::string &channName, const std::string &allNick) {
 	std::stringstream reply;
