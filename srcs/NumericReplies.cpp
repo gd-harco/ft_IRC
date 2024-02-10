@@ -18,7 +18,7 @@ void NumericReplies::reply::welcome(Client &client)
 }
 
 //#define RPL_NAMREPLY(client, channel, list_of_nicks) (":localhost 353 " + client +"user = #" + channel + " :" + list_of_nicks + "\r\n")
-void	NumericReplies::reply::nameInCHannel(Client &client, const std::string &channName, const std::string &allNick) {
+void	NumericReplies::reply::nameInChannel(Client &client, const std::string &channName, const std::string &allNick) {
 	std::stringstream reply;
 
 	reply << constructNumericReplyHeader(RPL_NAMREPLY, SERVER_NAME)
@@ -44,7 +44,7 @@ void	NumericReplies::Error::bannedFromChan(Client &client, const std::string &ch
 	std::stringstream reply;
 
 	reply << constructNumericReplyHeader(ERR_BANNEDFROMCHAN, SERVER_NAME)
-			<< client.GetUsername() << " #" \
+			<< client.GetUsername() << " #"
 			<< channName << "  :Cannot join channel (+b)" << DELIMITER;
 	client.addMessageToSendbox(reply.str());
 }

@@ -32,7 +32,7 @@ public:
 	class reply {
 	public:
 		static void	welcome(Client &client);
-		static void	nameInCHannel(Client &client, const std::string &channName, const std::string &allNick);
+		static void	nameInChannel(Client &client, const std::string &channName, const std::string &allNick);
 		static void	endOfName(Client &client, const std::string &channName);
 	};
 
