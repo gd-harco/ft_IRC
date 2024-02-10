@@ -28,7 +28,7 @@ void Server::join(vectorCommand args, Client *client)
 		NewChannel->AddClient(client->GetNickname(), client->GetFd());
 		AddChannel(RealNameChannel, NewChannel);
 //		client->addMessageToSendbox(RPL_JOIN(client->GetUsername(), RealNameChannel));
-		NumericReplies::reply::joinConfirm(*client, RealNameChannel);
+		NumericReplies::Notification::joinNotify(*client, RealNameChannel);
 //		client->addMessageToSendbox(RPL_NAMREPLY(client->GetUsername(), RealNameChannel, NewChannel->GetAllNickname()));
 		NumericReplies::reply::nameInCHannel(*client, RealNameChannel, NewChannel->GetAllNickname());
 //		client->addMessageToSendbox(RPL_ENDOFNAMES(client->GetUsername(), RealNameChannel));
@@ -40,7 +40,7 @@ client->updateClientStatus(_epollFd);
 	_channels[RealNameChannel]->AddClient(client->GetNickname(), client->GetFd());
 	stringClientMap	ClientChannel = _channels[RealNameChannel]->GetClients();
 //	client->addMessageToSendbox(RPL_JOIN(client->GetUsername(), RealNameChannel));
-	NumericReplies::reply::joinConfirm(*client, RealNameChannel);
+	NumericReplies::Notification::joinNotify(*client, RealNameChannel);
 	for (stringClientMap::iterator it = ClientChannel.begin(); it != ClientChannel.end(); it++)
 	{
 		if (this->_clients.find(it->second) != _clients.end())

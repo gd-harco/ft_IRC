@@ -23,10 +23,13 @@ void	NumericReplies::reply::endOfName(Client &client, const std::string &channNa
 	+ " #" + channName + " :End of /NAMES list." + DELIMITER);
 }
 
+
 //# define RPL_JOIN(user, channel) (":" + user + " JOIN #" + channel + "\r\n")
-void NumericReplies::reply::joinConfirm(Client &client, const std::string &channName) {
+void NumericReplies::Notification::joinNotify(Client &client, const std::string &channName) {
 	client.addMessageToSendbox(":" + client.GetUsername() + " JOIN #" + channName + DELIMITER);
 }
+
+
 
 std::string NumericReplies::constructHeader(const std::string &numericID, const std::string &hostName) {
 	std::stringstream   result;

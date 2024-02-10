@@ -23,12 +23,16 @@
 
 class NumericReplies {
 public:
+	class Notification {
+	public:
+		static void	joinNotify(Client &client, const std::string &channName);
+	};
+
 	class reply {
 	public:
 		static void	welcome(Client &client);
 		static void	nameInCHannel(Client &client, const std::string &channName, const std::string &allNick);
 		static void	endOfName(Client &client, const std::string &channName);
-		static void	joinConfirm(Client &client, const std::string &channName);
 	};
 
 	static std::string constructHeader(const std::string &numericID, const std::string &hostName);
