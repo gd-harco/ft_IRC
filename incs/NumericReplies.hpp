@@ -18,7 +18,7 @@
 #define	RPL_ENDOFNAME	"366"
 //
 //#define ERR_NICKNAMEINUSE	"433"
-//#define	ERR_BANNEDFROMCHAN	"474"
+#define	ERR_BANNEDFROMCHAN	"474"
 //#define ERR_BADCHANNELKEY	"475"
 
 class NumericReplies {
@@ -35,7 +35,13 @@ public:
 		static void	endOfName(Client &client, const std::string &channName);
 	};
 
-	static std::string constructHeader(const std::string &numericID, const std::string &hostName);
+	class Error {
+	public:
+//# define ERR_BANNEDFROMCHAN(client, channel) ("474 " + client + " #" + channel + " :Cannot join channel (+b)\r\n")
+			static void	bannedFromChan(Client &client, const std::string &channName);
+	};
+
+	static std::string constructNumericReplyHeader(const std::string &numericID, const std::string &hostName);
 };
 
 
@@ -47,8 +53,7 @@ public:
 //# define RPL_ENDOFNAMES(client, channel) (":localhost 366 " + client + " #" + channel + " :End of /NAMES list.\r\n")
 
 // JOIN
-//# define RPL_JOIN(user, channel) (":" + user + " JOIN #" + channel + "\r\n")
-# define ERR_BANNEDFROMCHAN(client, channel) ("474 " + client + " #" + channel + " :Cannot join channel (+b)\r\n")
+//# define ERR_BANNEDFROMCHAN(client, channel) ("474 " + client + " #" + channel + " :Cannot join channel (+b)\r\n")
 # define ERR_BADCHANNELKEY(client, channel) ("475 " + client + " #" + channel + " :Cannot join channel (+k)\r\n")
 
 // PART
