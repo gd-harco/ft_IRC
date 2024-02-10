@@ -84,8 +84,10 @@ void Server::CheckConnection(Client *client)
 
 	if (client->GetPassword() && !client->GetNickname().empty() && !client->GetUsername().empty())
 	{
-		client->SetAuthenticate();client->addMessageToSendbox(":irc.localhost 001 " + client->GetUsername() + " :Welcome to the " + "networkName" + " Network, " + client->GetUsername() + "!\r\n");
-		client->updateClientStatus(this->_epollFd);
+		client->SetAuthenticate();
+//		client->addMessageToSendbox(":irc.localhost 001 " + client->GetUsername() + " :Welcome to the " + "networkName" + " Network, " + client->GetUsername() + "!\r\n");
+		NumericReplies::reply::welcome(*client);
+client->updateClientStatus(this->_epollFd);
 	}
 }
 

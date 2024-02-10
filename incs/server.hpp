@@ -2,6 +2,7 @@
 #define SERVER_HPP
 
 #define BUFFER_READ_SIZE 512
+#define SERVER_NAME "irc.localhost"
 
 #include <iostream>
 #include <map>
@@ -15,7 +16,7 @@
 #include <cstdlib>
 #include "client.hpp"
 #include "channel.hpp"
-#include "NumericsReply.hpp"
+#include "NumericReplies.hpp"
 
 typedef std::map<int, Client *> fdClientMap;
 typedef std::map<std::string, Channel *> channelMap;
@@ -143,6 +144,7 @@ class	Server
 
 	private:
 		std::map<std::string, Handler>	_commands;
+		std::set<std::string>	_nickUsed;
 		std::string			_password;
 		struct epoll_event	_servEpollEvent;
 		fdClientMap			_clients;
