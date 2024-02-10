@@ -49,7 +49,9 @@ void	NumericReplies::Error::bannedFromChan(Client &client, const std::string &ch
 	client.addMessageToSendbox(reply.str());
 }
 
-//# define RPL_JOIN(user, channel) (":" + user + " JOIN #" + channel + "\r\n")
+//TODO: remove this when implementing notification in respective command file
+
+// # define RPL_JOIN(user, channel) (":" + user + " JOIN #" + channel + "\r\n")
 void	NumericReplies::Notification::joinNotify(Client &client, const std::string &channName) {
 	client.addMessageToSendbox(":" + client.GetUsername() + " JOIN #" + channName + DELIMITER);
 }

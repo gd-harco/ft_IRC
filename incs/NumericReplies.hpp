@@ -23,6 +23,7 @@
 
 class NumericReplies {
 public:
+	//TODO: remove this when implementing notification in respective command file
 	class Notification {
 	public:
 		static void	joinNotify(Client &client, const std::string &channName);
@@ -56,13 +57,15 @@ public:
 //# define ERR_BANNEDFROMCHAN(client, channel) ("474 " + client + " #" + channel + " :Cannot join channel (+b)\r\n")
 # define ERR_BADCHANNELKEY(client, channel) ("475 " + client + " #" + channel + " :Cannot join channel (+k)\r\n")
 
-// PART
-# define RPL_PART(user, channel) (user + " PART #" + channel + " Leaving\r\n")
 
 // TOPIC
 # define RPL_TOPIC(client, channel, topic) (":localhost 332 " + client + " #" + channel + " " + topic + "\r\n")
 # define RPL_NOTOPIC(client, channel) (":localhost 331 " + client + " #" + channel + " :No topic is set\r\n")
 
 
-// NICK
+//TODO: not a NumericReply but a notification, moove it in the corresponding command file
+//# define RPL_JOIN(user, channel) (":" + user + " JOIN #" + channel + "\r\n")
+# define RPL_PART(user, channel) (user + " PART #" + channel + " Leaving\r\n")
+
+
 #endif //NUMERICREPLIES_HPP
