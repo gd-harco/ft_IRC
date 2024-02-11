@@ -8,7 +8,7 @@ void Server::privmsg(vectorCommand args, Client *client)
 {
 	if (client->GetUsername().empty() || client->GetNickname().empty() || client->GetPassword() == false)
 		throw(NotAuthenticate());
-	if (args[0].find("#") != 0)
+	if (args[1].find("#") != 0)
 	{
 		try
 		{
@@ -46,7 +46,7 @@ void Server::privmsg(vectorCommand args, Client *client)
 
 void Server::ClientPrivMsg(vectorCommand args, Client *client)
 {
-	const std::string UserToSend = args[0];
+	const std::string UserToSend = args[1];
 	try
 	{
 		for(fdClientMap::iterator it = _clients.begin(); it != _clients.end(); it++)
@@ -54,8 +54,9 @@ void Server::ClientPrivMsg(vectorCommand args, Client *client)
 			if (it->second->GetNickname() == UserToSend)
 			{
 				std::ostringstream message;
-				std::cout << "message " << args[args.size() - 1] << "send to " << it->second->GetUsername() << std::endl;
-				message << client->GetRealname() << " : " << args[args.size() - 1] << std::endl;
+				std::string	content = args[args.size() - 1].substr(args[args.size() - 1].find(":") + 1);
+				std::cout << "message " << content << "send to " << it->second->GetUsername() << std::endl;
+				message << client->GetRealname() << " : " << content << std::endl;
 				it->second->addMessageToSendbox(message.str());
 				it->second->updateClientStatus(this->_epollFd);
 				return ;
@@ -71,7 +72,7 @@ void Server::ClientPrivMsg(vectorCommand args, Client *client)
 
 void Server::ChannelPrivMsg(vectorCommand args, Client *client)
 {
-	const std::string ChannelName(args[0].substr(1));
+	const std::string ChannelName(args[1].substr(1));
 	try
 	{
 		if (_channels.empty())
@@ -89,8 +90,9 @@ void Server::ChannelPrivMsg(vectorCommand args, Client *client)
 				if (_clients.find(it->second) != _clients.end())
 				{
 					std::ostringstream message;
-					std::cout << "message " << args[args.size() - 1] << "send to " << _clients[it->second]->GetUsername() << std::endl;
-					message << user_id(client->GetNickname(), client->GetUsername()) << " PRIVMSG #" << ChannelName << " : " << args[args.size() - 1] << std::endl;
+					std::string	content = args[args.size() - 1].substr(args[args.size() - 1].find(":") + 1);
+					std::cout << "message " << content << "send to " << _clients[it->second]->GetUsername() << std::endl;
+					message << user_id(client->GetNickname(), client->GetUsername()) << " PRIVMSG #" << ChannelName << " : " << content << std::endl;
 					_clients[it->second]->addMessageToSendbox(message.str());
 					_clients[it->second]->updateClientStatus(this->_epollFd);
 				}

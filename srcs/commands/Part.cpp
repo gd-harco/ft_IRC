@@ -8,9 +8,9 @@ void Server::part(vectorCommand args, Client *client)
 {
 	try
 	{
-		if (args[0][0] != '#')
+		if (args[1][0] != '#')
 			throw(NotAChannel());
-		std::string const ChannelName(args[0].substr(1));
+		std::string const ChannelName(args[1].substr(1));
 		const channelMap::iterator ChannelIt =  _channels.find(ChannelName);
 		if (ChannelIt == _channels.end())
 			throw (ChannelNotFound());

@@ -131,27 +131,25 @@ Server &Server::operator=(const Server &server)
 bool	Server::HandleCommand(std::string const &msg, Client *client)
 {
 	std::istringstream		SepMsg(msg);
-	std::string				Command;
 	std::string				pushBackArgs;
-	vectorCommand	Args;
+	vectorCommand			ParsMsg = ParsCommand(msg);
 
-	SepMsg >> Command;
-	while (!SepMsg.eof())
-	{
-		SepMsg >> pushBackArgs;
-		Args.push_back(pushBackArgs);
-	}
-	if (Command == "USER" || Command == "PRIVMSG")
-		Args.push_back(msg.substr(msg.find(":") + 1, msg.size() - msg.find(":") - 3));
+	// SepMsg >> Command;
+	// while (!SepMsg.eof())
+	// {
+	// 	SepMsg >> pushBackArgs;
+	// 	Args.push_back(pushBackArgs);
+	// }
+	// if (Command == "USER" || Command == "PRIVMSG")
+	// 	Args.push_back(msg.substr(msg.find(":") + 1, msg.size() - msg.find(":") - 3));
 	try
 	{
-
-		Handler	function = _commands.at(Command);
-		(this->*function)(Args, client);
+		Handler	function = _commands.at(ParsMsg[0]);
+		(this->*function)(ParsMsg, client);
 		if (!client->IsAuthenticate())
 			CheckConnection(client);
-		Args.clear();
-		if (Command != "PASS")
+		ParsMsg.clear();
+		if (ParsMsg[0] != "PASS")
 			std::cout << client->GetUsername() << ", " << client->GetNickname() << ": " << msg;
 
 		return (false);
@@ -215,13 +213,13 @@ bool	Server::HandleCommand(std::string const &msg, Client *client)
 	}
 	catch (std::exception &e)
 	{
-		while (!Args.empty())
+		while (!ParsMsg.empty())
 		{
-			std::cout << Args.back() << std::endl;
-			Args.pop_back();
+			std::cout << ParsMsg.back() << std::endl;
+			ParsMsg.pop_back();
 		}
 		std::cout << "404 cmd not found" << std::endl;
-		Args.clear();
+		ParsMsg.clear();
 		std::cout << client->GetUsername() << ", " << client->GetNickname() << ": " << msg;
 		return (true);
 	}

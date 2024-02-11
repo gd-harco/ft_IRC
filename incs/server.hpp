@@ -155,4 +155,6 @@ class	Server
 		int 				_epollFd;
 };
 
+vectorCommand	ParsCommand(std::string const &msg);
+
 #endif

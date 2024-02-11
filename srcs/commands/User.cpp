@@ -6,13 +6,10 @@
 
 void Server::user(vectorCommand args, Client *client)
 {
-	if (args.size() < 2)
-	{
-		throw (NeedMoreParams());
-	}
 	// for (fdClientMap::iterator it = _clients.begin(); it != _clients.end(); it++)
 	// {}
-	client->SetRealname(args[args.size() - 1]);
-	client->SetUsername(args[0]);
+	std::string	RealName = args[args.size() - 1].substr(1, args[args.size() - 1].find("\r") - 1);
+	client->SetRealname(RealName);
+	client->SetUsername(args[1]);
 	std::cout << client->GetNickname() << " " << client->GetUsername() << " " << client->GetFd() << ": " << "have new username" << std::endl;
 }
