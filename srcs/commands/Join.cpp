@@ -41,6 +41,7 @@ client->updateClientStatus(_epollFd);
 	stringClientMap	ClientChannel = _channels[RealNameChannel]->GetClients();
 //	client->addMessageToSendbox(RPL_JOIN(client->GetUsername(), RealNameChannel));
 	NumericReplies::Notification::joinNotify(*client, RealNameChannel);
+	client->updateClientStatus(this->_epollFd);
 	for (stringClientMap::iterator it = ClientChannel.begin(); it != ClientChannel.end(); it++)
 	{
 		if (this->_clients.find(it->second) != _clients.end())

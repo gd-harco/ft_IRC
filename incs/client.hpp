@@ -26,6 +26,7 @@ class	Client
 
 		void	updateClientStatus(const int &epollFd);
 		void	addClientToEpoll(const int &epollFd);
+		void	sendNumericReply(const std::string &message);
 		void	addMessageToSendbox(std::string message);
 
 		//getters
