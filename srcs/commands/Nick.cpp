@@ -4,6 +4,11 @@
 
 #include "server.hpp"
 
+
+//TODO Implement this ?
+//The NICK message may be sent from the server to clients to acknowledge their NICK command was successful,
+// and to inform other clients about the change of nickname. In these cases, the <source> of the message will be the
+// old nickname [ [ "!" user ] "@" host ] of the user who is changing their nickname.
 void Server::nick(vectorCommand args, Client *client)
 {
 	if (args.size() == 1 || args[1].empty())
