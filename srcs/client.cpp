@@ -47,6 +47,10 @@ void	Client::updateClientStatus(const int &epollFd) {
 	epoll_ctl(epollFd, EPOLL_CTL_MOD, this->_fd, &this->_clientEpollevent);
 }
 
+void Client::sendNumericReply(const std::string &message) {
+	this->_msgToSend.push(message);
+}
+
 void Client::addMessageToSendbox(std::string message) {
 	if (_password == false)
 	{
