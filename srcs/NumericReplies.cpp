@@ -60,6 +60,16 @@ void	NumericReplies::reply::endOfName(Client &client, const std::string &channNa
 	client.sendNumericReply(reply.str());
 }
 
+// 433 <nick> :Nickname is already in use"
+void	NumericReplies::Error::nickInUse(Client &client, const std::string &nickName) {
+	std::stringstream reply;
+
+	reply << constructNumericReplyHeader(ERR_NICKNAMEINUSE, SERVER_NAME)
+			<< nickName
+			<< " :" << nickName
+			<< " is already in use" << DELIMITER;
+	client.sendNumericReply(reply.str());
+}
 
 //# define ERR_BANNEDFROMCHAN(client, channel) ("474 " + client + " #" + channel + " :Cannot join channel (+b)\r\n")
 void	NumericReplies::Error::bannedFromChan(Client &client, const std::string &channName) {
