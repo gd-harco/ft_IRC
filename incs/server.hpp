@@ -72,6 +72,8 @@ class	Server
 		void	invite(vectorCommand args, Client *client);
 		void	topic(vectorCommand args, Client *client);
 		void	mode(vectorCommand args, Client *client);
+		void	ModeTopic(vectorCommand args, Client *client);
+		void	ModeOperator(vectorCommand args, Client *client);
 		void	privmsg(vectorCommand args, Client *client);
 		void	ClientPrivMsg(vectorCommand args, Client *client);
 		void	ChannelPrivMsg(vectorCommand args, Client *client);

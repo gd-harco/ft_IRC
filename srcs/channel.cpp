@@ -16,7 +16,7 @@ std::string Channel::GetName() const
 	return (_name);
 }
 
-std::map<std::string, int> Channel::GetClients() const
+stringClientMap Channel::GetClients() const
 {
 	return (_clients);
 }
@@ -73,7 +73,8 @@ std::string Channel::GetAllNickname()
 	{
 		if (std::find(_op.begin(), _op.end(), it->first) != _op.end())
 			str << " @" << it->first;
-		str << " " << it->first;
+		else
+			str << " " << it->first;
 	}
 	return (str.str());
 }
@@ -88,10 +89,28 @@ void Channel::SetOp(std::string const &op)
 	_op.push_back(op);
 }
 
+void Channel::RemoveOp(std::string const &op)
+{
+	std::vector<std::string>::iterator const it = std::find(_op.begin(), _op.end(), op);
+	if (it != _op.end())
+		_op.erase(it);
+}
+
+
 bool Channel::IsInChannel(std::string const &user) const
 {
 	if (_clients.find(user) != _clients.end())
 		return (true);
 	return (false);
+}
+
+void Channel::SetRTopic(bool status)
+{
+	_rTopic = status;
+}
+
+bool Channel::IsRestrictChannel() const
+{
+	return _rTopic;
 }
 

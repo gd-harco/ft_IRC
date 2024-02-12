@@ -19,7 +19,7 @@ SRC_PATH =	srcs/
 SRC =	main.cpp channel.cpp client.cpp server.cpp commands/CommandsExceptions.cpp \
 		commands/User.cpp commands/Pass.cpp commands/Nick.cpp commands/Join.cpp \
 		commands/Privmsg.cpp commands/Part.cpp utility.cpp NumericReplies.cpp \
-		parsing.cpp
+		parsing.cpp commands/Mode.cpp
 
 DIR_INCS =	incs/
 

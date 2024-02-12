@@ -56,7 +56,7 @@ void Server::SetMap()
 	// _commands["KICK"] = &Server::kick;
 	// _commands["INVITE"] = &Server::invite;
 	// _commands["TOPIC"] = &Server::topic;
-	// _commands["MODE"] = &Server::mode;
+	_commands["MODE"] = &Server::mode;
 	_commands["PRIVMSG"] = &Server::privmsg;
 	_commands["JOIN"] = &Server::join;
 	_commands["PART"] = &Server::part;
@@ -134,14 +134,6 @@ bool	Server::HandleCommand(std::string const &msg, Client *client)
 	std::string				pushBackArgs;
 	vectorCommand			ParsMsg = ParsCommand(msg);
 
-	// SepMsg >> Command;
-	// while (!SepMsg.eof())
-	// {
-	// 	SepMsg >> pushBackArgs;
-	// 	Args.push_back(pushBackArgs);
-	// }
-	// if (Command == "USER" || Command == "PRIVMSG")
-	// 	Args.push_back(msg.substr(msg.find(":") + 1, msg.size() - msg.find(":") - 3));
 	try
 	{
 		Handler	function = _commands.at(ParsMsg[0]);
