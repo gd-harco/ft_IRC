@@ -17,6 +17,7 @@
 #define	RPL_NAMREPLY	"353"
 #define	RPL_ENDOFNAME	"366"
 //
+#define ERR_NONICKGIVEN		"431"
 #define ERR_NICKNAMEINUSE	"433"
 #define	ERR_BANNEDFROMCHAN	"474"
 #define ERR_BADCHANNELKEY	"475"
@@ -40,6 +41,7 @@ public:
 
 	class Error {
 	public:
+		static void	noNickGiven(Client &client);
 		static void nickInUse(Client &client, const std::string &nickName);
 		static void	bannedFromChan(Client &client, const std::string &channName);
 		static void	badChannelKey(Client &client, const std::string &channName);

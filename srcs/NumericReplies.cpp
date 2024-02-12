@@ -60,6 +60,16 @@ void	NumericReplies::reply::endOfName(Client &client, const std::string &channNa
 	client.sendNumericReply(reply.str());
 }
 
+//431 * :No nickname given
+void	NumericReplies::Error::noNickGiven(Client &client) {
+	std::stringstream reply;
+
+	reply << constructNumericReplyHeader(ERR_NONICKGIVEN, SERVER_NAME)
+			<<" * :No nickname given"
+			<< DELIMITER;
+	client.sendNumericReply(reply.str());
+}
+
 // 433 <nick> :Nickname is already in use"
 void	NumericReplies::Error::nickInUse(Client &client, const std::string &nickName) {
 	std::stringstream reply;

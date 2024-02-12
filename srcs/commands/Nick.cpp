@@ -6,6 +6,8 @@
 
 void Server::nick(vectorCommand args, Client *client)
 {
+	if (args.size() == 1 || args[1].empty())
+		NumericReplies::Error::noNickGiven(*client);
 	if (this->_nickUsed.find(args[1]) != this->_nickUsed.end()) {
 		NumericReplies::Error::nickInUse(*client, args[1]);
 		client->updateClientStatus(this->_epollFd);
