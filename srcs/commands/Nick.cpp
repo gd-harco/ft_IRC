@@ -11,8 +11,10 @@
 // old nickname [ [ "!" user ] "@" host ] of the user who is changing their nickname.
 void Server::nick(vectorCommand args, Client *client)
 {
-	if (args.size() == 1 || args[1].empty())
+	if (args.size() == 1 || args[1].empty()) {
 		NumericReplies::Error::noNickGiven(*client);
+		throw std::runtime_error("Server::Commands::noNickGiven:  no nick was given");
+	}
 	if (this->_nickUsed.find(args[1]) != this->_nickUsed.end()) {
 		NumericReplies::Error::nickInUse(*client, args[1]);
 		client->updateClientStatus(this->_epollFd);

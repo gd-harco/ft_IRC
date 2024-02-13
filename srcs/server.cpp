@@ -134,14 +134,6 @@ bool	Server::HandleCommand(std::string const &msg, Client *client)
 	std::string				pushBackArgs;
 	vectorCommand			ParsMsg = ParsCommand(msg);
 
-	// SepMsg >> Command;
-	// while (!SepMsg.eof())
-	// {
-	// 	SepMsg >> pushBackArgs;
-	// 	Args.push_back(pushBackArgs);
-	// }
-	// if (Command == "USER" || Command == "PRIVMSG")
-	// 	Args.push_back(msg.substr(msg.find(":") + 1, msg.size() - msg.find(":") - 3));
 	try
 	{
 		Handler	function = _commands.at(ParsMsg[0]);
@@ -151,7 +143,6 @@ bool	Server::HandleCommand(std::string const &msg, Client *client)
 		ParsMsg.clear();
 		if (ParsMsg[0] != "PASS")
 			std::cout << client->GetUsername() << ", " << client->GetNickname() << ": " << msg;
-
 		return (false);
 	}
 	catch (NotAuthenticate &e)
@@ -170,8 +161,6 @@ bool	Server::HandleCommand(std::string const &msg, Client *client)
 	}
 	catch (AlreadyRegistred &e)
 	{
-		client->addMessageToSendbox(client->GetUsername() + " :You may not reregister\r\n");
-		client->updateClientStatus(_epollFd);
 		std::cout << e.what() << std::endl;
 		return (false);
 	}
@@ -209,6 +198,10 @@ bool	Server::HandleCommand(std::string const &msg, Client *client)
 	{
 		std::cout << e.what() << std::endl;
 		return (false);
+	}
+	catch (std::runtime_error &e) {
+		std::cout << e.what() << std::endl;
+		return false;
 	}
 	catch (std::exception &e)
 	{
