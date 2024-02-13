@@ -288,15 +288,21 @@ void Server::RemoveClient(int key)
 		return;
 	}
 	this->_nickUsed.erase(toRemove->second->GetNickname());
+	std::map<vectorCommand , Client *> partToExecute;
 	for (channelMap::iterator it = _channels.begin(); it != _channels.end(); it++)
 	{
 		if (it->second->IsInChannel(toRemove->second->GetNickname()))
 		{
 			vectorCommand	PartCommand;
+			PartCommand.push_back("PART");
 			PartCommand.push_back("#" + it->first);
-			part(PartCommand, toRemove->second);
+			partToExecute.insert(std::make_pair(PartCommand,toRemove->second));
+//			part(PartCommand, toRemove->second);
 		}
 	}
+	//execute all part stored in the partToExecute map.
+	for (std::map<vectorCommand , Client *>::iterator it = partToExecute.begin(); it != partToExecute.end(); ++it)
+		part(it->first, it->second);
 	close(key);
 	delete toRemove->second;
 	_clients.erase(key);
