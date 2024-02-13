@@ -14,6 +14,7 @@ void Server::join(vectorCommand args, Client *client)
 	// 	std::cout << "invalid number of args" << std::endl;
 	// 	return (false);
 	// }
+	//TODO: Clarifier avec Alex
 	if (args[1].find("#") != 0)
 	{
 		client->addMessageToSendbox(":irc.localhost 471 " + client->GetUsername() + " #" + args[1] + " :Cannot join channel\r\n");
@@ -41,6 +42,7 @@ client->updateClientStatus(_epollFd);
 	stringClientMap	ClientChannel = _channels[RealNameChannel]->GetClients();
 //	client->addMessageToSendbox(RPL_JOIN(client->GetUsername(), RealNameChannel));
 	NumericReplies::Notification::joinNotify(*client, RealNameChannel);
+	client->updateClientStatus(this->_epollFd);
 	for (stringClientMap::iterator it = ClientChannel.begin(); it != ClientChannel.end(); it++)
 	{
 		if (this->_clients.find(it->second) != _clients.end())

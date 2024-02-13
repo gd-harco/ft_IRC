@@ -21,6 +21,7 @@
 typedef std::map<int, Client *> fdClientMap;
 typedef std::map<std::string, Channel *> channelMap;
 typedef std::vector<std::string> vectorCommand;
+typedef std::set<std::string> nickSet;
 
 class Channel;
 class Client;
@@ -146,15 +147,15 @@ class	Server
 
 	private:
 		std::map<std::string, Handler>	_commands;
-		std::set<std::string>	_nickUsed;
-		std::string			_password;
-		struct epoll_event	_servEpollEvent;
-		fdClientMap			_clients;
-		channelMap			_channels;
-		uint64_t			_port;
-		struct sockaddr_in	_sockaddr;
-		int					_socket;
-		int 				_epollFd;
+		nickSet							_nickUsed;
+		std::string						_password;
+		struct epoll_event				_servEpollEvent;
+		fdClientMap						_clients;
+		channelMap						_channels;
+		uint64_t						_port;
+		struct sockaddr_in				_sockaddr;
+		int								_socket;
+		int 							_epollFd;
 };
 
 vectorCommand	ParsCommand(std::string const &msg);

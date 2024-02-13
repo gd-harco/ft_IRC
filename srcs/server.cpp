@@ -169,7 +169,6 @@ bool	Server::HandleCommand(std::string const &msg, Client *client)
 	}
 	catch (UnableToCreateChannel &e)
 	{
-
 		std::cout << e.what() << std::endl;
 		return (false);
 	}
@@ -280,6 +279,7 @@ void Server::RemoveClient(int key)
 		std::cout << "Client to remove not found" << std::endl;
 		return;
 	}
+	this->_nickUsed.erase(toRemove->second->GetNickname());
 	for (channelMap::iterator it = _channels.begin(); it != _channels.end(); it++)
 	{
 		if (it->second->IsInChannel(toRemove->second->GetNickname()))
