@@ -19,6 +19,7 @@
 //
 #define ERR_NONICKGIVEN		"431"
 #define ERR_NICKNAMEINUSE	"433"
+#define ERR_ALREADYREGISTRED "462"
 #define	ERR_BANNEDFROMCHAN	"474"
 #define ERR_BADCHANNELKEY	"475"
 
@@ -43,6 +44,7 @@ public:
 	public:
 		static void	noNickGiven(Client &client);
 		static void nickInUse(Client &client, const std::string &nickName);
+		static void	alreadyRegistered(Client &client);
 		static void	bannedFromChan(Client &client, const std::string &channName);
 		static void	badChannelKey(Client &client, const std::string &channName);
 	};

@@ -81,6 +81,15 @@ void	NumericReplies::Error::nickInUse(Client &client, const std::string &nickNam
 	client.sendNumericReply(reply.str());
 }
 
+//462 ":You may not reregister"
+void NumericReplies::Error::alreadyRegistered(Client &client) {
+	std::stringstream reply;
+
+	reply << constructNumericReplyHeader(ERR_ALREADYREGISTRED, SERVER_NAME)
+			<< ":You may not reregister"
+			<< DELIMITER;
+	client.sendNumericReply(reply.str());
+}
 //# define ERR_BANNEDFROMCHAN(client, channel) ("474 " + client + " #" + channel + " :Cannot join channel (+b)\r\n")
 void	NumericReplies::Error::bannedFromChan(Client &client, const std::string &channName) {
 	std::stringstream reply;
