@@ -76,7 +76,7 @@ void Server::ModePassword(vectorCommand args, Client *client)
 	}
 	else if (args[2] == "+k")
 	{
-		if (args.size() < 4)
+		if (args.size() < 5)
 			throw(NeedMoreParams());
 		std::string const ChannelName(args[1].substr(1));
 		channelMap::iterator it = _channels.find(ChannelName);
@@ -125,7 +125,7 @@ void Server::ModeUserLimit(vectorCommand args, Client *client)
 	}
 	else if (args[2] == "+l")
 	{
-		if (args.size() < 4)
+		if (args.size() < 5)
 			throw(NeedMoreParams());
 		std::string const ChannelName(args[1].substr(1));
 		channelMap::iterator it = _channels.find(ChannelName);
