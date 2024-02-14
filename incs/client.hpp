@@ -9,7 +9,6 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <cstring>
-#include "numericsReply.hpp"
 #include "channel.hpp"
 
 #define DELIMITER "\r\n"
@@ -22,11 +21,12 @@ class	Client
 		//constructor / destructor
 		Client();
 		Client(int fd);
-		Client(std::string username, std::string nickname);
+		Client(int fd, std::string username, std::string nickname);
 		~Client();
 
 		void	updateClientStatus(const int &epollFd);
 		void	addClientToEpoll(const int &epollFd);
+		void	sendNumericReply(const std::string &message);
 		void	addMessageToSendbox(std::string message);
 
 		//getters
@@ -34,12 +34,17 @@ class	Client
 		bool		GetAuthor() const;
 		std::string	GetNickname() const;
 		std::string	GetUsername() const;
+		std::string		GetRealname() const;
 		bool		GetPassword() const;
+		bool		IsAuthenticate() const;
+
 
 		//setters
 		void	SetPassword();
 		void	SetUsername(std::string const &username);
 		void	SetNickname(std::string const &nickname);
+		void	SetRealname(std::string const &realname);
+		void	SetAuthenticate(void);
 
 		void	receiveMsg();
 		void	handleString(const std::string &toParse);
@@ -49,11 +54,13 @@ class	Client
 		bool		_haveAuthor;
 		bool		_isInEpoll;
 		bool		_password;
+		bool		_authenticate;
 
 		std::string				_clientBuffer;
 		struct epoll_event		_clientEpollevent;
 		std::string				_nickname;
 		std::string				_username;
+		std::string				_realname;
 		std::queue<std::string>	_msgToSend;
 };
 

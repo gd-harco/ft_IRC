@@ -4,6 +4,7 @@
 
 Server *serv;
 
+
 void	handleSigInt(int sig);
 
 int	main(int argc, char **argv)

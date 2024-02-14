@@ -8,17 +8,21 @@ Client::Client()
 {
 }
 
-Client::Client(int fd): _fd(fd), _isInEpoll(false)
+Client::Client(int fd): _fd(fd), _haveAuthor(false), _isInEpoll(false), _password(false), _authenticate(false)
 {
-	_password = false;
-	_haveAuthor = false;
 	memset(&this->_clientEpollevent, '\0', sizeof (struct epoll_event));
 	this->_clientEpollevent.events = EPOLLIN;
 	this->_clientEpollevent.data.fd = fd;
 }
 
-Client::Client(std::string username, std::string nickname): _nickname(nickname) ,_username(username)
+Client::Client(int fd, std::string username, std::string nickname): _fd(fd), _nickname(nickname) ,_username(username)
 {
+	_isInEpoll = false;
+	_password = true;
+	_authenticate = false;
+	memset(&this->_clientEpollevent, '\0', sizeof (struct epoll_event));
+	this->_clientEpollevent.events = EPOLLIN;
+	this->_clientEpollevent.data.fd = fd;
 }
 
 Client::~Client()
@@ -41,6 +45,10 @@ void	Client::updateClientStatus(const int &epollFd) {
 	else
 		this->_clientEpollevent.events = EPOLLIN | EPOLLOUT;
 	epoll_ctl(epollFd, EPOLL_CTL_MOD, this->_fd, &this->_clientEpollevent);
+}
+
+void Client::sendNumericReply(const std::string &message) {
+	this->_msgToSend.push(message);
 }
 
 void Client::addMessageToSendbox(std::string message) {
@@ -74,9 +82,14 @@ void	Client::handleString(const std::string &toParse) {
 				throw std::runtime_error("Message are left in the queue after a non-terminated message");
 			return;
 		}
-		//TODO this is evil, move all chec in the HandelCommand logic please ?
-		if (serv->HandleCommand(toProcess.front(), this) && this->GetPassword() && !this->GetNickname().empty() && !this->GetUsername().empty()) {
-			std::cout << "dealt string: " << toProcess.front() << std::endl;
+		//TODO this is evil, move all check in the HandelCommand logic please ?
+		try {
+			if (serv->HandleCommand(toProcess.front(), this) && this->GetPassword() && !this->GetNickname().empty() &&
+				!this->GetUsername().empty()) {
+				std::cout << "dealt string: " << toProcess.front() << std::endl;
+			}
+		} catch (Server::BadPassword &e) {
+			throw e;
 		}
 		toProcess.pop();
 	}
@@ -84,10 +97,18 @@ void	Client::handleString(const std::string &toParse) {
 
 
 void Client::receiveMsg() {
-	std::string toSend = _msgToSend.front();
-	send(this->_fd, toSend.c_str(), toSend.size(), 0);
-	_msgToSend.pop();
+	while (!_msgToSend.empty()) {
+		std::string toSend = _msgToSend.front();
+		send(this->_fd, toSend.c_str(), toSend.size(), 0);
+		_msgToSend.pop();
+	}
 }
+
+void Client::SetAuthenticate()
+{
+	_authenticate = true;
+}
+
 
 void Client::SetPassword()
 {
@@ -102,6 +123,12 @@ void Client::SetUsername(std::string const &username)
 {
 	_username = username;
 }
+
+void Client::SetRealname(std::string const &realname)
+{
+	_realname = realname;
+}
+
 
 bool Client::GetPassword() const
 {
@@ -126,4 +153,14 @@ std::string Client::GetUsername() const
 std::string Client::GetNickname() const
 {
 	return (_nickname);
+}
+
+bool Client::IsAuthenticate() const
+{
+	return (_authenticate);
+}
+
+std::string Client::GetRealname() const
+{
+	return (_realname);
 }

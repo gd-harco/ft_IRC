@@ -1,5 +1,4 @@
 #include "server.hpp"
-
 #include <unistd.h>
 #include <csignal>
 
@@ -83,12 +82,14 @@ void Server::handleEventEpollin(struct epoll_event event, int currFd)
 
 Server::Server(uint64_t port, std::string password)
 {
+	int	option = 1;
 	_port = port;
 	_password = password;
 	_socket = socket(AF_INET, SOCK_STREAM, 0);
 	if (_socket == -1) {
 		throw std::runtime_error("Failed to create socket");
 	}
+	setsockopt(this->_socket, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
 	std::cout << "Created a socket with fd: " << this->_socket << std::endl;
 	_sockaddr.sin_family = AF_INET;
 	_sockaddr.sin_port =htons(this->_port);
@@ -125,7 +126,7 @@ void Server::SetMap()
 	// _commands["KICK"] = &Server::kick;
 	// _commands["INVITE"] = &Server::invite;
 	// _commands["TOPIC"] = &Server::topic;
-	// _commands["MODE"] = &Server::mode;
+	_commands["MODE"] = &Server::mode;
 	_commands["PRIVMSG"] = &Server::privmsg;
 	_commands["JOIN"] = &Server::join;
 	_commands["PART"] = &Server::part;
@@ -147,6 +148,19 @@ void Server::NewConnectionRequest(int fd)
 	Client *addedClient = new Client(clientFd);
 	AddClient(clientFd, addedClient);
 }
+
+void Server::CheckConnection(Client *client)
+{
+
+	if (client->GetPassword() && !client->GetNickname().empty() && !client->GetUsername().empty())
+	{
+		client->SetAuthenticate();
+//		client->addMessageToSendbox(":irc.localhost 001 " + client->GetUsername() + " :Welcome to the " + "networkName" + " Network, " + client->GetUsername() + "!\r\n");
+		NumericReplies::reply::welcome(*client);
+client->updateClientStatus(this->_epollFd);
+	}
+}
+
 
 void Server::HandleEvent(int fd)
 {
@@ -187,42 +201,92 @@ Server &Server::operator=(const Server &server)
 bool	Server::HandleCommand(std::string const &msg, Client *client)
 {
 	std::istringstream		SepMsg(msg);
-	std::string				Command;
 	std::string				pushBackArgs;
-	vectorCommand	Args;
+	vectorCommand			ParsMsg = ParsCommand(msg);
 
-	SepMsg >> Command;
-	while (!SepMsg.eof())
-	{
-		SepMsg >> pushBackArgs;
-		Args.push_back(pushBackArgs);
-	}
-
-	if (Command == "USER" || Command == "PRIVMSG")
-		Args.push_back(msg.substr(msg.find(":") + 1, msg.size() - msg.find(":") - 3));
 	try
 	{
-		Handler	function = _commands.at(Command);
-		(this->*function)(Args, client);
-		Args.clear();
-		if (Command != "PASS")
+		Handler	function = _commands.at(ParsMsg[0]);
+		(this->*function)(ParsMsg, client);
+		if (!client->IsAuthenticate())
+			CheckConnection(client);
+		ParsMsg.clear();
+		if (ParsMsg[0] != "PASS")
 			std::cout << client->GetUsername() << ", " << client->GetNickname() << ": " << msg;
-
 		return (false);
+	}
+	catch (NotAuthenticate &e)
+	{
+		std::cout << e.what() << std::endl;
+		return (false);
+	}
+	catch (NeedMoreParams &e)
+	{
+		std::cout << e.what() << std::endl;
+		return (false);
+	}
+	catch (BadPassword &e)
+	{
+		throw BadPassword();
+	}
+	catch (AlreadyRegistred &e)
+	{
+		std::cout << e.what() << std::endl;
+		return (false);
+	}
+	catch (UnableToCreateChannel &e)
+	{
+		std::cout << e.what() << std::endl;
+		return (false);
+	}
+	catch (NotAChannel &e)
+	{
+		std::cout << e.what() << std::endl;
+		return (false);
+	}
+	catch (UserAlreadyExist &e)
+	{
+		std::cout << e.what() << std::endl;
+		return (false);
+	}
+	catch (NickAlreadyExist &e)
+	{
+		std::cout << e.what() << std::endl;
+		return (false);
+	}
+	catch (ChannelNotFound &e)
+	{
+		std::cout << e.what() << std::endl;
+		return (false);
+	}
+	catch (ClientNotFound &e)
+	{
+		std::cout << e.what() << std::endl;
+		return (false);
+	}
+	catch (NotInTheChannel &e)
+	{
+		std::cout << e.what() << std::endl;
+		return (false);
+	}
+	catch (std::runtime_error &e) {
+		std::cout << e.what() << std::endl;
+		return false;
 	}
 	catch (std::exception &e)
 	{
-		while (!Args.empty())
+		while (!ParsMsg.empty())
 		{
-			std::cout << Args.back() << std::endl;
-			Args.pop_back();
+			std::cout << ParsMsg.back() << std::endl;
+			ParsMsg.pop_back();
 		}
 		std::cout << "404 cmd not found" << std::endl;
-		Args.clear();
+		ParsMsg.clear();
 		std::cout << client->GetUsername() << ", " << client->GetNickname() << ": " << msg;
 		return (true);
 	}
 	//TODO send numeric reply to client
+	return (true);
 }
 
 channelMap & Server::GetChannels()
@@ -286,6 +350,22 @@ void Server::RemoveClient(int key)
 		std::cout << "Client to remove not found" << std::endl;
 		return;
 	}
+	this->_nickUsed.erase(toRemove->second->GetNickname());
+	std::map<vectorCommand , Client *> partToExecute;
+	for (channelMap::iterator it = _channels.begin(); it != _channels.end(); it++)
+	{
+		if (it->second->IsInChannel(toRemove->second->GetNickname()))
+		{
+			vectorCommand	PartCommand;
+			PartCommand.push_back("PART");
+			PartCommand.push_back("#" + it->first);
+			partToExecute.insert(std::make_pair(PartCommand,toRemove->second));
+//			part(PartCommand, toRemove->second);
+		}
+	}
+	//execute all part stored in the partToExecute map.
+	for (std::map<vectorCommand , Client *>::iterator it = partToExecute.begin(); it != partToExecute.end(); ++it)
+		part(it->first, it->second);
 	close(key);
 	delete toRemove->second;
 	_clients.erase(key);
