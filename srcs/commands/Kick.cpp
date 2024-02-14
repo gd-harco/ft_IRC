@@ -32,7 +32,10 @@ void Server::kick(vectorCommand args, Client *client)
                 NumericReplies::Error::bannedFromChan(*client, channelName);
             }
             else
+            {
                 channel->RemoveClient(args[i]);
+                // TODO: Envoyer un message au client concerné
+            }
         }
 	}
 	catch(std::exception &e)
