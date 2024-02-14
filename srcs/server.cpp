@@ -53,8 +53,8 @@ void Server::SetMap()
 	_commands["PASS"] = &Server::pass;
 	_commands["USER"] = &Server::user;
 	_commands["NICK"] = &Server::nick;
-	 _commands["KICK"] = &Server::kick;
-	// _commands["INVITE"] = &Server::invite;
+	_commands["KICK"] = &Server::kick;
+	_commands["INVITE"] = &Server::invite;
 	// _commands["TOPIC"] = &Server::topic;
 	_commands["MODE"] = &Server::mode;
 	_commands["PRIVMSG"] = &Server::privmsg;
