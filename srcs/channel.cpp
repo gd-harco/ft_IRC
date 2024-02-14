@@ -44,7 +44,10 @@ void Channel::SetTopics(std::string const &NewTopic)
 
 void Channel::SetName(std::string const &NewName)
 {
-	_name = NewName;
+	std::stringstream newNameLower;
+	for (size_t i = 0; i < NewName.length(); ++i)
+		newNameLower << tolower(NewName[i]);
+	_name = newNameLower.str();
 }
 
 void Channel::AddClient(std::string key, int value)
@@ -122,4 +125,3 @@ void Channel::SetRInvite(bool status)
 {
 	_rInvite = status;
 }
-

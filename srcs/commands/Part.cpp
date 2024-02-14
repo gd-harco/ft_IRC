@@ -3,6 +3,7 @@
 //
 
 #include "server.hpp"
+#include "utility.hpp"
 
 void Server::part(vectorCommand args, Client *client)
 {
@@ -10,7 +11,7 @@ void Server::part(vectorCommand args, Client *client)
 	{
 		if (args[1][0] != '#')
 			throw(NotAChannel());
-		std::string const ChannelName(args[1].substr(1));
+		std::string const ChannelName = processedChannelName(args[1]);
 		const channelMap::iterator ChannelIt =  _channels.find(ChannelName);
 		if (ChannelIt == _channels.end())
 			throw (ChannelNotFound());
@@ -42,4 +43,3 @@ void Server::part(vectorCommand args, Client *client)
 		std::cout << e.what() << std::endl;
 	}
 }
-
