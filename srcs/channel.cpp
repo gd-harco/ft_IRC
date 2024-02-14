@@ -6,7 +6,7 @@ Channel::Channel()
 Channel::~Channel()
 {}
 
-Channel::Channel(const std::string &name, const std::string &opName): _name(name), _havePassword(false)
+Channel::Channel(const std::string &name, const std::string &opName): _password(""), _topic(""), _name(name), _rTopic(false), _rInvite(false), _userLimit(-1)
 {
 	this->SetOp(opName);
 }
@@ -16,7 +16,7 @@ std::string Channel::GetName() const
 	return (_name);
 }
 
-std::map<std::string, int> Channel::GetClients() const
+stringClientMap Channel::GetClients() const
 {
 	return (_clients);
 }
@@ -31,24 +31,18 @@ std::string Channel::GetTopics() const
 	return (_topic);
 }
 
-bool Channel::GetHavePassword() const
-{
-	return (_havePassword);
-}
 
-
-void Channel::SetPassword(std::string &NewPassword)
+void Channel::SetPassword(std::string const &NewPassword)
 {
-	_havePassword = true;
 	_password = NewPassword;
 }
 
-void Channel::SetTopics(std::string &NewTopic)
+void Channel::SetTopics(std::string const &NewTopic)
 {
 	_topic = NewTopic;
 }
 
-void Channel::SetName(std::string &NewName)
+void Channel::SetName(std::string const &NewName)
 {
 	_name = NewName;
 }
@@ -73,7 +67,8 @@ std::string Channel::GetAllNickname()
 	{
 		if (std::find(_op.begin(), _op.end(), it->first) != _op.end())
 			str << " @" << it->first;
-		str << " " << it->first;
+		else
+			str << " " << it->first;
 	}
 	return (str.str());
 }
@@ -88,10 +83,43 @@ void Channel::SetOp(std::string const &op)
 	_op.push_back(op);
 }
 
+void Channel::RemoveOp(std::string const &op)
+{
+	std::vector<std::string>::iterator const it = std::find(_op.begin(), _op.end(), op);
+	if (it != _op.end())
+		_op.erase(it);
+}
+
+
 bool Channel::IsInChannel(std::string const &user) const
 {
 	if (_clients.find(user) != _clients.end())
 		return (true);
 	return (false);
+}
+
+void Channel::SetRTopic(bool status)
+{
+	_rTopic = status;
+}
+
+bool Channel::IsRestrictChannel() const
+{
+	return _rTopic;
+}
+
+bool Channel::GetUserLimit() const
+{
+	return (_userLimit);
+}
+
+void Channel::SetUserLimit(int NewLimit)
+{
+	_userLimit = NewLimit;
+}
+
+void Channel::SetRInvite(bool status)
+{
+	_rInvite = status;
 }
 

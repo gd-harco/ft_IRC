@@ -8,12 +8,10 @@ vectorCommand	ParsCommand(std::string const &msg)
 
 	if (FindDoublePoint != msg.npos)
 	{
-		std::string	Msg;
-		std::string	Args;
 		std::string	PushBackArg;
 
-		Args = msg.substr(0, FindDoublePoint);
-		Msg = msg.substr(FindDoublePoint, msg.size());
+		std::string Args = msg.substr(0, FindDoublePoint);
+		std::string Msg = msg.substr(FindDoublePoint, msg.size());
 		std::stringstream	SepMsg(Args);
 		while (!SepMsg.eof())
 		{

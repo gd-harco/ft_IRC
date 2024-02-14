@@ -38,6 +38,10 @@ public:
 		static void topic(Client &client, const std::string &channName, const std::string &topic);
 		static void	nameInChannel(Client &client, const std::string &channName, const std::string &allNick);
 		static void	endOfName(Client &client, const std::string &channName);
+		static void	removeModeLimit(Client &client, const std::string &channelName);
+		static void	addModeLimit(Client &client, const std::string &channelName, const std::string &number);
+		static void removeModePassword(Client &client, const std::string &channelName);
+		static void	addModePassword(Client &client, const std::string &channelName, const std::string &password);
 	};
 
 	class Error {

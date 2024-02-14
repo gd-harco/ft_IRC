@@ -9,9 +9,9 @@ void NumericReplies::reply::welcome(Client &client)
 	std::stringstream reply;
 
 	reply << constructNumericReplyHeader(RPL_WELCOME, SERVER_NAME)
-			<< client.GetUsername()
+			<< client.GetNickname()
 			<< " :Welcome to the " << NETWORK_NAME
-			<< " Network " << client.GetUsername()
+			<< " Network " << client.GetNickname()
 			<< "!" + client.GetRealname()
 			<< "@localhost" << DELIMITER;
 	client.sendNumericReply(reply.str());
@@ -59,6 +59,39 @@ void	NumericReplies::reply::endOfName(Client &client, const std::string &channNa
 			<< channName  << " :End of /NAMES list." << DELIMITER;
 	client.sendNumericReply(reply.str());
 }
+
+void NumericReplies::reply::addModeLimit(Client &client, const std::string &channelName, const std::string &number)
+{
+	std::stringstream reply;
+	reply << constructNumericReplyHeader("", SERVER_NAME)
+			<< "MODE #" << channelName << " +l " << number << DELIMITER;
+	client.sendNumericReply(reply.str());
+}
+
+void NumericReplies::reply::removeModeLimit(Client &client, const std::string &channelName)
+{
+	std::stringstream reply;
+	reply << constructNumericReplyHeader("", SERVER_NAME)
+			<< "MODE #" << channelName << " -l" << DELIMITER;
+	client.sendNumericReply(reply.str());
+}
+
+void NumericReplies::reply::addModePassword(Client &client, const std::string &channelName, const std::string &password)
+{
+	std::stringstream reply;
+	reply << constructNumericReplyHeader("", SERVER_NAME)
+			<< "MODE #" << channelName << " +k " << password << DELIMITER;
+	client.sendNumericReply(reply.str());
+}
+
+void NumericReplies::reply::removeModePassword(Client &client, const std::string &channelName)
+{
+	std::stringstream reply;
+	reply << constructNumericReplyHeader("", SERVER_NAME)
+			<< "MODE #" << channelName << " -k" << DELIMITER;
+	client.sendNumericReply(reply.str());
+}
+
 
 //431 * :No nickname given
 void	NumericReplies::Error::noNickGiven(Client &client) {
@@ -115,7 +148,7 @@ void	NumericReplies::Error::badChannelKey(Client &client, const std::string &cha
 
 // # define RPL_JOIN(user, channel) (":" + user + " JOIN #" + channel + "\r\n")
 void	NumericReplies::Notification::joinNotify(Client &client, const std::string &channName) {
-	client.sendNumericReply(":" + client.GetUsername() + " JOIN #" + channName + DELIMITER);
+	client.sendNumericReply(":" + client.GetNickname() + " JOIN #" + channName + DELIMITER);
 }
 
 std::string	NumericReplies::constructNumericReplyHeader(const std::string &numericID, const std::string &hostName) {
