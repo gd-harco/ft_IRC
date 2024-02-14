@@ -33,6 +33,7 @@ public:
 	class Notification {
 	public:
 		static void	joinNotify(Client &client, const std::string &channName);
+		static void kickNotify(Client &client, const std::string &sourceUser, const std::string &channel, const std::string reason);
 	};
 
 	class reply {

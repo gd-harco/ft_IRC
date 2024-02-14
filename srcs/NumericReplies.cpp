@@ -196,6 +196,11 @@ void	NumericReplies::Notification::joinNotify(Client &client, const std::string 
 	client.sendNumericReply(":" + client.GetNickname() + " JOIN #" + channName + DELIMITER);
 }
 
+void	NumericReplies::Notification::kickNotify(Client &client, const std::string &sourceUser, const std::string &channel, const std::string reason)
+{
+	client.sendNumericReply(":" + sourceUser + " KICK #" + channel + " " + client.GetNickname() + " " + reason + DELIMITER);
+}
+
 std::string	NumericReplies::constructNumericReplyHeader(const std::string &numericID, const std::string &hostName) {
 	std::stringstream   result;
 
