@@ -92,6 +92,16 @@ void NumericReplies::reply::removeModePassword(Client &client, const std::string
 	client.sendNumericReply(reply.str());
 }
 
+//403 <client> <channel>: No such channel
+void NumericReplies::Error::noSuchChannel(Client &client, const std::string channel)
+{
+	std::stringstream reply;
+
+	reply << constructNumericReplyHeader(ERR_NOSUCHCHANNEL, SERVER_NAME)
+		<< channel
+		<< " :No such channel" << DELIMITER;
+	client.sendNumericReply(reply.str());
+}
 
 //431 * :No nickname given
 void	NumericReplies::Error::noNickGiven(Client &client) {
@@ -103,7 +113,7 @@ void	NumericReplies::Error::noNickGiven(Client &client) {
 	client.sendNumericReply(reply.str());
 }
 
-// 433 <nick> :Nickname is already in use"
+// 433 <nick> :Nickname is already in use
 void	NumericReplies::Error::nickInUse(Client &client, const std::string &nickName) {
 	std::stringstream reply;
 
@@ -111,6 +121,39 @@ void	NumericReplies::Error::nickInUse(Client &client, const std::string &nickNam
 			<< nickName
 			<< " :" << nickName
 			<< " is already in use" << DELIMITER;
+	client.sendNumericReply(reply.str());
+}
+
+// 441 <nick> <channel>: They aren't on that channel
+void	NumericReplies::Error::userNotInChannel(Client &client, const std::string &nickName, const std::string &channel) {
+	std::stringstream reply;
+
+	reply << constructNumericReplyHeader(ERR_USERNOTINCHANNEL, SERVER_NAME)
+			<< nickName << " "
+			<< channel << " :They aren't on that channel"
+			<< DELIMITER;
+	client.sendNumericReply(reply.str());
+}
+
+// 442 <channel> : Your not on that channel
+void	NumericReplies::Error::notOnChannel(Client &client, const std::string &channel)
+{
+	std::stringstream reply;
+
+	reply << constructNumericReplyHeader(ERR_NOTONCHANNEL, SERVER_NAME)
+			<< channel << " :Your not on that channel"
+			<< DELIMITER;
+	client.sendNumericReply(reply.str());
+}
+
+// 461 <command> : Not enough paramters
+void	NumericReplies::Error::needMoreParams(Client &client, const std::string &command)
+{
+	std::stringstream reply;
+
+	reply << constructNumericReplyHeader(ERR_NOTONCHANNEL, SERVER_NAME)
+			<< command << " :Not enough parameters"
+			<< DELIMITER;
 	client.sendNumericReply(reply.str());
 }
 
@@ -132,6 +175,17 @@ void	NumericReplies::Error::badChannelKey(Client &client, const std::string &cha
 			<< client.GetUsername() << " #"
 			<< channName
 			<< " :Cannot join channel (+k)" << DELIMITER;
+	client.sendNumericReply(reply.str());
+}
+
+// 482 <client> <channel> :You're not channel operator
+void	NumericReplies::Error::chanOpPrivsNeeded(Client &client, const std::string &channName)
+{
+	std::stringstream reply;
+
+		reply << constructNumericReplyHeader(ERR_NOTONCHANNEL, SERVER_NAME)
+			<< channName << " :You're not channel operator"
+			<< DELIMITER;
 	client.sendNumericReply(reply.str());
 }
 

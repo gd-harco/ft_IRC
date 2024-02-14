@@ -30,6 +30,7 @@ class	Channel
 		bool			IsInChannel(std::string const &user) const;
 		bool			IsRestrictChannel() const;
 		bool			GetUserLimit() const;
+		bool			isOp(std::string const &user);
 
 		//setters
 		void	SetPassword(std::string const &NewPassword);

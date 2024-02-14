@@ -113,6 +113,13 @@ bool Channel::GetUserLimit() const
 	return (_userLimit);
 }
 
+bool Channel::isOp(std::string const &user)
+{
+	for (size_t i = 0; i < _op.size(); i++)
+		if (_op[i] == user)
+			return 1;
+	return (0);
+}
 void Channel::SetUserLimit(int NewLimit)
 {
 	_userLimit = NewLimit;
