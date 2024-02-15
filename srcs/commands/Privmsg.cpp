@@ -57,10 +57,10 @@ void Server::ClientPrivMsg(vectorCommand args, Client *client)
 				std::stringstream message;
 				std::string	content = args[args.size() - 1].substr(args[args.size() - 1].find(":") + 1);
 				std::cout << "message " << content << "send to " << it->second->GetUsername() << std::endl;
-//				message << client->GetRealname() << " : " << content << DELIMITER;
 				message << client->GetNickname() << " PRIVMSG "  << it->second->GetNickname() << " : " << content ;
 				it->second->addMessageToSendbox(message.str());
 				it->second->updateClientStatus(this->_epollFd);
+				std::cout << "message " << content << "send to " << it->second->GetNickname() << std::endl;
 				return ;
 			}
 		}
@@ -71,7 +71,6 @@ void Server::ClientPrivMsg(vectorCommand args, Client *client)
 		throw ;
 	}
 }
-
 void Server::ChannelPrivMsg(vectorCommand args, Client *client)
 {
 	std::string const ChannelName = processedChannelName(args[1]);

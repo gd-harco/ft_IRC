@@ -1,5 +1,6 @@
 #include "server.hpp"
 #include <unistd.h>
+#include <csignal>
 
 Server::Server()
 {
@@ -8,6 +9,75 @@ Server::Server()
 Server::Server(const Server &server)
 {
 	*this = server;
+}
+
+void	handleSigInt(int sig);
+
+void Server::launchServer(void)
+{
+	signal(SIGINT, handleSigInt);
+	std::cout << "Waiting for incoming connection on port " << this->GetPort() << std::endl;
+	struct epoll_event eventsCaught[MAX_EVENT];
+
+	while (true)
+		waitLoop(eventsCaught);
+}
+
+void Server::waitLoop(struct epoll_event eventsCaught[MAX_EVENT])
+{
+	int nfds = epoll_wait(this->GetEpollFd(), eventsCaught, MAX_EVENT, -1);
+	if (nfds == -1)
+	{
+		perror("epoll wait");
+		exit(1);
+	}
+	for (int i = 0; i < nfds; ++i) {
+		handleEvent(eventsCaught[i]);	
+	}
+}
+
+void Server::handleEvent(struct epoll_event event)
+{
+	int currFd = event.data.fd;
+	if (currFd == this->GetScocket())
+	{
+		//this mean we got a new incoming connection
+		std::cout << "new connection detected" << std::endl;
+		this->NewConnectionRequest(currFd);
+	}
+	else
+	{
+		handleExistingConnection(event);
+	}
+}
+
+void Server::handleExistingConnection(struct epoll_event event, int currFd)
+{
+	if (event.events & EPOLLOUT)
+	{
+		this->sendMsg(event.data.fd);
+	}
+	if (event.events & EPOLLIN)
+	{
+		handleEventEpollin(event, currFd);
+	}
+}
+
+void Server::handleEventEpollin(struct epoll_event event, int currFd)
+{
+	//si le read fail, alors le client a ete deco
+	try
+	{
+		this->HandleEvent(currFd);
+	}
+	catch (std::exception &e)
+	{
+		std::cout << e.what() << std::endl;
+		//parcourir les channels pour voir si il y a le fd et le suppr
+		this->RemoveClient(currFd);
+		epoll_ctl(this->GetEpollFd(), EPOLL_CTL_DEL, currFd, 0);
+		close(currFd);
+	}
 }
 
 Server::Server(uint64_t port, std::string password)
