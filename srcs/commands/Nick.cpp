@@ -4,6 +4,7 @@
 
 #include "server.hpp"
 
+bool	validNickname(const std::string &nick);
 
 //TODO Implement this ?
 //The NICK message may be sent from the server to clients to acknowledge their NICK command was successful,
@@ -15,6 +16,11 @@ void Server::nick(vectorCommand args, Client *client)
 		NumericReplies::Error::noNickGiven(*client);
 		throw std::runtime_error("Server::Commands::noNickGiven:  no nick was given");
 	}
+	if (!validNickname(args[1]))
+	{
+		//TODO: code and sent NR 432
+		throw ErroneusNickName();
+	}
 	if (this->_nickUsed.find(args[1]) != this->_nickUsed.end()) {
 		NumericReplies::Error::nickInUse(*client, args[1]);
 		client->updateClientStatus(this->_epollFd);
@@ -25,4 +31,12 @@ void Server::nick(vectorCommand args, Client *client)
 	this->_nickUsed.insert(args[1]);
 	client->SetNickname(args[1]);
 	std::cout << client->GetNickname() << " " << client->GetUsername() << " " << client->GetFd() << ": " << "have new nickname" << std::endl;
+}
+
+bool	validNickname(const std::string &nick) {
+	if (nick[0] ==  '#' || nick[0] == ':' || nick[0] == '$')
+		return false;
+	if (nick.find_first_of(" ,*?!@") != std::string::npos)
+		return false;
+	return true;
 }
