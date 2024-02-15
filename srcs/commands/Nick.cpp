@@ -14,11 +14,13 @@ void Server::nick(vectorCommand args, Client *client)
 {
 	if (args.size() == 1 || args[1].empty()) {
 		NumericReplies::Error::noNickGiven(*client);
+		client->updateClientStatus(_epollFd);
 		throw std::runtime_error("Server::Commands::noNickGiven:  no nick was given");
 	}
 	if (!validNickname(args[1]))
 	{
-		//TODO: code and sent NR 432
+		NumericReplies::Error::erroneusNickName(*client, args[1]);
+		client->updateClientStatus(_epollFd);
 		throw ErroneusNickName();
 	}
 	if (this->_nickUsed.find(args[1]) != this->_nickUsed.end()) {

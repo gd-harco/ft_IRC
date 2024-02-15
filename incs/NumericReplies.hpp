@@ -18,6 +18,7 @@
 #define	RPL_ENDOFNAME	"366"
 //
 #define ERR_NONICKGIVEN		"431"
+#define ERR_ERRONEUSNICKNAME	"432"
 #define ERR_NICKNAMEINUSE	"433"
 #define ERR_ALREADYREGISTRED "462"
 #define	ERR_BANNEDFROMCHAN	"474"
@@ -47,6 +48,7 @@ public:
 	class Error {
 	public:
 		static void	noNickGiven(Client &client);
+		static void	erroneusNickName(Client &client, const std::string &nickName);
 		static void nickInUse(Client &client, const std::string &nickName);
 		static void	alreadyRegistered(Client &client);
 		static void	bannedFromChan(Client &client, const std::string &channName);
