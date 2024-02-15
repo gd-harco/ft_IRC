@@ -3,6 +3,7 @@
 //
 
 #include "server.hpp"
+#include "utility.hpp"
 
 void Server::join(vectorCommand args, Client *client)
 {
@@ -21,7 +22,7 @@ void Server::join(vectorCommand args, Client *client)
 		client->updateClientStatus(_epollFd);
 		throw(UnableToCreateChannel());
 	}
-	std::string RealNameChannel(args[1].substr(1));
+	std::string const RealNameChannel = processedChannelName(args[1]);
 	if (_channels.find(RealNameChannel) == _channels.end())
 	{
 		std::cout << client->GetUsername() << " create channel " << RealNameChannel << std::endl;
