@@ -32,7 +32,7 @@ void Server::waitLoop(struct epoll_event eventsCaught[MAX_EVENT])
 		exit(1);
 	}
 	for (int i = 0; i < nfds; ++i) {
-		handleEvent(eventsCaught[i]);	
+		handleEvent(eventsCaught[i]);
 	}
 }
 
@@ -47,7 +47,7 @@ void Server::handleEvent(struct epoll_event event)
 	}
 	else
 	{
-		handleExistingConnection(event);
+		handleExistingConnection(event, currFd);
 	}
 }
 
@@ -59,11 +59,11 @@ void Server::handleExistingConnection(struct epoll_event event, int currFd)
 	}
 	if (event.events & EPOLLIN)
 	{
-		handleEventEpollin(event, currFd);
+		handleEventEpollin(currFd);
 	}
 }
 
-void Server::handleEventEpollin(struct epoll_event event, int currFd)
+void Server::handleEventEpollin(int currFd)
 {
 	//si le read fail, alors le client a ete deco
 	try
