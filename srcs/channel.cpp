@@ -111,7 +111,7 @@ bool Channel::IsRestrictChannel() const
 	return _rTopic;
 }
 
-bool Channel::GetUserLimit() const
+int Channel::GetUserLimit() const
 {
 	return (_userLimit);
 }
