@@ -61,3 +61,7 @@ const char *Server::UnableToCreateChannel::what() const throw()
 	return ("Server::Commands::UnableToCreateChannel:  User cannot create this channel (no #)");
 }
 
+const char *Server::ErroneusNickName::what() const throw()
+{
+	return ("Server::Commands::ErroneusNickName:  erroneus nick name");
+}
