@@ -45,7 +45,7 @@ class	Server
 		void waitLoop(struct epoll_event eventsCaught[MAX_EVENT]);
 		void handleEvent(struct epoll_event event);
 		void handleExistingConnection(struct epoll_event event, int currFd);
-		void handleEventEpollin(struct epoll_event event, int currFd);
+		void handleEventEpollin(int currFd);
 
 		Server &operator=(const Server &server);
 
