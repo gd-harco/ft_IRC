@@ -9,6 +9,8 @@ void Server::privmsg(vectorCommand args, Client *client)
 {
 	if (client->GetUsername().empty() || client->GetNickname().empty() || !client->GetPassword())
 		throw(NotAuthenticate());
+	if (args.size() != 3)
+		throw (NeedMoreParams());
 	if (args[1].find("#") != 0)
 	{
 		try
