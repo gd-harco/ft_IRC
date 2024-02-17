@@ -148,6 +148,11 @@ class	Server
 		public:
 			virtual const char *what() const throw();
 		};
+		class AlreadyOnChannel : public std::exception
+		{
+		public:
+			virtual const char *what() const throw();
+		}
 
 		void	deleteClient(fdClientMap::iterator toDelete) const;
 		void	deleteChannel(channelMap::iterator toDelete);
