@@ -11,6 +11,14 @@ void Server::invite(vectorCommand args, Client *client)
         }
         std::string channelName = args[1].substr(1);
         std::string userToInvite = args[2];
+        if (_channels.find(channelName) == _channels.end())
+        {
+            NumericReplies::Error::noSuchChannel(*client, channelName);
+            client->updateClientStatus(_epollFd);
+            throw NotAChannel();
+        }
+        Channel *channel = _channels.find(channelName)->second;
+        
     }
     catch(const std::exception& e)
     {
