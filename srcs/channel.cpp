@@ -81,6 +81,11 @@ const std::vector<std::string> &Channel::GetOp() const
 	return (_op);
 }
 
+bool Channel::GetRTopic()
+{
+	return _rTopic;
+}
+
 void Channel::SetOp(std::string const &op)
 {
 	_op.push_back(op);

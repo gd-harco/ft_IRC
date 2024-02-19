@@ -126,6 +126,14 @@ void	NumericReplies::Error::noNickGiven(Client &client) {
 			<< DELIMITER;
 	client.sendNumericReply(reply.str());
 }
+// 432 <nick> :Erroneus nickname
+void	NumericReplies::Error::erroneusNickName(Client &client, const std::string &nickName) {
+	std::stringstream reply;
+	reply << constructNumericReplyHeader(ERR_ERRONEUSNICKNAME, SERVER_NAME)
+			<< nickName
+			<< ":Erroneus nickname" << DELIMITER;
+	client.sendNumericReply(reply.str());
+}
 
 // 433 <nick> :Nickname is already in use
 void	NumericReplies::Error::nickInUse(Client &client, const std::string &nickName) {

@@ -125,7 +125,7 @@ void Server::SetMap()
 	_commands["NICK"] = &Server::nick;
 	_commands["KICK"] = &Server::kick;
 	_commands["INVITE"] = &Server::invite;
-	// _commands["TOPIC"] = &Server::topic;
+	_commands["TOPIC"] = &Server::topic;
 	_commands["MODE"] = &Server::mode;
 	_commands["PRIVMSG"] = &Server::privmsg;
 	_commands["JOIN"] = &Server::join;
@@ -270,6 +270,10 @@ bool	Server::HandleCommand(std::string const &msg, Client *client)
 		return (false);
 	}
 	catch (std::runtime_error &e) {
+		std::cout << e.what() << std::endl;
+		return false;
+	}
+	catch (ErroneusNickName &e) {
 		std::cout << e.what() << std::endl;
 		return false;
 	}
