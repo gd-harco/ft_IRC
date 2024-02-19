@@ -26,6 +26,7 @@ class	Channel
 		std::string		GetName() const;
 		stringClientMap	GetClients() const;
 		std::string		GetAllNickname();
+		bool			GetRTopic();
 		const std::vector<std::string>		&GetOp() const;
 		bool			IsInChannel(std::string const &user) const;
 		bool			IsRestrictChannel() const;
