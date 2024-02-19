@@ -273,6 +273,10 @@ bool	Server::HandleCommand(std::string const &msg, Client *client)
 		std::cout << e.what() << std::endl;
 		return false;
 	}
+	catch (ErroneusNickName &e) {
+		std::cout << e.what() << std::endl;
+		return false;
+	}
 	catch (std::exception &e)
 	{
 		while (!ParsMsg.empty())
