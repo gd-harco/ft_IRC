@@ -46,7 +46,7 @@ void NumericReplies::reply::inviting(Client &client, const std::string &nick, co
 
 	reply << constructNumericReplyHeader(RPL_INVITING, SERVER_NAME)
 		<< client.GetUsername() << " "
-		<< nick << " "
+		<< nick << " #"
 		<<channName << DELIMITER;
 	client.sendNumericReply(reply.str());
 
@@ -111,7 +111,8 @@ void NumericReplies::Error::noSuchChannel(Client &client, const std::string chan
 	std::stringstream reply;
 
 	reply << constructNumericReplyHeader(ERR_NOSUCHCHANNEL, SERVER_NAME)
-		<< channel
+		<< client.GetNickname() << " "
+		<< "#" << channel
 		<< " :No such channel" << DELIMITER;
 	client.sendNumericReply(reply.str());
 }
@@ -143,7 +144,8 @@ void	NumericReplies::Error::userNotInChannel(Client &client, const std::string &
 	std::stringstream reply;
 
 	reply << constructNumericReplyHeader(ERR_USERNOTINCHANNEL, SERVER_NAME)
-			<< nickName << " "
+			<< client.GetUsername() << " "
+			<< nickName << " #"
 			<< channel << " :They aren't on that channel"
 			<< DELIMITER;
 	client.sendNumericReply(reply.str());
@@ -155,6 +157,7 @@ void	NumericReplies::Error::notOnChannel(Client &client, const std::string &chan
 	std::stringstream reply;
 
 	reply << constructNumericReplyHeader(ERR_NOTONCHANNEL, SERVER_NAME)
+			<< client.GetUsername() << " "
 			<< channel << " :Your not on that channel"
 			<< DELIMITER;
 	client.sendNumericReply(reply.str());
@@ -166,7 +169,8 @@ void	NumericReplies::Error::userOnChannel(Client &client, const std::string &nic
 	std::stringstream reply;
 
 	reply << constructNumericReplyHeader(ERR_USERONCHANNEL, SERVER_NAME)
-			<< nickName << " "
+			<< client.GetUsername() << " "
+			<< nickName << " #"
 			<< channel << " :is already on channel"
 			<< DELIMITER;
 	client.sendNumericReply(reply.str());
@@ -178,6 +182,7 @@ void	NumericReplies::Error::needMoreParams(Client &client, const std::string &co
 	std::stringstream reply;
 
 	reply << constructNumericReplyHeader(ERR_NOTONCHANNEL, SERVER_NAME)
+			<< client.GetUsername() << " "
 			<< command << " :Not enough parameters"
 			<< DELIMITER;
 	client.sendNumericReply(reply.str());
@@ -189,6 +194,7 @@ void NumericReplies::Error::alreadyRegistered(Client &client) {
 	std::stringstream reply;
 
 	reply << constructNumericReplyHeader(ERR_ALREADYREGISTRED, SERVER_NAME)
+			<< client.GetUsername() << " "
 			<< ":You may not reregister"
 			<< DELIMITER;
 	client.sendNumericReply(reply.str());
@@ -221,6 +227,7 @@ void	NumericReplies::Error::chanOpPrivsNeeded(Client &client, const std::string 
 	std::stringstream reply;
 
 		reply << constructNumericReplyHeader(ERR_NOTONCHANNEL, SERVER_NAME)
+			<< client.GetUsername() << " #"
 			<< channName << " :You're not channel operator"
 			<< DELIMITER;
 	client.sendNumericReply(reply.str());
