@@ -48,6 +48,9 @@ void	Client::updateClientStatus(const int &epollFd) {
 }
 
 void Client::sendNumericReply(const std::string &message) {
+	std::cout << "---------------" << std::endl;
+	std::cout << message << std::endl;
+	std::cout << "---------------" << std::endl;
 	this->_msgToSend.push(message);
 }
 

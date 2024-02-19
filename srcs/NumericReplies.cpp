@@ -132,6 +132,7 @@ void	NumericReplies::Error::nickInUse(Client &client, const std::string &nickNam
 	std::stringstream reply;
 
 	reply << constructNumericReplyHeader(ERR_NICKNAMEINUSE, SERVER_NAME)
+			<< client.GetNickname() << " "
 			<< nickName
 			<< " :" << nickName
 			<< " is already in use" << DELIMITER;
@@ -144,7 +145,7 @@ void	NumericReplies::Error::userNotInChannel(Client &client, const std::string &
 	std::stringstream reply;
 
 	reply << constructNumericReplyHeader(ERR_USERNOTINCHANNEL, SERVER_NAME)
-			<< client.GetUsername() << " "
+			<< client.GetNickname() << " "
 			<< nickName << " #"
 			<< channel << " :They aren't on that channel"
 			<< DELIMITER;
@@ -157,7 +158,7 @@ void	NumericReplies::Error::notOnChannel(Client &client, const std::string &chan
 	std::stringstream reply;
 
 	reply << constructNumericReplyHeader(ERR_NOTONCHANNEL, SERVER_NAME)
-			<< client.GetUsername() << " "
+			<< client.GetNickname() << " #"
 			<< channel << " :Your not on that channel"
 			<< DELIMITER;
 	client.sendNumericReply(reply.str());
