@@ -66,3 +66,8 @@ const char *Server::OperatorIsNeeded::what() const throw()
 	return ("Server::Commands::OperatorIsNeeded: You're not channel operator");
 }
 
+const char *Server::AlreadyOnChannel::what() const throw()
+{
+	return ("Server::Commands::AlreadyOnChannel: User already on channel");
+}
+

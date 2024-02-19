@@ -56,6 +56,7 @@ class	Server
 		int					GetEpollFd() const;
 		int					GetScocket() const;
 		struct sockaddr_in	GetSockAddr() const;
+		Client				*findClient(std::string nickName);
 
 		//setter
 		void	AddClient(int key, Client *clientToAdd);
@@ -152,6 +153,11 @@ class	Server
 			virtual const char *what() const throw();
 		};
 		class OperatorIsNeeded : public std::exception
+		{
+		public:
+			virtual const char *what() const throw();
+		};
+		class AlreadyOnChannel : public std::exception
 		{
 		public:
 			virtual const char *what() const throw();

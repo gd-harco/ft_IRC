@@ -39,6 +39,19 @@ void NumericReplies::reply::topic(Client &client, const std::string &channName, 
 	client.sendNumericReply(reply.str());
 }
 
+// RPL_INVINTING 341
+void NumericReplies::reply::inviting(Client &client, const std::string &nick, const std::string &channName)
+{
+	std::stringstream reply;
+
+	reply << constructNumericReplyHeader(RPL_INVITING, SERVER_NAME)
+		<< client.GetUsername() << " "
+		<< nick << " "
+		<<channName << DELIMITER;
+	client.sendNumericReply(reply.str());
+
+}
+
 //#define RPL_NAMREPLY(client, channel, list_of_nicks) (":localhost 353 " + client +"user = #" + channel + " :" + list_of_nicks + "\r\n")
 void	NumericReplies::reply::nameInChannel(Client &client, const std::string &channName, const std::string &allNick) {
 	std::stringstream reply;
@@ -147,6 +160,18 @@ void	NumericReplies::Error::notOnChannel(Client &client, const std::string &chan
 	client.sendNumericReply(reply.str());
 }
 
+// 443 <nick> <channel> : is already on channel
+void	NumericReplies::Error::userOnChannel(Client &client, const std::string &nickName, const std::string &channel)
+{
+	std::stringstream reply;
+
+	reply << constructNumericReplyHeader(ERR_USERONCHANNEL, SERVER_NAME)
+			<< nickName << " "
+			<< channel << " :is already on channel"
+			<< DELIMITER;
+	client.sendNumericReply(reply.str());
+}
+
 // 461 <command> : Not enough paramters
 void	NumericReplies::Error::needMoreParams(Client &client, const std::string &command)
 {
@@ -211,6 +236,11 @@ void	NumericReplies::Notification::joinNotify(Client &client, const std::string 
 void	NumericReplies::Notification::kickNotify(Client &client, const std::string &sourceUser, const std::string &channel, const std::string reason)
 {
 	client.sendNumericReply(":" + sourceUser + " KICK #" + channel + " " + client.GetNickname() + " " + reason + DELIMITER);
+}
+
+void	NumericReplies::Notification::inviteNotify(Client &client, const std::string &sourceUser, const std::string &channel)
+{
+	client.sendNumericReply(":" + sourceUser + "INVITE " + client.GetNickname() + " #" + channel + DELIMITER);
 }
 
 std::string	NumericReplies::constructNumericReplyHeader(const std::string &numericID, const std::string &hostName) {

@@ -14,6 +14,7 @@
 #define RPL_WELCOME		"001"
 #define	RPL_NOTOPIC		"331"
 #define	RPL_TOPIC		"332"
+#define RPL_INVITING	"341"
 #define	RPL_NAMREPLY	"353"
 #define	RPL_ENDOFNAME	"366"
 //
@@ -22,6 +23,7 @@
 #define ERR_NICKNAMEINUSE		"433"
 #define ERR_USERNOTINCHANNEL	"441"
 #define ERR_NOTONCHANNEL		"442"
+#define ERR_USERONCHANNEL		"443"
 #define ERR_NEEDMOREPARAMS		"461"
 #define ERR_ALREADYREGISTRED "462"
 #define	ERR_BANNEDFROMCHAN		"474"
@@ -36,6 +38,7 @@ public:
 	public:
 		static void	joinNotify(Client &client, const std::string &channName);
 		static void kickNotify(Client &client, const std::string &sourceUser, const std::string &channel, const std::string reason);
+		static void inviteNotify(Client &client, const std::string &sourceUser, const std::string &channel);
 	};
 
 	class reply {
@@ -43,6 +46,7 @@ public:
 		static void	welcome(Client &client);
 		static void	noTopic(Client &client, const std::string &channName);
 		static void topic(Client &client, const std::string &channName, const std::string &topic);
+		static void inviting(Client &client, const std::string &nick, const std::string &channName);
 		static void	nameInChannel(Client &client, const std::string &channName, const std::string &allNick);
 		static void	endOfName(Client &client, const std::string &channName);
 		static void	removeModeLimit(Client &client, const std::string &channelName);
@@ -58,6 +62,7 @@ public:
 		static void nickInUse(Client &client, const std::string &nickName);
 		static void userNotInChannel(Client &client, const std::string &nickName, const std::string &channel);
 		static void notOnChannel(Client &client, const std::string &channel);
+		static void userOnChannel(Client &client, const std::string &nickName, const std::string &channel);
 		static void needMoreParams(Client &client, const std::string &command);
 		static void	alreadyRegistered(Client &client);
 		static void	bannedFromChan(Client &client, const std::string &channName);
