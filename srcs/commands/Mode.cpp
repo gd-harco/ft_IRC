@@ -1,5 +1,6 @@
 #include "server.hpp"
 #include "channel.hpp"
+#include "utility.hpp"
 #include <algorithm>
 
 
@@ -18,7 +19,7 @@ void Server::ModeInvite(vectorCommand args, Client *client)
 {
 	if (args[2] == "-i")
 	{
-		std::string const ChannelName(args[1].substr(1));
+		std::string const ChannelName = processedChannelName(args[1]);
 		channelMap::iterator it = _channels.find(ChannelName);
 		if (it ==  _channels.end())
 			throw(Server::ChannelNotFound());
@@ -34,7 +35,7 @@ void Server::ModeInvite(vectorCommand args, Client *client)
 	}
 	else if (args[2] == "+i")
 	{
-		std::string const ChannelName(args[1].substr(1));
+		std::string const ChannelName = processedChannelName(args[1]);
 		channelMap::iterator it = _channels.find(ChannelName);
 		if (it ==  _channels.end())
 			throw(Server::ChannelNotFound());
@@ -55,7 +56,7 @@ void Server::ModePassword(vectorCommand args, Client *client)
 {
 	if (args[2] == "-k")
 	{
-		std::string const ChannelName(args[1].substr(1));
+		std::string const ChannelName = processedChannelName(args[1]);
 		channelMap::iterator it = _channels.find(ChannelName);
 		if (it ==  _channels.end())
 			throw(Server::ChannelNotFound());
@@ -78,7 +79,7 @@ void Server::ModePassword(vectorCommand args, Client *client)
 	{
 		if (args.size() < 5)
 			throw(NeedMoreParams());
-		std::string const ChannelName(args[1].substr(1));
+		std::string const ChannelName = processedChannelName(args[1]);
 		channelMap::iterator it = _channels.find(ChannelName);
 		if (it ==  _channels.end())
 			throw(Server::ChannelNotFound());
@@ -104,7 +105,7 @@ void Server::ModeUserLimit(vectorCommand args, Client *client)
 {
 	if (args[2] == "-l")
 	{
-		std::string const ChannelName(args[1].substr(1));
+		std::string const ChannelName = processedChannelName(args[1]);
 		channelMap::iterator it = _channels.find(ChannelName);
 		if (it ==  _channels.end())
 			throw(Server::ChannelNotFound());
@@ -127,7 +128,7 @@ void Server::ModeUserLimit(vectorCommand args, Client *client)
 	{
 		if (args.size() < 5)
 			throw(NeedMoreParams());
-		std::string const ChannelName(args[1].substr(1));
+		std::string const ChannelName = processedChannelName(args[1]);
 		channelMap::iterator it = _channels.find(ChannelName);
 		if (it ==  _channels.end())
 			throw(Server::ChannelNotFound());
@@ -163,7 +164,7 @@ void Server::ModeOperator(vectorCommand args, Client *client)
 	{
 		if (args.size() != 5)
 			throw(NeedMoreParams());
-		std::string const ChannelName(args[1].substr(1));
+		std::string const ChannelName = processedChannelName(args[1]);
 		channelMap::iterator it = _channels.find(ChannelName);
 		if (it ==  _channels.end())
 			throw(Server::ChannelNotFound());
@@ -198,7 +199,7 @@ void Server::ModeOperator(vectorCommand args, Client *client)
 	{
 		if (args.size() != 5)
 			throw(NeedMoreParams());
-		std::string const ChannelName(args[1].substr(1));
+		std::string const ChannelName = processedChannelName(args[1]);
 		channelMap::iterator it = _channels.find(ChannelName);
 		if (it ==  _channels.end())
 			throw(Server::ChannelNotFound());
@@ -238,7 +239,7 @@ void	Server::ModeTopic(vectorCommand args, Client *client)
 	{
 		if (args.size() < 4)
 			throw (Server::NeedMoreParams());
-		std::string const ChannelName(args[1].substr(1));
+		std::string const ChannelName = processedChannelName(args[1]);
 		channelMap::iterator it = _channels.find(ChannelName);
 		if (it ==  _channels.end())
 			throw(Server::ChannelNotFound());
@@ -256,7 +257,7 @@ void	Server::ModeTopic(vectorCommand args, Client *client)
 	{
 		if (args.size() < 4)
 			throw (Server::NeedMoreParams());
-		std::string const ChannelName(args[1].substr(1));
+		std::string const ChannelName = processedChannelName(args[1]);
 		channelMap::iterator it = _channels.find(ChannelName);
 		if (it ==  _channels.end())
 			throw(Server::ChannelNotFound());

@@ -3,11 +3,14 @@
 //
 
 #include "server.hpp"
+#include "utility.hpp"
 
 void Server::privmsg(vectorCommand args, Client *client)
 {
-	if (client->GetUsername().empty() || client->GetNickname().empty() || client->GetPassword() == false)
+	if (client->GetUsername().empty() || client->GetNickname().empty() || !client->GetPassword())
 		throw(NotAuthenticate());
+	if (args.size() != 3)
+		throw (NeedMoreParams());
 	if (args[1].find("#") != 0)
 	{
 		try
@@ -53,12 +56,12 @@ void Server::ClientPrivMsg(vectorCommand args, Client *client)
 		{
 			if (it->second->GetNickname() == UserToSend)
 			{
-				std::ostringstream message;
+				std::stringstream message;
 				std::string	content = args[args.size() - 1].substr(args[args.size() - 1].find(":") + 1);
-				std::cout << "message " << content << "send to " << it->second->GetUsername() << std::endl;
-				message << client->GetRealname() << " : " << content << std::endl;
+				message << ":" << client->GetNickname() << " PRIVMSG "  << it->second->GetNickname() << " : " << content ;
 				it->second->addMessageToSendbox(message.str());
 				it->second->updateClientStatus(this->_epollFd);
+				std::cout << "message " << message.str() << "send to file descriptor" << it->second->GetFd() << std::endl;
 				return ;
 			}
 		}
@@ -69,10 +72,9 @@ void Server::ClientPrivMsg(vectorCommand args, Client *client)
 		throw ;
 	}
 }
-
 void Server::ChannelPrivMsg(vectorCommand args, Client *client)
 {
-	const std::string ChannelName(args[1].substr(1));
+	std::string const ChannelName = processedChannelName(args[1]);
 	try
 	{
 		if (_channels.empty())
@@ -103,4 +105,3 @@ void Server::ChannelPrivMsg(vectorCommand args, Client *client)
 		throw ;
 	}
 }
-

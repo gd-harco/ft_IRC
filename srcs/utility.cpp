@@ -14,3 +14,9 @@ std::queue<std::string> split(const std::string &toSplit, const std::string &del
 	returned.push(toSplit.substr(start));
 	return returned;
 }
+
+std::string	processedChannelName(const std::string &argument){
+	std::string result = argument.substr(1);
+	std::transform(result.begin(), result.end(), result.begin(), ::tolower);
+	return result;
+}

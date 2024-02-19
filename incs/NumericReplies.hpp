@@ -23,9 +23,11 @@
 #define ERR_USERNOTINCHANNEL	"441"
 #define ERR_NOTONCHANNEL		"442"
 #define ERR_NEEDMOREPARAMS		"461"
+#define ERR_ALREADYREGISTRED "462"
 #define	ERR_BANNEDFROMCHAN		"474"
 #define ERR_BADCHANNELKEY		"475"
 #define ERR_CHANOPRIVSNEEDED	"482"
+
 
 class NumericReplies {
 public:
@@ -57,6 +59,7 @@ public:
 		static void userNotInChannel(Client &client, const std::string &nickName, const std::string &channel);
 		static void notOnChannel(Client &client, const std::string &channel);
 		static void needMoreParams(Client &client, const std::string &command);
+		static void	alreadyRegistered(Client &client);
 		static void	bannedFromChan(Client &client, const std::string &channName);
 		static void	badChannelKey(Client &client, const std::string &channName);
 		static void chanOpPrivsNeeded(Client &client, const std::string &channName);

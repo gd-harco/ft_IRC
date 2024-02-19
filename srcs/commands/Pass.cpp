@@ -6,6 +6,10 @@
 
 void Server::pass(vectorCommand args, Client *client)
 {
+	if (client->IsAuthenticate()){
+		NumericReplies::Error::alreadyRegistered(*client);
+		throw AlreadyRegistred();
+	}
 	if (args[1] == _password && client->GetPassword() == false)
 	{
 		std::cout << client->GetNickname() << " " << client->GetUsername() << " " << client->GetFd() << ": " << "have right password" << std::endl;

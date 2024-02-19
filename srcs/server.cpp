@@ -1,5 +1,6 @@
 #include "server.hpp"
 #include <unistd.h>
+#include <csignal>
 
 Server::Server()
 {
@@ -8,6 +9,75 @@ Server::Server()
 Server::Server(const Server &server)
 {
 	*this = server;
+}
+
+void	handleSigInt(int sig);
+
+void Server::launchServer(void)
+{
+	signal(SIGINT, handleSigInt);
+	std::cout << "Waiting for incoming connection on port " << this->GetPort() << std::endl;
+	struct epoll_event eventsCaught[MAX_EVENT];
+
+	while (true)
+		waitLoop(eventsCaught);
+}
+
+void Server::waitLoop(struct epoll_event eventsCaught[MAX_EVENT])
+{
+	int nfds = epoll_wait(this->GetEpollFd(), eventsCaught, MAX_EVENT, -1);
+	if (nfds == -1)
+	{
+		perror("epoll wait");
+		exit(1);
+	}
+	for (int i = 0; i < nfds; ++i) {
+		handleEvent(eventsCaught[i]);
+	}
+}
+
+void Server::handleEvent(struct epoll_event event)
+{
+	int currFd = event.data.fd;
+	if (currFd == this->GetScocket())
+	{
+		//this mean we got a new incoming connection
+		std::cout << "new connection detected" << std::endl;
+		this->NewConnectionRequest(currFd);
+	}
+	else
+	{
+		handleExistingConnection(event, currFd);
+	}
+}
+
+void Server::handleExistingConnection(struct epoll_event event, int currFd)
+{
+	if (event.events & EPOLLOUT)
+	{
+		this->sendMsg(event.data.fd);
+	}
+	if (event.events & EPOLLIN)
+	{
+		handleEventEpollin(currFd);
+	}
+}
+
+void Server::handleEventEpollin(int currFd)
+{
+	//si le read fail, alors le client a ete deco
+	try
+	{
+		this->HandleEvent(currFd);
+	}
+	catch (std::exception &e)
+	{
+		std::cout << e.what() << std::endl;
+		//parcourir les channels pour voir si il y a le fd et le suppr
+		this->RemoveClient(currFd);
+		epoll_ctl(this->GetEpollFd(), EPOLL_CTL_DEL, currFd, 0);
+		close(currFd);
+	}
 }
 
 Server::Server(uint64_t port, std::string password)
@@ -143,7 +213,6 @@ bool	Server::HandleCommand(std::string const &msg, Client *client)
 		ParsMsg.clear();
 		if (ParsMsg[0] != "PASS")
 			std::cout << client->GetUsername() << ", " << client->GetNickname() << ": " << msg;
-
 		return (false);
 	}
 	catch (NotAuthenticate &e)
@@ -162,8 +231,6 @@ bool	Server::HandleCommand(std::string const &msg, Client *client)
 	}
 	catch (AlreadyRegistred &e)
 	{
-		client->addMessageToSendbox(client->GetUsername() + " :You may not reregister\r\n");
-		client->updateClientStatus(_epollFd);
 		std::cout << e.what() << std::endl;
 		return (false);
 	}
@@ -201,6 +268,10 @@ bool	Server::HandleCommand(std::string const &msg, Client *client)
 	{
 		std::cout << e.what() << std::endl;
 		return (false);
+	}
+	catch (std::runtime_error &e) {
+		std::cout << e.what() << std::endl;
+		return false;
 	}
 	catch (std::exception &e)
 	{
@@ -280,15 +351,21 @@ void Server::RemoveClient(int key)
 		return;
 	}
 	this->_nickUsed.erase(toRemove->second->GetNickname());
+	std::map<vectorCommand , Client *> partToExecute;
 	for (channelMap::iterator it = _channels.begin(); it != _channels.end(); it++)
 	{
 		if (it->second->IsInChannel(toRemove->second->GetNickname()))
 		{
 			vectorCommand	PartCommand;
+			PartCommand.push_back("PART");
 			PartCommand.push_back("#" + it->first);
-			part(PartCommand, toRemove->second);
+			partToExecute.insert(std::make_pair(PartCommand,toRemove->second));
+//			part(PartCommand, toRemove->second);
 		}
 	}
+	//execute all part stored in the partToExecute map.
+	for (std::map<vectorCommand , Client *>::iterator it = partToExecute.begin(); it != partToExecute.end(); ++it)
+		part(it->first, it->second);
 	close(key);
 	delete toRemove->second;
 	_clients.erase(key);

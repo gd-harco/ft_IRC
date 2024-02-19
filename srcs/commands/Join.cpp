@@ -3,17 +3,15 @@
 //
 
 #include "server.hpp"
+#include "utility.hpp"
 
 void Server::join(vectorCommand args, Client *client)
 {
-	if (client->GetUsername().empty() || client->GetNickname().empty() || client->GetPassword() == false)
+	if (!client->IsAuthenticate())
 		throw (NotAuthenticate());
 
-	// if (args.size() != 1)
-	// {
-	// 	std::cout << "invalid number of args" << std::endl;
-	// 	return (false);
-	// }
+	if (args.size() < 3)
+		throw (NeedMoreParams());
 	//TODO: Clarifier avec Alex
 	if (args[1].find("#") != 0)
 	{
@@ -21,7 +19,7 @@ void Server::join(vectorCommand args, Client *client)
 		client->updateClientStatus(_epollFd);
 		throw(UnableToCreateChannel());
 	}
-	std::string RealNameChannel(args[1].substr(1));
+	std::string const RealNameChannel = processedChannelName(args[1]);
 	if (_channels.find(RealNameChannel) == _channels.end())
 	{
 		std::cout << client->GetUsername() << " create channel " << RealNameChannel << std::endl;
@@ -34,6 +32,20 @@ void Server::join(vectorCommand args, Client *client)
 client->updateClientStatus(_epollFd);
 
 		return ;
+	}
+	if (_channels[RealNameChannel]->GetUserLimit() >= (int)_channels[RealNameChannel]->GetClients().size() && _channels[RealNameChannel]->GetUserLimit() >= 0)
+	{
+		std::cout << "channel full" << std::endl;
+		return ;
+	}
+	if (_channels[RealNameChannel]->GetPassword().size() != 0)
+	{
+		if (args.size() < 4)
+			throw(NeedMoreParams());
+		if (args[4] != _channels[RealNameChannel]->GetPassword())
+		{
+			NumericReplies::Error::badChannelKey(*client, RealNameChannel);
+		}
 	}
 	_channels[RealNameChannel]->AddClient(client->GetNickname(), client->GetFd());
 	stringClientMap	ClientChannel = _channels[RealNameChannel]->GetClients();

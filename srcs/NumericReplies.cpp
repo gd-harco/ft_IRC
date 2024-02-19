@@ -124,6 +124,7 @@ void	NumericReplies::Error::nickInUse(Client &client, const std::string &nickNam
 	client.sendNumericReply(reply.str());
 }
 
+
 // 441 <nick> <channel>: They aren't on that channel
 void	NumericReplies::Error::userNotInChannel(Client &client, const std::string &nickName, const std::string &channel) {
 	std::stringstream reply;
@@ -153,6 +154,17 @@ void	NumericReplies::Error::needMoreParams(Client &client, const std::string &co
 
 	reply << constructNumericReplyHeader(ERR_NOTONCHANNEL, SERVER_NAME)
 			<< command << " :Not enough parameters"
+			<< DELIMITER;
+	client.sendNumericReply(reply.str());
+}
+
+
+//462 ":You may not reregister"
+void NumericReplies::Error::alreadyRegistered(Client &client) {
+	std::stringstream reply;
+
+	reply << constructNumericReplyHeader(ERR_ALREADYREGISTRED, SERVER_NAME)
+			<< ":You may not reregister"
 			<< DELIMITER;
 	client.sendNumericReply(reply.str());
 }
