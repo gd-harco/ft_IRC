@@ -29,7 +29,8 @@ class	Channel
 		const std::vector<std::string>		&GetOp() const;
 		bool			IsInChannel(std::string const &user) const;
 		bool			IsRestrictChannel() const;
-		bool			GetUserLimit() const;
+  	int       GetUserLimit() const;
+		bool			isOp(std::string const &user);
 
 		//setters
 		void	SetPassword(std::string const &NewPassword);

@@ -123,8 +123,8 @@ void Server::SetMap()
 	_commands["PASS"] = &Server::pass;
 	_commands["USER"] = &Server::user;
 	_commands["NICK"] = &Server::nick;
-	// _commands["KICK"] = &Server::kick;
-	// _commands["INVITE"] = &Server::invite;
+	_commands["KICK"] = &Server::kick;
+	_commands["INVITE"] = &Server::invite;
 	_commands["TOPIC"] = &Server::topic;
 	_commands["MODE"] = &Server::mode;
 	_commands["PRIVMSG"] = &Server::privmsg;
@@ -321,6 +321,17 @@ int Server::GetEpollFd() const
 sockaddr_in Server::GetSockAddr() const
 {
 	return (_sockaddr);
+}
+
+Client *Server::findClient(std::string nickName)
+{
+	for (fdClientMap::const_iterator it = _clients.begin(); it != _clients.end(); ++it)
+	{
+	    Client* client = it->second;
+	    if (client->GetNickname() == nickName)
+	        return client;
+	}
+	return NULL;
 }
 
 

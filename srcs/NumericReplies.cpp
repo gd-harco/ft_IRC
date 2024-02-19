@@ -39,6 +39,19 @@ void NumericReplies::reply::topic(Client &client, const std::string &channName, 
 	client.sendNumericReply(reply.str());
 }
 
+// RPL_INVINTING 341
+void NumericReplies::reply::inviting(Client &client, const std::string &nick, const std::string &channName)
+{
+	std::stringstream reply;
+
+	reply << constructNumericReplyHeader(RPL_INVITING, SERVER_NAME)
+		<< client.GetUsername() << " "
+		<< nick << " "
+		<<channName << DELIMITER;
+	client.sendNumericReply(reply.str());
+
+}
+
 //#define RPL_NAMREPLY(client, channel, list_of_nicks) (":localhost 353 " + client +"user = #" + channel + " :" + list_of_nicks + "\r\n")
 void	NumericReplies::reply::nameInChannel(Client &client, const std::string &channName, const std::string &allNick) {
 	std::stringstream reply;
@@ -92,6 +105,16 @@ void NumericReplies::reply::removeModePassword(Client &client, const std::string
 	client.sendNumericReply(reply.str());
 }
 
+//403 <client> <channel>: No such channel
+void NumericReplies::Error::noSuchChannel(Client &client, const std::string channel)
+{
+	std::stringstream reply;
+
+	reply << constructNumericReplyHeader(ERR_NOSUCHCHANNEL, SERVER_NAME)
+		<< channel
+		<< " :No such channel" << DELIMITER;
+	client.sendNumericReply(reply.str());
+}
 
 //431 * :No nickname given
 void	NumericReplies::Error::noNickGiven(Client &client) {
@@ -111,7 +134,7 @@ void	NumericReplies::Error::erroneusNickName(Client &client, const std::string &
 	client.sendNumericReply(reply.str());
 }
 
-// 433 <nick> :Nickname is already in use"
+// 433 <nick> :Nickname is already in use
 void	NumericReplies::Error::nickInUse(Client &client, const std::string &nickName) {
 	std::stringstream reply;
 
@@ -122,6 +145,53 @@ void	NumericReplies::Error::nickInUse(Client &client, const std::string &nickNam
 	client.sendNumericReply(reply.str());
 }
 
+
+// 441 <nick> <channel>: They aren't on that channel
+void	NumericReplies::Error::userNotInChannel(Client &client, const std::string &nickName, const std::string &channel) {
+	std::stringstream reply;
+
+	reply << constructNumericReplyHeader(ERR_USERNOTINCHANNEL, SERVER_NAME)
+			<< nickName << " "
+			<< channel << " :They aren't on that channel"
+			<< DELIMITER;
+	client.sendNumericReply(reply.str());
+}
+
+// 442 <channel> : Your not on that channel
+void	NumericReplies::Error::notOnChannel(Client &client, const std::string &channel)
+{
+	std::stringstream reply;
+
+	reply << constructNumericReplyHeader(ERR_NOTONCHANNEL, SERVER_NAME)
+			<< channel << " :Your not on that channel"
+			<< DELIMITER;
+	client.sendNumericReply(reply.str());
+}
+
+// 443 <nick> <channel> : is already on channel
+void	NumericReplies::Error::userOnChannel(Client &client, const std::string &nickName, const std::string &channel)
+{
+	std::stringstream reply;
+
+	reply << constructNumericReplyHeader(ERR_USERONCHANNEL, SERVER_NAME)
+			<< nickName << " "
+			<< channel << " :is already on channel"
+			<< DELIMITER;
+	client.sendNumericReply(reply.str());
+}
+
+// 461 <command> : Not enough paramters
+void	NumericReplies::Error::needMoreParams(Client &client, const std::string &command)
+{
+	std::stringstream reply;
+
+	reply << constructNumericReplyHeader(ERR_NOTONCHANNEL, SERVER_NAME)
+			<< command << " :Not enough parameters"
+			<< DELIMITER;
+	client.sendNumericReply(reply.str());
+}
+
+
 //462 ":You may not reregister"
 void NumericReplies::Error::alreadyRegistered(Client &client) {
 	std::stringstream reply;
@@ -131,6 +201,7 @@ void NumericReplies::Error::alreadyRegistered(Client &client) {
 			<< DELIMITER;
 	client.sendNumericReply(reply.str());
 }
+
 //# define ERR_BANNEDFROMCHAN(client, channel) ("474 " + client + " #" + channel + " :Cannot join channel (+b)\r\n")
 void	NumericReplies::Error::bannedFromChan(Client &client, const std::string &channName) {
 	std::stringstream reply;
@@ -152,11 +223,32 @@ void	NumericReplies::Error::badChannelKey(Client &client, const std::string &cha
 	client.sendNumericReply(reply.str());
 }
 
+// 482 <client> <channel> :You're not channel operator
+void	NumericReplies::Error::chanOpPrivsNeeded(Client &client, const std::string &channName)
+{
+	std::stringstream reply;
+
+		reply << constructNumericReplyHeader(ERR_NOTONCHANNEL, SERVER_NAME)
+			<< channName << " :You're not channel operator"
+			<< DELIMITER;
+	client.sendNumericReply(reply.str());
+}
+
 //TODO: remove this when implementing notification in respective command file
 
 // # define RPL_JOIN(user, channel) (":" + user + " JOIN #" + channel + "\r\n")
 void	NumericReplies::Notification::joinNotify(Client &client, const std::string &channName) {
 	client.sendNumericReply(":" + client.GetNickname() + " JOIN #" + channName + DELIMITER);
+}
+
+void	NumericReplies::Notification::kickNotify(Client &client, const std::string &sourceUser, const std::string &channel, const std::string reason)
+{
+	client.sendNumericReply(":" + sourceUser + " KICK #" + channel + " " + client.GetNickname() + " " + reason + DELIMITER);
+}
+
+void	NumericReplies::Notification::inviteNotify(Client &client, const std::string &sourceUser, const std::string &channel)
+{
+	client.sendNumericReply(":" + sourceUser + "INVITE " + client.GetNickname() + " #" + channel + DELIMITER);
 }
 
 std::string	NumericReplies::constructNumericReplyHeader(const std::string &numericID, const std::string &hostName) {

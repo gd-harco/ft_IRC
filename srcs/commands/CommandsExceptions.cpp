@@ -65,3 +65,12 @@ const char *Server::ErroneusNickName::what() const throw()
 {
 	return ("Server::Commands::ErroneusNickName:  erroneus nick name");
 }
+const char *Server::OperatorIsNeeded::what() const throw()
+{
+	return ("Server::Commands::OperatorIsNeeded: You're not channel operator");
+}
+
+const char *Server::AlreadyOnChannel::what() const throw()
+{
+	return ("Server::Commands::AlreadyOnChannel: User already on channel");
+}
