@@ -248,6 +248,17 @@ sockaddr_in Server::GetSockAddr() const
 	return (_sockaddr);
 }
 
+Client *Server::findClient(std::string nickName)
+{
+	for (fdClientMap::const_iterator it = _clients.begin(); it != _clients.end(); ++it)
+	{
+	    Client* client = it->second;
+	    if (client->GetNickname() == nickName)
+	        return client;
+	}
+	return NULL;
+}
+
 
 void Server::SetPort(uint64_t port)
 {

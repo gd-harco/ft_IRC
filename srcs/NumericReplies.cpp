@@ -160,7 +160,7 @@ void	NumericReplies::Error::notOnChannel(Client &client, const std::string &chan
 }
 
 // 443 <nick> <channel> : is already on channel
-void	Numericreplies::Error::userOnChannel(Client &client, const std::string &nickName, const std::string &channel)
+void	NumericReplies::Error::userOnChannel(Client &client, const std::string &nickName, const std::string &channel)
 {
 	std::stringstream reply;
 
@@ -224,6 +224,11 @@ void	NumericReplies::Notification::joinNotify(Client &client, const std::string 
 void	NumericReplies::Notification::kickNotify(Client &client, const std::string &sourceUser, const std::string &channel, const std::string reason)
 {
 	client.sendNumericReply(":" + sourceUser + " KICK #" + channel + " " + client.GetNickname() + " " + reason + DELIMITER);
+}
+
+void	NumericReplies::Notification::inviteNotify(Client &client, const std::string &sourceUser, const std::string &channel)
+{
+	client.sendNumericReply(":" + sourceUser + "INVITE " + client.GetNickname() + " #" + channel + DELIMITER);
 }
 
 std::string	NumericReplies::constructNumericReplyHeader(const std::string &numericID, const std::string &hostName) {

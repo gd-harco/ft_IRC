@@ -48,6 +48,7 @@ class	Server
 		int					GetEpollFd() const;
 		int					GetScocket() const;
 		struct sockaddr_in	GetSockAddr() const;
+		Client				*findClient(std::string nickName);
 
 		//setter
 		void	AddClient(int key, Client *clientToAdd);
