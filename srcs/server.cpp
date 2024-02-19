@@ -125,7 +125,7 @@ void Server::SetMap()
 	_commands["NICK"] = &Server::nick;
 	// _commands["KICK"] = &Server::kick;
 	// _commands["INVITE"] = &Server::invite;
-	// _commands["TOPIC"] = &Server::topic;
+	_commands["TOPIC"] = &Server::topic;
 	_commands["MODE"] = &Server::mode;
 	_commands["PRIVMSG"] = &Server::privmsg;
 	_commands["JOIN"] = &Server::join;
