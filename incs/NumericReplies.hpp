@@ -20,12 +20,13 @@
 //
 #define ERR_NOSUCHCHANNEL		"403"
 #define ERR_NONICKGIVEN			"431"
+#define ERR_ERRONEUSNICKNAME	"432"
 #define ERR_NICKNAMEINUSE		"433"
 #define ERR_USERNOTINCHANNEL	"441"
 #define ERR_NOTONCHANNEL		"442"
 #define ERR_USERONCHANNEL		"443"
 #define ERR_NEEDMOREPARAMS		"461"
-#define ERR_ALREADYREGISTRED "462"
+#define ERR_ALREADYREGISTRED	"462"
 #define	ERR_BANNEDFROMCHAN		"474"
 #define ERR_BADCHANNELKEY		"475"
 #define ERR_CHANOPRIVSNEEDED	"482"
@@ -59,6 +60,7 @@ public:
 	public:
 		static void noSuchChannel(Client &client, const std::string channel);
 		static void	noNickGiven(Client &client);
+		static void	erroneusNickName(Client &client, const std::string &nickName);
 		static void nickInUse(Client &client, const std::string &nickName);
 		static void userNotInChannel(Client &client, const std::string &nickName, const std::string &channel);
 		static void notOnChannel(Client &client, const std::string &channel);

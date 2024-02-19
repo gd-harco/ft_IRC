@@ -61,6 +61,10 @@ const char *Server::UnableToCreateChannel::what() const throw()
 	return ("Server::Commands::UnableToCreateChannel:  User cannot create this channel (no #)");
 }
 
+const char *Server::ErroneusNickName::what() const throw()
+{
+	return ("Server::Commands::ErroneusNickName:  erroneus nick name");
+}
 const char *Server::OperatorIsNeeded::what() const throw()
 {
 	return ("Server::Commands::OperatorIsNeeded: You're not channel operator");
@@ -70,4 +74,3 @@ const char *Server::AlreadyOnChannel::what() const throw()
 {
 	return ("Server::Commands::AlreadyOnChannel: User already on channel");
 }
-

@@ -152,6 +152,10 @@ class	Server
 		public:
 			virtual const char *what() const throw();
 		};
+		class ErroneusNickName : public std::exception{
+		public:
+		virtual const char *what() const throw();
+		};
 		class OperatorIsNeeded : public std::exception
 		{
 		public:

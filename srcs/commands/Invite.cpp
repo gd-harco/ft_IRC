@@ -47,7 +47,7 @@ void Server::invite(vectorCommand args, Client *client)
         else
         {
             // TODO exception serveur ?
-            std::cerr << "Je connais pas : " << userToInvite << std::endl;
+//            std::cerr << "Je connais pas : " << userToInvite << std::endl;
         }
     }
     catch(const std::exception& e)
