@@ -122,6 +122,7 @@ void	NumericReplies::Error::noNickGiven(Client &client) {
 	std::stringstream reply;
 
 	reply << constructNumericReplyHeader(ERR_NONICKGIVEN, SERVER_NAME)
+			<< client.GetNickname() << " "
 			<<" * :No nickname given"
 			<< DELIMITER;
 	client.sendNumericReply(reply.str());
@@ -130,6 +131,7 @@ void	NumericReplies::Error::noNickGiven(Client &client) {
 void	NumericReplies::Error::erroneusNickName(Client &client, const std::string &nickName) {
 	std::stringstream reply;
 	reply << constructNumericReplyHeader(ERR_ERRONEUSNICKNAME, SERVER_NAME)
+			<< client.GetNickname() << " "
 			<< nickName
 			<< ":Erroneus nickname" << DELIMITER;
 	client.sendNumericReply(reply.str());
@@ -178,7 +180,7 @@ void	NumericReplies::Error::userOnChannel(Client &client, const std::string &nic
 	std::stringstream reply;
 
 	reply << constructNumericReplyHeader(ERR_USERONCHANNEL, SERVER_NAME)
-			<< client.GetUsername() << " "
+			<< client.GetNickname() << " "
 			<< nickName << " #"
 			<< channel << " :is already on channel"
 			<< DELIMITER;
