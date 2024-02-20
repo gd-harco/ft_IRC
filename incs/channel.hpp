@@ -27,11 +27,13 @@ class	Channel
 		stringClientMap	GetClients() const;
 		std::string		GetAllNickname();
 		bool			GetRTopic();
-		const std::vector<std::string>		&GetOp() const;
+		const			std::vector<std::string>		&GetOp() const;
 		bool			IsInChannel(std::string const &user) const;
 		bool			IsRestrictChannel() const;
-  	int       GetUserLimit() const;
+  		int				GetUserLimit() const;
 		bool			isOp(std::string const &user);
+		bool			IsInvite(std::string const &nick);
+		bool			GetRInvite();
 
 		//setters
 		void	SetPassword(std::string const &NewPassword);
@@ -39,6 +41,7 @@ class	Channel
 		void	SetName(std::string const &NewName);
 		void	SetOp(std::string const &op);
 		void	RemoveOp(std::string const &op);
+		void	SetInvite(std::string const &nick);
 		void	SetRTopic(bool status);
 		void	SetUserLimit(int NewLimit);
 		void	SetRInvite(bool status);
@@ -53,6 +56,7 @@ class	Channel
 		std::string					_topic;
 		std::string 				_name;
 		std::vector<std::string>	_op;
+		std::vector<std::string>	_inviting_users;
 		bool						_rTopic;
 		bool						_rInvite;
 		int							_userLimit;

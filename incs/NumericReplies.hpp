@@ -29,6 +29,7 @@
 #define ERR_NEEDMOREPARAMS		"461"
 #define ERR_ALREADYREGISTRED	"462"
 #define ERR_CHANNELISFULL		"471"
+#define ERR_INVITEONLYCHAN		"473"
 #define	ERR_BANNEDFROMCHAN		"474"
 #define ERR_BADCHANNELKEY		"475"
 #define ERR_CHANOPRIVSNEEDED	"482"
@@ -74,6 +75,7 @@ public:
 		static void	bannedFromChan(Client &client, const std::string &channName);
 		static void	badChannelKey(Client &client, const std::string &channName);
 		static void chanOpPrivsNeeded(Client &client, const std::string &channName);
+		static void	chanelInviteOnly(Client &client, const std::string &channelName);
 
 	};
 

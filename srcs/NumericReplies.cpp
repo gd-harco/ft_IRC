@@ -262,6 +262,18 @@ void	NumericReplies::Error::chanOpPrivsNeeded(Client &client, const std::string 
 	client.sendNumericReply(reply.str());
 }
 
+void NumericReplies::Error::chanelInviteOnly(Client &client, const std::string &channelName)
+{
+	std::stringstream reply;
+
+	reply << constructNumericReplyHeader(ERR_INVITEONLYCHAN, SERVER_NAME)
+		<< client.GetNickname() << " #"
+		<< channelName << " :Channel is only on invite"
+		<< DELIMITER;
+	client.sendNumericReply(reply.str());
+}
+
+
 //TODO: remove this when implementing notification in respective command file
 
 // # define RPL_JOIN(user, channel) (":" + user + " JOIN #" + channel + "\r\n")
@@ -276,7 +288,7 @@ void	NumericReplies::Notification::kickNotify(Client &client, const std::string 
 
 void	NumericReplies::Notification::inviteNotify(Client &client, const std::string &sourceUser, const std::string &channel)
 {
-	client.sendNumericReply(":" + sourceUser + "INVITE " + client.GetNickname() + " #" + channel + DELIMITER);
+	client.sendNumericReply(":" + sourceUser + " INVITE " + client.GetNickname() + " #" + channel + DELIMITER);
 }
 
 std::string	NumericReplies::constructNumericReplyHeader(const std::string &numericID, const std::string &hostName) {

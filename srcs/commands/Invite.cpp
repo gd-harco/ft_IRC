@@ -4,7 +4,7 @@ void Server::invite(vectorCommand args, Client *client)
 {
     try
     {
-        if (args.size() < 3)
+        if (args.size() < 4)
         {
             NumericReplies::Error::needMoreParams(*client, args[0]);
             throw NeedMoreParams();
@@ -43,11 +43,7 @@ void Server::invite(vectorCommand args, Client *client)
             client->updateClientStatus(_epollFd);
             NumericReplies::Notification::inviteNotify(*clientInvited, client->GetNickname(), channelName);
             clientInvited->updateClientStatus(_epollFd);
-        }
-        else
-        {
-            // TODO exception serveur ?
-//            std::cerr << "Je connais pas : " << userToInvite << std::endl;
+            channel->SetInvite(userToInvite);
         }
     }
     catch(const std::exception& e)

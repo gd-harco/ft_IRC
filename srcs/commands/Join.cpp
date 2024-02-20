@@ -35,8 +35,7 @@ void Server::join(vectorCommand args, Client *client)
 		NumericReplies::Notification::joinNotify(*client, RealNameChannel);
 		NumericReplies::reply::nameInChannel(*client, RealNameChannel, NewChannel->GetAllNickname());
 		NumericReplies::reply::endOfName(*client, RealNameChannel);
-client->updateClientStatus(_epollFd);
-
+		client->updateClientStatus(_epollFd);
 		return ;
 	}
 	if (_channels[RealNameChannel]->GetUserLimit() >= (int)_channels[RealNameChannel]->GetClients().size() && _channels[RealNameChannel]->GetUserLimit() >= 0)
@@ -44,6 +43,15 @@ client->updateClientStatus(_epollFd);
 		NumericReplies::Error::channelIsFull(*client, RealNameChannel);
 		client->updateClientStatus(_epollFd);
 		return ;
+	}
+	if (_channels[RealNameChannel]->GetRInvite())
+	{
+		if (!_channels[RealNameChannel]->IsInvite(client->GetNickname()))
+		{
+			NumericReplies::Error::chanelInviteOnly(*client, RealNameChannel);
+			client->updateClientStatus(_epollFd);
+			return ;
+		}
 	}
 	if (_channels[RealNameChannel]->GetPassword().size() != 0)
 	{

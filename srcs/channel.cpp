@@ -137,3 +137,20 @@ void Channel::SetRInvite(bool status)
 {
 	_rInvite = status;
 }
+
+bool Channel::IsInvite(std::string const &nick)
+{
+	return (std::find(_inviting_users.begin(), _inviting_users.end(), nick) != _inviting_users.end());
+}
+
+void Channel::SetInvite(std::string const &nick)
+{
+	if (std::find(_inviting_users.begin(), _inviting_users.end(), nick) == _inviting_users.end())
+		_inviting_users.push_back(nick);
+}
+
+bool Channel::GetRInvite()
+{
+	return (_rInvite);
+}
+
