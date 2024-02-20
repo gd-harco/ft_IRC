@@ -32,7 +32,8 @@ void Server::ModeInvite(vectorCommand args, Client *client)
 			throw(Server::ChannelNotFound());
 		}
 		std::vector<std::string> ChannelOperator = it ->second->GetOp();
-		if (_channels[ChannelName]->GetClients().find(client->GetNickname()) == _channels[ChannelName]->GetClients().end())
+		stringClientMap MyClients = _channels[ChannelName]->GetClients();
+		if (MyClients.find(client->GetNickname()) == MyClients.end())
 		{
 			NumericReplies::Error::notOnChannel(*client, ChannelName);
 			client->updateClientStatus(_epollFd);
@@ -62,7 +63,8 @@ void Server::ModeInvite(vectorCommand args, Client *client)
 			throw(Server::ChannelNotFound());
 		}
 		std::vector<std::string> ChannelOperator = it ->second->GetOp();
-		if (_channels[ChannelName]->GetClients().find(client->GetNickname()) == _channels[ChannelName]->GetClients().end())
+		stringClientMap MyClients = _channels[ChannelName]->GetClients();
+		if (MyClients.find(client->GetNickname()) == MyClients.end())
 		{
 			NumericReplies::Error::notOnChannel(*client, ChannelName);
 			client->updateClientStatus(_epollFd);
@@ -97,7 +99,8 @@ void Server::ModePassword(vectorCommand args, Client *client)
 			throw(Server::ChannelNotFound());
 		}
 		std::vector<std::string> ChannelOperator = it ->second->GetOp();
-		if (_channels[ChannelName]->GetClients().find(client->GetNickname()) == _channels[ChannelName]->GetClients().end())
+		stringClientMap MyClients = _channels[ChannelName]->GetClients();
+		if (MyClients.find(client->GetNickname()) == MyClients.end())
 		{
 			NumericReplies::Error::notOnChannel(*client, ChannelName);
 			client->updateClientStatus(_epollFd);
@@ -138,7 +141,8 @@ void Server::ModePassword(vectorCommand args, Client *client)
 			throw(Server::ChannelNotFound());
 		}
 		std::vector<std::string> ChannelOperator = it ->second->GetOp();
-		if (_channels[ChannelName]->GetClients().find(client->GetNickname()) == _channels[ChannelName]->GetClients().end())
+		stringClientMap MyClients = _channels[ChannelName]->GetClients();
+		if (MyClients.find(client->GetNickname()) == MyClients.end())
 		{
 			NumericReplies::Error::notOnChannel(*client, ChannelName);
 			client->updateClientStatus(_epollFd);
@@ -178,7 +182,8 @@ void Server::ModeUserLimit(vectorCommand args, Client *client)
 			throw(Server::ChannelNotFound());
 		}
 		std::vector<std::string> ChannelOperator = it ->second->GetOp();
-		if (_channels[ChannelName]->GetClients().find(client->GetNickname()) == _channels[ChannelName]->GetClients().end())
+		stringClientMap MyClients = _channels[ChannelName]->GetClients();
+		if (MyClients.find(client->GetNickname()) == MyClients.end())
 		{
 			NumericReplies::Error::notOnChannel(*client, ChannelName);
 			client->updateClientStatus(_epollFd);
@@ -219,7 +224,8 @@ void Server::ModeUserLimit(vectorCommand args, Client *client)
 			throw(Server::ChannelNotFound());
 		}
 		std::vector<std::string> ChannelOperator = it ->second->GetOp();
-		if (_channels[ChannelName]->GetClients().find(client->GetNickname()) == _channels[ChannelName]->GetClients().end())
+		stringClientMap MyClients = _channels[ChannelName]->GetClients();
+		if (MyClients.find(client->GetNickname()) == MyClients.end())
 		{
 			NumericReplies::Error::notOnChannel(*client, ChannelName);
 			client->updateClientStatus(_epollFd);
@@ -273,7 +279,8 @@ void Server::ModeOperator(vectorCommand args, Client *client)
 			throw(Server::ChannelNotFound());
 		}
 		std::vector<std::string> ChannelOperator = it ->second->GetOp();
-		if (_channels[ChannelName]->GetClients().find(client->GetNickname()) == _channels[ChannelName]->GetClients().end())
+		stringClientMap MyClients = _channels[ChannelName]->GetClients();
+		if (MyClients.find(client->GetNickname()) == MyClients.end())
 		{
 			NumericReplies::Error::notOnChannel(*client, ChannelName);
 			client->updateClientStatus(_epollFd);
@@ -325,7 +332,8 @@ void Server::ModeOperator(vectorCommand args, Client *client)
 			client->updateClientStatus(_epollFd);
 			throw(Server::ChannelNotFound());
 		}
-		if (_channels[ChannelName]->GetClients().find(client->GetNickname()) == _channels[ChannelName]->GetClients().end())
+		stringClientMap MyClients = _channels[ChannelName]->GetClients();
+		if (MyClients.find(client->GetNickname()) == MyClients.end())
 		{
 			NumericReplies::Error::notOnChannel(*client, ChannelName);
 			client->updateClientStatus(_epollFd);
@@ -353,7 +361,6 @@ void Server::ModeOperator(vectorCommand args, Client *client)
 				stringClientMap	ClientChannel = _channels[ChannelName]->GetClients();
 				for (stringClientMap::iterator itCM = ClientChannel.begin(); itCM != ClientChannel.end(); itCM++)
 				{
-					// _clients[itCM->second]->addMessageToSendbox(":localhost MODE #" + ChannelName + " +o" + args[3] + "\r\n");
 					NumericReplies::reply::nameInChannel(*_clients[itCM->second], ChannelName, it->second->GetAllNickname());
 					NumericReplies::reply::endOfName(*_clients[itCM->second], ChannelName);
 					_clients[itCM->second]->updateClientStatus(_epollFd);
@@ -383,7 +390,8 @@ void	Server::ModeTopic(vectorCommand args, Client *client)
 			client->updateClientStatus(_epollFd);
 			throw(Server::ChannelNotFound());
 		}
-		else if (_channels[ChannelName]->GetClients().find(client->GetNickname()) == _channels[ChannelName]->GetClients().end())
+		stringClientMap MyClients = _channels[ChannelName]->GetClients();
+		if (MyClients.find(client->GetNickname()) == MyClients.end())
 		{
 			NumericReplies::Error::notOnChannel(*client, ChannelName);
 			client->updateClientStatus(_epollFd);
@@ -416,7 +424,8 @@ void	Server::ModeTopic(vectorCommand args, Client *client)
 			client->updateClientStatus(_epollFd);
 			throw(Server::ChannelNotFound());
 		}
-		if (_channels[ChannelName]->GetClients().find(client->GetNickname()) == _channels[ChannelName]->GetClients().end())
+		stringClientMap MyClients = _channels[ChannelName]->GetClients();
+		if (MyClients.find(client->GetNickname()) == MyClients.end())
 		{
 			NumericReplies::Error::notOnChannel(*client, ChannelName);
 			client->updateClientStatus(_epollFd);
