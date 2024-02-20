@@ -47,8 +47,6 @@ class	Server
 		void handleExistingConnection(struct epoll_event event, int currFd);
 		void handleEventEpollin(int currFd);
 
-		Server &operator=(const Server &server);
-
 		//getters
 		fdClientMap			&GetClients();
 		channelMap			& GetChannels();

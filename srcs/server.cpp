@@ -155,7 +155,6 @@ void Server::CheckConnection(Client *client)
 	if (client->GetPassword() && !client->GetNickname().empty() && !client->GetUsername().empty())
 	{
 		client->SetAuthenticate();
-//		client->addMessageToSendbox(":irc.localhost 001 " + client->GetUsername() + " :Welcome to the " + "networkName" + " Network, " + client->GetUsername() + "!\r\n");
 		NumericReplies::reply::welcome(*client);
 client->updateClientStatus(this->_epollFd);
 	}
@@ -166,7 +165,6 @@ void Server::HandleEvent(int fd)
 {
 	fdClientMap::iterator curClient = _clients.find(fd);
 	char buf[BUFFER_READ_SIZE + 1] = {0};
-	// std::memset(buf, 0, BUFFER_READ_SIZE + 1);
 	ssize_t ret_data = recv(fd, buf, BUFFER_READ_SIZE, 0);
 	if (ret_data <= 0)
 		throw std::invalid_argument("Client disconnected");
@@ -187,15 +185,6 @@ void	Server::sendMsg(int fd)
 	}
 	client->second->receiveMsg();
 	client->second->updateClientStatus(this->_epollFd);
-}
-
-Server &Server::operator=(const Server &server)
-{
-	if (this != &server)
-	{
-		//TODO faire jai la flemme de lefaire maintenant
-	}
-	return (*this);
 }
 
 bool	Server::HandleCommand(std::string const &msg, Client *client)
@@ -312,7 +301,6 @@ void Server::RemoveClient(int key)
 			PartCommand.push_back("PART");
 			PartCommand.push_back("#" + it->first);
 			partToExecute.insert(std::make_pair(PartCommand,toRemove->second));
-//			part(PartCommand, toRemove->second);
 		}
 	}
 	//execute all part stored in the partToExecute map.
