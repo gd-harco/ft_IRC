@@ -57,7 +57,7 @@ void	NumericReplies::reply::nameInChannel(Client &client, const std::string &cha
 	std::stringstream reply;
 
 	reply << constructNumericReplyHeader(RPL_NAMREPLY, SERVER_NAME)
-			<< client.GetNickname() << " user = #"
+			<< client.GetNickname() << " = #"
 			<< channName << " :"
 			<< allNick << DELIMITER;
 	client.sendNumericReply(reply.str());

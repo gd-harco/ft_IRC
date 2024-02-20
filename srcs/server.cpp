@@ -215,68 +215,6 @@ bool	Server::HandleCommand(std::string const &msg, Client *client)
 			std::cout << client->GetUsername() << ", " << client->GetNickname() << ": " << msg;
 		return (false);
 	}
-	catch (NotAuthenticate &e)
-	{
-		std::cout << e.what() << std::endl;
-		return (false);
-	}
-	catch (NeedMoreParams &e)
-	{
-		std::cout << e.what() << std::endl;
-		return (false);
-	}
-	catch (BadPassword &e)
-	{
-		throw BadPassword();
-	}
-	catch (AlreadyRegistred &e)
-	{
-		std::cout << e.what() << std::endl;
-		return (false);
-	}
-	catch (UnableToCreateChannel &e)
-	{
-		std::cout << e.what() << std::endl;
-		return (false);
-	}
-	catch (NotAChannel &e)
-	{
-		std::cout << e.what() << std::endl;
-		return (false);
-	}
-	catch (UserAlreadyExist &e)
-	{
-		std::cout << e.what() << std::endl;
-		return (false);
-	}
-	catch (NickAlreadyExist &e)
-	{
-		std::cout << e.what() << std::endl;
-		return (false);
-	}
-	catch (ChannelNotFound &e)
-	{
-		std::cout << e.what() << std::endl;
-		return (false);
-	}
-	catch (ClientNotFound &e)
-	{
-		std::cout << e.what() << std::endl;
-		return (false);
-	}
-	catch (NotInTheChannel &e)
-	{
-		std::cout << e.what() << std::endl;
-		return (false);
-	}
-	catch (std::runtime_error &e) {
-		std::cout << e.what() << std::endl;
-		return false;
-	}
-	catch (ErroneusNickName &e) {
-		std::cout << e.what() << std::endl;
-		return false;
-	}
 	catch (std::exception &e)
 	{
 		while (!ParsMsg.empty())
@@ -284,12 +222,11 @@ bool	Server::HandleCommand(std::string const &msg, Client *client)
 			std::cout << ParsMsg.back() << std::endl;
 			ParsMsg.pop_back();
 		}
-		std::cout << "404 cmd not found" << std::endl;
+		// std::cout << "404 cmd not found" << std::endl;
 		ParsMsg.clear();
-		std::cout << client->GetUsername() << ", " << client->GetNickname() << ": " << msg;
+		std::cout << e.what() << std::endl;
 		return (true);
 	}
-	//TODO send numeric reply to client
 	return (true);
 }
 
