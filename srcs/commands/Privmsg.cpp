@@ -19,7 +19,8 @@ void Server::privmsg(vectorCommand args, Client *client)
 		}
 		catch(ClientNotFound &e)
 		{
-			throw ;
+			NumericReplies::Error::noSuchNick(*client, args[1]);
+			client->updateClientStatus(_epollFd);
 		}
 		catch (std::exception &e)
 		{
@@ -34,7 +35,8 @@ void Server::privmsg(vectorCommand args, Client *client)
 		}
 		catch (ChannelNotFound &e)
 		{
-			throw ;
+			NumericReplies::Error::noSuchChannel(*client, processedChannelName(args[1]));
+			client->updateClientStatus(_epollFd);
 		}
 		catch (NotInTheChannel &e)
 		{

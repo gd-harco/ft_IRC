@@ -10,6 +10,7 @@ void Server::user(vectorCommand args, Client *client)
 	// {}
 	if (client->IsAuthenticate()){
 		NumericReplies::Error::alreadyRegistered(*client);
+		client->updateClientStatus(_epollFd);
 		throw AlreadyRegistred();
 	}
 	std::string	RealName = args[args.size() - 1].substr(1, args[args.size() - 1].find("\r") - 1);

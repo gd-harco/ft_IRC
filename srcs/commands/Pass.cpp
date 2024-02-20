@@ -8,6 +8,7 @@ void Server::pass(vectorCommand args, Client *client)
 {
 	if (client->IsAuthenticate()){
 		NumericReplies::Error::alreadyRegistered(*client);
+
 		throw AlreadyRegistred();
 	}
 	if (args[1] == _password && client->GetPassword() == false)

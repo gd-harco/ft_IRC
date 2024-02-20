@@ -5,17 +5,23 @@
 #include "server.hpp"
 #include "utility.hpp"
 
+//TODO add invitations
+
 void Server::join(vectorCommand args, Client *client)
 {
 	if (!client->IsAuthenticate())
 		throw (NotAuthenticate());
 
 	if (args.size() < 3)
+	{
+		NumericReplies::Error::needMoreParams(*client, args[0]);
+		client->updateClientStatus(_epollFd);
 		throw (NeedMoreParams());
+	}
 	//TODO: Clarifier avec Alex
 	if (args[1].find("#") != 0)
 	{
-		client->addMessageToSendbox(":irc.localhost 471 " + client->GetUsername() + " #" + args[1] + " :Cannot join channel\r\n");
+		NumericReplies::Error::noSuchChannel(*client, args[1]);
 		client->updateClientStatus(_epollFd);
 		throw(UnableToCreateChannel());
 	}
@@ -35,16 +41,22 @@ client->updateClientStatus(_epollFd);
 	}
 	if (_channels[RealNameChannel]->GetUserLimit() >= (int)_channels[RealNameChannel]->GetClients().size() && _channels[RealNameChannel]->GetUserLimit() >= 0)
 	{
-		std::cout << "channel full" << std::endl;
+		NumericReplies::Error::channelIsFull(*client, RealNameChannel);
+		client->updateClientStatus(_epollFd);
 		return ;
 	}
 	if (_channels[RealNameChannel]->GetPassword().size() != 0)
 	{
 		if (args.size() < 4)
+		{
+			NumericReplies::Error::needMoreParams(*client, args[0]);
+			client->updateClientStatus(_epollFd);
 			throw(NeedMoreParams());
+		}
 		if (args[4] != _channels[RealNameChannel]->GetPassword())
 		{
 			NumericReplies::Error::badChannelKey(*client, RealNameChannel);
+			client->updateClientStatus(_epollFd);
 		}
 	}
 	_channels[RealNameChannel]->AddClient(client->GetNickname(), client->GetFd());

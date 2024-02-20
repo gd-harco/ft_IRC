@@ -22,7 +22,7 @@ void NumericReplies::reply::noTopic(Client &client, const std::string &channName
 	std::stringstream reply;
 
 	reply << constructNumericReplyHeader(RPL_NOTOPIC, SERVER_NAME)
-			<< client.GetUsername() << " #"
+			<< client.GetNickname() << " #"
 			<< channName
 			<< " :No topic is set" << DELIMITER;
 	client.sendNumericReply(reply.str());
@@ -33,7 +33,7 @@ void NumericReplies::reply::topic(Client &client, const std::string &channName, 
 	std::stringstream reply;
 
 	reply << constructNumericReplyHeader(RPL_TOPIC, SERVER_NAME)
-			<< client.GetUsername() << " #"
+			<< client.GetNickname() << " #"
 			<< channName << " "
 			<< topic << DELIMITER;
 	client.sendNumericReply(reply.str());
@@ -45,7 +45,7 @@ void NumericReplies::reply::inviting(Client &client, const std::string &nick, co
 	std::stringstream reply;
 
 	reply << constructNumericReplyHeader(RPL_INVITING, SERVER_NAME)
-		<< client.GetUsername() << " "
+		<< client.GetNickname() << " "
 		<< nick << " #"
 		<<channName << DELIMITER;
 	client.sendNumericReply(reply.str());
@@ -57,7 +57,7 @@ void	NumericReplies::reply::nameInChannel(Client &client, const std::string &cha
 	std::stringstream reply;
 
 	reply << constructNumericReplyHeader(RPL_NAMREPLY, SERVER_NAME)
-			<< client.GetUsername() << "user = #"
+			<< client.GetNickname() << " user = #"
 			<< channName << " :"
 			<< allNick << DELIMITER;
 	client.sendNumericReply(reply.str());
@@ -68,7 +68,7 @@ void	NumericReplies::reply::endOfName(Client &client, const std::string &channNa
 	std::stringstream reply;
 
 	reply << constructNumericReplyHeader(RPL_ENDOFNAME, SERVER_NAME)
-			<< client.GetUsername() << " #"
+			<< client.GetNickname() << " #"
 			<< channName  << " :End of /NAMES list." << DELIMITER;
 	client.sendNumericReply(reply.str());
 }
@@ -102,6 +102,15 @@ void NumericReplies::reply::removeModePassword(Client &client, const std::string
 	std::stringstream reply;
 	reply << constructNumericReplyHeader("", SERVER_NAME)
 			<< "MODE #" << channelName << " -k" << DELIMITER;
+	client.sendNumericReply(reply.str());
+}
+
+//401 <client nick> <nickname> :No such nick/channel
+void NumericReplies::Error::noSuchNick(Client &client, const std::string nickname)
+{
+	std::stringstream	reply;
+
+	reply << constructNumericReplyHeader(ERR_NOSUCHNICK, SERVER_NAME) << client.GetNickname() << " " << nickname << " :No such nick/channel" << DELIMITER;
 	client.sendNumericReply(reply.str());
 }
 
@@ -193,7 +202,7 @@ void	NumericReplies::Error::needMoreParams(Client &client, const std::string &co
 	std::stringstream reply;
 
 	reply << constructNumericReplyHeader(ERR_NOTONCHANNEL, SERVER_NAME)
-			<< client.GetUsername() << " "
+			<< client.GetNickname() << " "
 			<< command << " :Not enough parameters"
 			<< DELIMITER;
 	client.sendNumericReply(reply.str());
@@ -205,18 +214,27 @@ void NumericReplies::Error::alreadyRegistered(Client &client) {
 	std::stringstream reply;
 
 	reply << constructNumericReplyHeader(ERR_ALREADYREGISTRED, SERVER_NAME)
-			<< client.GetUsername() << " "
+			<< client.GetNickname() << " "
 			<< ":You may not reregister"
 			<< DELIMITER;
 	client.sendNumericReply(reply.str());
 }
+
+void NumericReplies::Error::channelIsFull(Client &client, const std::string channel)
+{
+	std::stringstream reply;
+
+	reply << constructNumericReplyHeader(ERR_CHANNELISFULL, SERVER_NAME) << client.GetNickname() << channel << " you cannot join the channel" << DELIMITER;
+	client.sendNumericReply(reply.str());
+}
+
 
 //# define ERR_BANNEDFROMCHAN(client, channel) ("474 " + client + " #" + channel + " :Cannot join channel (+b)\r\n")
 void	NumericReplies::Error::bannedFromChan(Client &client, const std::string &channName) {
 	std::stringstream reply;
 
 	reply << constructNumericReplyHeader(ERR_BANNEDFROMCHAN, SERVER_NAME)
-			<< client.GetUsername() << " #"
+			<< client.GetNickname() << " #"
 			<< channName << "  :Cannot join channel (+b)" << DELIMITER;
 	client.sendNumericReply(reply.str());
 }
@@ -226,7 +244,7 @@ void	NumericReplies::Error::badChannelKey(Client &client, const std::string &cha
 	std::stringstream reply;
 
 	reply << constructNumericReplyHeader(ERR_BANNEDFROMCHAN, SERVER_NAME)
-			<< client.GetUsername() << " #"
+			<< client.GetNickname() << " #"
 			<< channName
 			<< " :Cannot join channel (+k)" << DELIMITER;
 	client.sendNumericReply(reply.str());
@@ -238,7 +256,7 @@ void	NumericReplies::Error::chanOpPrivsNeeded(Client &client, const std::string 
 	std::stringstream reply;
 
 		reply << constructNumericReplyHeader(ERR_NOTONCHANNEL, SERVER_NAME)
-			<< client.GetUsername() << " #"
+			<< client.GetNickname() << " #"
 			<< channName << " :You're not channel operator"
 			<< DELIMITER;
 	client.sendNumericReply(reply.str());
