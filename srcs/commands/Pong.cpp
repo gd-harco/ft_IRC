@@ -9,7 +9,7 @@ void Server::pong(vectorCommand args, Client *client)
         throw NeedMoreParams();
     }
     std::string token = args[1];
-    if (token != client.GetPingPongToken())
+    if (token != client->GetPingPongToken())
     {
         // Meaby deconnect the client when this happen
         throw BadPongResponse();

@@ -43,7 +43,7 @@ public:
 		static void	joinNotify(Client &client, const std::string &channName);
 		static void kickNotify(Client &client, const std::string &sourceUser, const std::string &channel, const std::string reason);
 		static void inviteNotify(Client &client, const std::string &sourceUser, const std::string &channel);
-		static void pongNotify(Client &client, const std::string &token);
+		static void pongNotify(Client &client, const std::string &servname, const std::string &token);
 		static void pingNotify(Client &client, const std::string &token);
 	};
 

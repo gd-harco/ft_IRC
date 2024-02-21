@@ -9,6 +9,6 @@ void Server::ping(vectorCommand args, Client *client)
         throw NeedMoreParams();
     }
     std::string token = args[1];
-    NumericReplies::Notification::pongNotify(*client, token);
+    NumericReplies::Notification::pongNotify(*client, NETWORK_NAME, token);
     client->updateClientStatus(_epollFd);
 }

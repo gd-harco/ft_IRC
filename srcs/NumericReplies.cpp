@@ -291,14 +291,14 @@ void	NumericReplies::Notification::inviteNotify(Client &client, const std::strin
 	client.sendNumericReply(":" + sourceUser + " INVITE " + client.GetNickname() + " #" + channel + DELIMITER);
 }
 
-void	NumericReplies::Notification::pongNotify(Client &client, const std::string &token)
+void	NumericReplies::Notification::pongNotify(Client &client, const std::string &servname, const std::string &token)
 {
-	client.sendNumericReply("PONG " + NETWORK_NAME + " :" + token);
+	client.sendNumericReply("PONG " + servname + " :" + token);
 }
 
-void	NumericReplies::Notification::pingNotify(Client &client)
+void	NumericReplies::Notification::pingNotify(Client &client, const std::string &token)
 {
-	client.sendNumericReply("PING : " + token)
+	client.sendNumericReply("PING : " + token);
 }
 
 std::string	NumericReplies::constructNumericReplyHeader(const std::string &numericID, const std::string &hostName) {
