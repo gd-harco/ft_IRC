@@ -74,3 +74,8 @@ const char *Server::AlreadyOnChannel::what() const throw()
 {
 	return ("Server::Commands::AlreadyOnChannel: User already on channel");
 }
+
+const char *Server::BadPongResponse::what() const throw()
+{
+	return ("Server::Commands::BadPongResponse: Token received not equel to token send");
+}

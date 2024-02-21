@@ -132,6 +132,10 @@ void Client::SetRealname(std::string const &realname)
 	_realname = realname;
 }
 
+void Client::SetPingPongToken(std::string const &token)
+{
+	_pingPongToken = token;
+}
 
 bool Client::GetPassword() const
 {
@@ -156,6 +160,11 @@ std::string Client::GetUsername() const
 std::string Client::GetNickname() const
 {
 	return (_nickname);
+}
+
+std::string Client::GetPingPongToken() const
+{
+	return (_pingPongToken);
 }
 
 bool Client::IsAuthenticate() const
