@@ -11,14 +11,6 @@ void    Server::quit(vectorCommand args, Client *client)
     client->addMessageToSendbox("ERROR :Closing connection: " + args[1] + DELIMITER);
     client->updateClientStatus(_epollFd);
     // TODO : comprendre pourquoi ca fonctionne pas de faire ca
-    /*
-    for (fdClientMap::iterator it = _clients.begin(); it != _clients.end(); ++it)
-    {
-        int clientFd = it->first;
-        if (clientFd == client->GetFd()) {
-            deleteClient(it);
-            return;
-        }
-    }
-    */
+//    RemoveClient(client->GetFd());
+//    deleteClient(_clients.find(client->GetFd()));
 }
