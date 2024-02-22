@@ -35,12 +35,14 @@ class	Client
 		std::string	GetNickname() const;
 		std::string	GetUsername() const;
 		std::string		GetRealname() const;
+		std::string	GetPingPongToken() const;
 		bool		GetPassword() const;
 		bool		IsAuthenticate() const;
 
 
 		//setters
 		void	SetPassword();
+		void	SetPingPongToken(std::string const &token);
 		void	SetUsername(std::string const &username);
 		void	SetNickname(std::string const &nickname);
 		void	SetRealname(std::string const &realname);
@@ -56,6 +58,7 @@ class	Client
 		bool		_password;
 		bool		_authenticate;
 
+		std::string				_pingPongToken;
 		std::string				_clientBuffer;
 		struct epoll_event		_clientEpollevent;
 		std::string				_nickname;

@@ -131,8 +131,8 @@ void Server::SetMap()
 	_commands["JOIN"] = &Server::join;
 	_commands["PART"] = &Server::part;
 	// _commands["QUIT"] = &Server::quit;
-	// _commands["PING"] = &Server::ping;
-	// _commands["PONG"] = &Server::pong;
+	_commands["PING"] = &Server::ping;
+	_commands["PONG"] = &Server::pong;
 	// _commands["ERROR"] = &Server::error;
 }
 
