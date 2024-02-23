@@ -41,10 +41,11 @@ public:
 	class Notification {
 	public:
 		static void	joinNotify(Client &client, const std::string &channName);
-		static void kickNotify(Client &client, const std::string &sourceUser, const std::string &channel, const std::string reason);
+		static void kickNotify(Client &client, std::string const &name, std::string const &channel ,std::string const &reason);
 		static void inviteNotify(Client &client, const std::string &sourceUser, const std::string &channel);
 		static void pongNotify(Client &client, const std::string &servname, const std::string &token);
 		static void pingNotify(Client &client, const std::string &token);
+		static void	changeNick(Client &client, const std::string &oldNick, const std::string &newNick, const std::string &name);
 	};
 
 	class reply {

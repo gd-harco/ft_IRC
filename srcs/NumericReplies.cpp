@@ -281,9 +281,13 @@ void	NumericReplies::Notification::joinNotify(Client &client, const std::string 
 	client.sendNumericReply(":" + client.GetNickname() + " JOIN #" + channName + DELIMITER);
 }
 
-void	NumericReplies::Notification::kickNotify(Client &client, const std::string &sourceUser, const std::string &channel, const std::string reason)
+// :fion!caca@localhost KICK #a Carlos :Kicked by the channel's operator
+void	NumericReplies::Notification::kickNotify(Client &client, std::string const &name, std::string const &channel ,std::string const &reason)
 {
-	client.sendNumericReply(":" + sourceUser + " KICK #" + channel + " " + client.GetNickname() + " " + reason + DELIMITER);
+	std::stringstream reply;
+
+	reply << ":" << client.GetNickname() << "!" << client.GetUsername() << "@" << "localhost" << " KICK #" << channel << " " << name << " " << reason << DELIMITER;
+	client.sendNumericReply(reply.str());
 }
 
 void	NumericReplies::Notification::inviteNotify(Client &client, const std::string &sourceUser, const std::string &channel)
@@ -300,6 +304,16 @@ void	NumericReplies::Notification::pingNotify(Client &client, const std::string 
 {
 	client.sendNumericReply("PING : " + token);
 }
+
+// :fion!caca@localhost NICK caca
+void NumericReplies::Notification::changeNick(Client &client, const std::string &oldNick, const std::string &newNick, const std::string &name)
+{
+	std::stringstream reply;
+
+	reply << ":" << oldNick << "!" << name << "@localhost" << " NICK " << newNick << DELIMITER;
+	client.sendNumericReply(reply.str());
+}
+
 
 std::string	NumericReplies::constructNumericReplyHeader(const std::string &numericID, const std::string &hostName) {
 	std::stringstream   result;

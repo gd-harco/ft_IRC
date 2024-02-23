@@ -31,6 +31,43 @@ void Server::nick(vectorCommand args, Client *client)
 	if (!client->GetNickname().empty())
 		this->_nickUsed.erase(client->GetNickname());
 	this->_nickUsed.insert(args[1]);
+	if (client->GetNickname().size() != 0)
+	{
+		NumericReplies::Notification::changeNick(*client, client->GetNickname(), args[1], client->GetUsername());
+		client->updateClientStatus(_epollFd);
+		for (channelMap::iterator getChannels = _channels.begin(); getChannels != _channels.end(); getChannels++)
+		{
+			Channel	*channel = getChannels->second;
+			stringClientMap clientsChannel = channel->GetClients();
+			if (clientsChannel.find(client->GetNickname()) != clientsChannel.end())
+			{
+				for (stringClientMap::iterator it = clientsChannel.begin(); it != clientsChannel.end(); it++)
+				{
+					if (client->GetNickname() == it->first)
+					{
+						if (channel->isOp(client->GetNickname()))
+						{
+							channel->RemoveOp(client->GetNickname());
+							channel->SetOp(args[1]);
+						}
+						int saveFd = it->second;
+						channel->RemoveClient(client->GetNickname());
+						channel->AddClient(args[1], saveFd);
+					}
+					else
+					{
+						fdClientMap::iterator clientToSendIt = _clients.find(it->second);
+						if (clientToSendIt != _clients.end())
+						{
+							Client *clientToSend = clientToSendIt->second;
+							NumericReplies::Notification::changeNick(*clientToSend, client->GetNickname(), args[1], client->GetUsername());
+							clientToSend->updateClientStatus(_epollFd);
+						}
+					}
+				}
+			}
+		}
+	}
 	client->SetNickname(args[1]);
 	std::cout << client->GetNickname() << " " << client->GetUsername() << " " << client->GetFd() << ": " << "have new nickname" << std::endl;
 }

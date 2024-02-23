@@ -31,22 +31,27 @@ void Server::kick(vectorCommand args, Client *client)
             client->updateClientStatus(_epollFd);
             throw OperatorIsNeeded();
         }
-        for (size_t i = 2; i < args.size() - 1; i++)
-        {
-            if (!channel->IsInChannel(args[i]))
-            {
-                NumericReplies::Error::userNotInChannel(*client, args[i], channelName);
-                client->updateClientStatus(_epollFd);
-                throw NotInTheChannel();
-            }
-            else
-            {
-                Client clientKicked = channel->GetClients().find(args[i])->second;
-                NumericReplies::Notification::kickNotify(clientKicked, client->GetNickname(), channelName, args[args.size() - 1]);
-                clientKicked.updateClientStatus(_epollFd);
-                channel->RemoveClient(args[i]);
-            }
-        }
+		if (!channel->IsInChannel(args[2]))
+		{
+			NumericReplies::Error::userNotInChannel(*client, args[2], channelName);
+			client->updateClientStatus(_epollFd);
+			throw NotInTheChannel();
+		}
+		else
+		{
+			stringClientMap	ClientChannelMap = channel->GetClients();
+			for (stringClientMap::iterator it = ClientChannelMap.begin(); it != ClientChannelMap.end(); it++)
+			{
+				fdClientMap::iterator	findIt = _clients.find(it->second);
+				if (findIt != _clients.end())
+				{
+					Client	*userToSend = findIt->second;
+					NumericReplies::Notification::kickNotify(*userToSend, args[2], channelName, args[args.size() - 1]);
+					userToSend->updateClientStatus(_epollFd);
+				}
+			}
+				channel->RemoveClient(args[2]);
+		}
 	}
 	catch(std::exception &e)
 	{

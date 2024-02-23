@@ -45,6 +45,11 @@ void Server::invite(vectorCommand args, Client *client)
             clientInvited->updateClientStatus(_epollFd);
             channel->SetInvite(userToInvite);
         }
+        else
+        {
+            NumericReplies::Error::noSuchNick(*client, userToInvite);
+            client->updateClientStatus(_epollFd);
+        }
     }
     catch(const std::exception& e)
     {
