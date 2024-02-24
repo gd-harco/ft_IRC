@@ -43,4 +43,14 @@ void Server::topic(vectorCommand args, Client *client)
         throw OperatorIsNeeded();
     }
     channel->SetTopics(args[2]);
+    stringClientMap   clientsMap = channel->GetClients();
+    for (stringClientMap::iterator clientMapIt = clientsMap.begin(); clientMapIt != clientsMap.end(); clientMapIt++)
+    {
+        if (_clients.find(clientMapIt->second) != _clients.end())
+        {
+            Client  *clientToSend = _clients.find(clientMapIt->second)->second;
+            NumericReplies::reply::topic(*clientToSend, channelName, channel->GetTopics());
+            clientToSend->updateClientStatus(_epollFd);
+        }
+    }
 }
