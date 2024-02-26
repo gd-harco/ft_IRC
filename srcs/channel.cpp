@@ -81,6 +81,11 @@ const std::vector<std::string> &Channel::GetOp() const
 	return (_op);
 }
 
+bool Channel::GetRTopic()
+{
+	return _rTopic;
+}
+
 void Channel::SetOp(std::string const &op)
 {
 	_op.push_back(op);
@@ -111,11 +116,18 @@ bool Channel::IsRestrictChannel() const
 	return _rTopic;
 }
 
-bool Channel::GetUserLimit() const
+int Channel::GetUserLimit() const
 {
 	return (_userLimit);
 }
 
+bool Channel::isOp(std::string const &user)
+{
+	for (size_t i = 0; i < _op.size(); i++)
+		if (_op[i] == user)
+			return 1;
+	return (0);
+}
 void Channel::SetUserLimit(int NewLimit)
 {
 	_userLimit = NewLimit;
@@ -125,3 +137,20 @@ void Channel::SetRInvite(bool status)
 {
 	_rInvite = status;
 }
+
+bool Channel::IsInvite(std::string const &nick)
+{
+	return (std::find(_inviting_users.begin(), _inviting_users.end(), nick) != _inviting_users.end());
+}
+
+void Channel::SetInvite(std::string const &nick)
+{
+	if (std::find(_inviting_users.begin(), _inviting_users.end(), nick) == _inviting_users.end())
+		_inviting_users.push_back(nick);
+}
+
+bool Channel::GetRInvite()
+{
+	return (_rInvite);
+}
+

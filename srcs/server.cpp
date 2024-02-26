@@ -123,16 +123,16 @@ void Server::SetMap()
 	_commands["PASS"] = &Server::pass;
 	_commands["USER"] = &Server::user;
 	_commands["NICK"] = &Server::nick;
-	// _commands["KICK"] = &Server::kick;
-	// _commands["INVITE"] = &Server::invite;
-	// _commands["TOPIC"] = &Server::topic;
+	_commands["KICK"] = &Server::kick;
+	_commands["INVITE"] = &Server::invite;
+	_commands["TOPIC"] = &Server::topic;
 	_commands["MODE"] = &Server::mode;
 	_commands["PRIVMSG"] = &Server::privmsg;
 	_commands["JOIN"] = &Server::join;
 	_commands["PART"] = &Server::part;
 	// _commands["QUIT"] = &Server::quit;
-	// _commands["PING"] = &Server::ping;
-	// _commands["PONG"] = &Server::pong;
+	_commands["PING"] = &Server::ping;
+	_commands["PONG"] = &Server::pong;
 	// _commands["ERROR"] = &Server::error;
 }
 
@@ -155,7 +155,6 @@ void Server::CheckConnection(Client *client)
 	if (client->GetPassword() && !client->GetNickname().empty() && !client->GetUsername().empty())
 	{
 		client->SetAuthenticate();
-//		client->addMessageToSendbox(":irc.localhost 001 " + client->GetUsername() + " :Welcome to the " + "networkName" + " Network, " + client->GetUsername() + "!\r\n");
 		NumericReplies::reply::welcome(*client);
 client->updateClientStatus(this->_epollFd);
 	}
@@ -166,7 +165,6 @@ void Server::HandleEvent(int fd)
 {
 	fdClientMap::iterator curClient = _clients.find(fd);
 	char buf[BUFFER_READ_SIZE + 1] = {0};
-	// std::memset(buf, 0, BUFFER_READ_SIZE + 1);
 	ssize_t ret_data = recv(fd, buf, BUFFER_READ_SIZE, 0);
 	if (ret_data <= 0)
 		throw std::invalid_argument("Client disconnected");
@@ -189,15 +187,6 @@ void	Server::sendMsg(int fd)
 	client->second->updateClientStatus(this->_epollFd);
 }
 
-Server &Server::operator=(const Server &server)
-{
-	if (this != &server)
-	{
-		//TODO faire jai la flemme de lefaire maintenant
-	}
-	return (*this);
-}
-
 bool	Server::HandleCommand(std::string const &msg, Client *client)
 {
 	std::istringstream		SepMsg(msg);
@@ -215,68 +204,6 @@ bool	Server::HandleCommand(std::string const &msg, Client *client)
 			std::cout << client->GetUsername() << ", " << client->GetNickname() << ": " << msg;
 		return (false);
 	}
-	catch (NotAuthenticate &e)
-	{
-		std::cout << e.what() << std::endl;
-		return (false);
-	}
-	catch (NeedMoreParams &e)
-	{
-		std::cout << e.what() << std::endl;
-		return (false);
-	}
-	catch (BadPassword &e)
-	{
-		throw BadPassword();
-	}
-	catch (AlreadyRegistred &e)
-	{
-		std::cout << e.what() << std::endl;
-		return (false);
-	}
-	catch (UnableToCreateChannel &e)
-	{
-		std::cout << e.what() << std::endl;
-		return (false);
-	}
-	catch (NotAChannel &e)
-	{
-		std::cout << e.what() << std::endl;
-		return (false);
-	}
-	catch (UserAlreadyExist &e)
-	{
-		std::cout << e.what() << std::endl;
-		return (false);
-	}
-	catch (NickAlreadyExist &e)
-	{
-		std::cout << e.what() << std::endl;
-		return (false);
-	}
-	catch (ChannelNotFound &e)
-	{
-		std::cout << e.what() << std::endl;
-		return (false);
-	}
-	catch (ClientNotFound &e)
-	{
-		std::cout << e.what() << std::endl;
-		return (false);
-	}
-	catch (NotInTheChannel &e)
-	{
-		std::cout << e.what() << std::endl;
-		return (false);
-	}
-	catch (std::runtime_error &e) {
-		std::cout << e.what() << std::endl;
-		return false;
-	}
-	catch (ErroneusNickName &e) {
-		std::cout << e.what() << std::endl;
-		return false;
-	}
 	catch (std::exception &e)
 	{
 		while (!ParsMsg.empty())
@@ -284,12 +211,11 @@ bool	Server::HandleCommand(std::string const &msg, Client *client)
 			std::cout << ParsMsg.back() << std::endl;
 			ParsMsg.pop_back();
 		}
-		std::cout << "404 cmd not found" << std::endl;
+		// std::cout << "404 cmd not found" << std::endl;
 		ParsMsg.clear();
-		std::cout << client->GetUsername() << ", " << client->GetNickname() << ": " << msg;
+		std::cout << e.what() << std::endl;
 		return (true);
 	}
-	//TODO send numeric reply to client
 	return (true);
 }
 
@@ -321,6 +247,17 @@ int Server::GetEpollFd() const
 sockaddr_in Server::GetSockAddr() const
 {
 	return (_sockaddr);
+}
+
+Client *Server::findClient(std::string nickName)
+{
+	for (fdClientMap::const_iterator it = _clients.begin(); it != _clients.end(); ++it)
+	{
+	    Client* client = it->second;
+	    if (client->GetNickname() == nickName)
+	        return client;
+	}
+	return NULL;
 }
 
 
@@ -364,7 +301,6 @@ void Server::RemoveClient(int key)
 			PartCommand.push_back("PART");
 			PartCommand.push_back("#" + it->first);
 			partToExecute.insert(std::make_pair(PartCommand,toRemove->second));
-//			part(PartCommand, toRemove->second);
 		}
 	}
 	//execute all part stored in the partToExecute map.

@@ -5,20 +5,23 @@
 #include "server.hpp"
 #include "utility.hpp"
 
+//TODO add invitations
+
 void Server::join(vectorCommand args, Client *client)
 {
-	if (client->GetUsername().empty() || client->GetNickname().empty() || client->GetPassword() == false)
+	if (!client->IsAuthenticate())
 		throw (NotAuthenticate());
 
-	// if (args.size() != 1)
-	// {
-	// 	std::cout << "invalid number of args" << std::endl;
-	// 	return (false);
-	// }
+	if (args.size() < 3)
+	{
+		NumericReplies::Error::needMoreParams(*client, args[0]);
+		client->updateClientStatus(_epollFd);
+		throw (NeedMoreParams());
+	}
 	//TODO: Clarifier avec Alex
 	if (args[1].find("#") != 0)
 	{
-		client->addMessageToSendbox(":irc.localhost 471 " + client->GetUsername() + " #" + args[1] + " :Cannot join channel\r\n");
+		NumericReplies::Error::noSuchChannel(*client, args[1]);
 		client->updateClientStatus(_epollFd);
 		throw(UnableToCreateChannel());
 	}
@@ -29,29 +32,51 @@ void Server::join(vectorCommand args, Client *client)
 		Channel *NewChannel = new Channel(RealNameChannel, client->GetNickname());
 		NewChannel->AddClient(client->GetNickname(), client->GetFd());
 		AddChannel(RealNameChannel, NewChannel);
-//		client->addMessageToSendbox(RPL_JOIN(client->GetUsername(), RealNameChannel));
 		NumericReplies::Notification::joinNotify(*client, RealNameChannel);
-//		client->addMessageToSendbox(RPL_NAMREPLY(client->GetUsername(), RealNameChannel, NewChannel->GetAllNickname()));
 		NumericReplies::reply::nameInChannel(*client, RealNameChannel, NewChannel->GetAllNickname());
-//		client->addMessageToSendbox(RPL_ENDOFNAMES(client->GetUsername(), RealNameChannel));
 		NumericReplies::reply::endOfName(*client, RealNameChannel);
-client->updateClientStatus(_epollFd);
-
+		client->updateClientStatus(_epollFd);
 		return ;
+	}
+	if (_channels[RealNameChannel]->GetUserLimit() >= (int)_channels[RealNameChannel]->GetClients().size() && _channels[RealNameChannel]->GetUserLimit() >= 0)
+	{
+		NumericReplies::Error::channelIsFull(*client, RealNameChannel);
+		client->updateClientStatus(_epollFd);
+		return ;
+	}
+	if (_channels[RealNameChannel]->GetRInvite())
+	{
+		if (!_channels[RealNameChannel]->IsInvite(client->GetNickname()))
+		{
+			NumericReplies::Error::chanelInviteOnly(*client, RealNameChannel);
+			client->updateClientStatus(_epollFd);
+			return ;
+		}
+	}
+	if (_channels[RealNameChannel]->GetPassword().size() != 0)
+	{
+		if (args.size() < 4)
+		{
+			NumericReplies::Error::needMoreParams(*client, args[0]);
+			client->updateClientStatus(_epollFd);
+			throw(NeedMoreParams());
+		}
+		if (args[4] != _channels[RealNameChannel]->GetPassword())
+		{
+			NumericReplies::Error::badChannelKey(*client, RealNameChannel);
+			client->updateClientStatus(_epollFd);
+		}
 	}
 	_channels[RealNameChannel]->AddClient(client->GetNickname(), client->GetFd());
 	stringClientMap	ClientChannel = _channels[RealNameChannel]->GetClients();
-//	client->addMessageToSendbox(RPL_JOIN(client->GetUsername(), RealNameChannel));
 	NumericReplies::Notification::joinNotify(*client, RealNameChannel);
 	client->updateClientStatus(this->_epollFd);
 	for (stringClientMap::iterator it = ClientChannel.begin(); it != ClientChannel.end(); it++)
 	{
 		if (this->_clients.find(it->second) != _clients.end())
 		{
-//			_clients[it->second]->addMessageToSendbox(RPL_NAMREPLY(_clients[it->second]->GetUsername(), RealNameChannel, _channels.find(RealNameChannel)->second->GetAllNickname()));
 			NumericReplies::reply::nameInChannel(*_clients[it->second], RealNameChannel,
 					_channels.find(RealNameChannel)->second->GetAllNickname());
-//			_clients[it->second]->addMessageToSendbox(RPL_ENDOFNAMES(_clients[it->second]->GetUsername(), RealNameChannel));
 			NumericReplies::reply::endOfName(*_clients[it->second], RealNameChannel);
 			_clients[it->second]->updateClientStatus(_epollFd);
 		}

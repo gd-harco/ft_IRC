@@ -47,8 +47,6 @@ class	Server
 		void handleExistingConnection(struct epoll_event event, int currFd);
 		void handleEventEpollin(int currFd);
 
-		Server &operator=(const Server &server);
-
 		//getters
 		fdClientMap			&GetClients();
 		channelMap			& GetChannels();
@@ -56,6 +54,7 @@ class	Server
 		int					GetEpollFd() const;
 		int					GetScocket() const;
 		struct sockaddr_in	GetSockAddr() const;
+		Client				*findClient(std::string nickName);
 
 		//setter
 		void	AddClient(int key, Client *clientToAdd);
@@ -154,6 +153,21 @@ class	Server
 		class ErroneusNickName : public std::exception{
 		public:
 		virtual const char *what() const throw();
+		};
+		class OperatorIsNeeded : public std::exception
+		{
+		public:
+			virtual const char *what() const throw();
+		};
+		class AlreadyOnChannel : public std::exception
+		{
+		public:
+			virtual const char *what() const throw();
+		};
+		class BadPongResponse : public std::exception
+		{
+		public:
+			virtual const char *what() const throw();
 		};
 
 		void	deleteClient(fdClientMap::iterator toDelete) const;

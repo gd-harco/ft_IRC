@@ -7,7 +7,11 @@
 void Server::mode(vectorCommand args, Client *client)
 {
 	if (args.size() < 3)
-		throw (Server::NeedMoreParams());
+	{
+		NumericReplies::Error::needMoreParams(*client, args[0]);
+		client->updateClientStatus(_epollFd);
+		throw (NeedMoreParams());
+	}
 	ModeTopic(args, client);
 	ModeOperator(args, client);
 	ModeUserLimit(args, client);
@@ -22,11 +26,26 @@ void Server::ModeInvite(vectorCommand args, Client *client)
 		std::string const ChannelName = processedChannelName(args[1]);
 		channelMap::iterator it = _channels.find(ChannelName);
 		if (it ==  _channels.end())
+		{
+			NumericReplies::Error::noSuchChannel(*client, ChannelName);
+			client->updateClientStatus(_epollFd);
 			throw(Server::ChannelNotFound());
+		}
 		std::vector<std::string> ChannelOperator = it ->second->GetOp();
+		stringClientMap MyClients = _channels[ChannelName]->GetClients();
+		if (MyClients.find(client->GetNickname()) == MyClients.end())
+		{
+			NumericReplies::Error::notOnChannel(*client, ChannelName);
+			client->updateClientStatus(_epollFd);
+			throw (NotInTheChannel());
+		}
 		std::vector<std::string>::iterator ToFind =  std::find(ChannelOperator.begin(), ChannelOperator.end(),client->GetNickname());
 		if (ToFind == ChannelOperator.end())
-			std::cout << "client are not operator cannot change password" << std::endl;
+		{
+			NumericReplies::Error::chanOpPrivsNeeded(*client, ChannelName);
+			client->updateClientStatus(_epollFd);
+			throw OperatorIsNeeded();
+		}
 		else
 		{
 			std::cout << "channel #" << ChannelName << " is now not invite only" << std::endl;
@@ -38,11 +57,26 @@ void Server::ModeInvite(vectorCommand args, Client *client)
 		std::string const ChannelName = processedChannelName(args[1]);
 		channelMap::iterator it = _channels.find(ChannelName);
 		if (it ==  _channels.end())
+		{
+			NumericReplies::Error::noSuchChannel(*client, ChannelName);
+			client->updateClientStatus(_epollFd);
 			throw(Server::ChannelNotFound());
+		}
 		std::vector<std::string> ChannelOperator = it ->second->GetOp();
+		stringClientMap MyClients = _channels[ChannelName]->GetClients();
+		if (MyClients.find(client->GetNickname()) == MyClients.end())
+		{
+			NumericReplies::Error::notOnChannel(*client, ChannelName);
+			client->updateClientStatus(_epollFd);
+			throw (NotInTheChannel());
+		}
 		std::vector<std::string>::iterator ToFind =  std::find(ChannelOperator.begin(), ChannelOperator.end(),client->GetNickname());
 		if (ToFind == ChannelOperator.end())
-			std::cout << "client are not operator cannot change password" << std::endl;
+		{
+			NumericReplies::Error::chanOpPrivsNeeded(*client, ChannelName);
+			client->updateClientStatus(_epollFd);
+			throw OperatorIsNeeded();
+		}
 		else
 		{
 			std::cout << "channel #" << ChannelName << " is now invite only" << std::endl;
@@ -59,11 +93,26 @@ void Server::ModePassword(vectorCommand args, Client *client)
 		std::string const ChannelName = processedChannelName(args[1]);
 		channelMap::iterator it = _channels.find(ChannelName);
 		if (it ==  _channels.end())
+		{
+			NumericReplies::Error::noSuchChannel(*client, ChannelName);
+			client->updateClientStatus(_epollFd);
 			throw(Server::ChannelNotFound());
+		}
 		std::vector<std::string> ChannelOperator = it ->second->GetOp();
+		stringClientMap MyClients = _channels[ChannelName]->GetClients();
+		if (MyClients.find(client->GetNickname()) == MyClients.end())
+		{
+			NumericReplies::Error::notOnChannel(*client, ChannelName);
+			client->updateClientStatus(_epollFd);
+			throw (NotInTheChannel());
+		}
 		std::vector<std::string>::iterator ToFind =  std::find(ChannelOperator.begin(), ChannelOperator.end(),client->GetNickname());
 		if (ToFind == ChannelOperator.end())
-			std::cout << "client are not operator cannot change password" << std::endl;
+		{
+			NumericReplies::Error::chanOpPrivsNeeded(*client, ChannelName);
+			client->updateClientStatus(_epollFd);
+			throw OperatorIsNeeded();
+		}
 		else
 		{
 			it->second->SetPassword("");
@@ -78,15 +127,34 @@ void Server::ModePassword(vectorCommand args, Client *client)
 	else if (args[2] == "+k")
 	{
 		if (args.size() < 5)
-			throw(NeedMoreParams());
+		{
+			NumericReplies::Error::needMoreParams(*client, args[0]);
+			client->updateClientStatus(_epollFd);
+			throw (NeedMoreParams());
+		}
 		std::string const ChannelName = processedChannelName(args[1]);
 		channelMap::iterator it = _channels.find(ChannelName);
 		if (it ==  _channels.end())
+		{
+			NumericReplies::Error::noSuchChannel(*client, ChannelName);
+			client->updateClientStatus(_epollFd);
 			throw(Server::ChannelNotFound());
+		}
 		std::vector<std::string> ChannelOperator = it ->second->GetOp();
+		stringClientMap MyClients = _channels[ChannelName]->GetClients();
+		if (MyClients.find(client->GetNickname()) == MyClients.end())
+		{
+			NumericReplies::Error::notOnChannel(*client, ChannelName);
+			client->updateClientStatus(_epollFd);
+			throw (NotInTheChannel());
+		}
 		std::vector<std::string>::iterator ToFind =  std::find(ChannelOperator.begin(), ChannelOperator.end(),client->GetNickname());
 		if (ToFind == ChannelOperator.end())
-			std::cout << "client are not operator cannot change password" << std::endl;
+		{
+			NumericReplies::Error::chanOpPrivsNeeded(*client, ChannelName);
+			client->updateClientStatus(_epollFd);
+			throw OperatorIsNeeded();
+		}
 		else
 		{
 			it->second->SetPassword(args[3]);
@@ -108,11 +176,26 @@ void Server::ModeUserLimit(vectorCommand args, Client *client)
 		std::string const ChannelName = processedChannelName(args[1]);
 		channelMap::iterator it = _channels.find(ChannelName);
 		if (it ==  _channels.end())
+		{
+			NumericReplies::Error::noSuchChannel(*client, ChannelName);
+			client->updateClientStatus(_epollFd);
 			throw(Server::ChannelNotFound());
+		}
 		std::vector<std::string> ChannelOperator = it ->second->GetOp();
+		stringClientMap MyClients = _channels[ChannelName]->GetClients();
+		if (MyClients.find(client->GetNickname()) == MyClients.end())
+		{
+			NumericReplies::Error::notOnChannel(*client, ChannelName);
+			client->updateClientStatus(_epollFd);
+			throw (NotInTheChannel());
+		}
 		std::vector<std::string>::iterator ToFind =  std::find(ChannelOperator.begin(), ChannelOperator.end(),client->GetNickname());
 		if (ToFind == ChannelOperator.end())
-			std::cout << "client are not operator cannot change user limit" << std::endl;
+		{
+			NumericReplies::Error::chanOpPrivsNeeded(*client, ChannelName);
+			client->updateClientStatus(_epollFd);
+			throw OperatorIsNeeded();
+		}
 		else
 		{
 			it->second->SetUserLimit(-1);
@@ -127,15 +210,34 @@ void Server::ModeUserLimit(vectorCommand args, Client *client)
 	else if (args[2] == "+l")
 	{
 		if (args.size() < 5)
-			throw(NeedMoreParams());
+		{
+			NumericReplies::Error::needMoreParams(*client, args[0]);
+			client->updateClientStatus(_epollFd);
+			throw (NeedMoreParams());
+		}
 		std::string const ChannelName = processedChannelName(args[1]);
 		channelMap::iterator it = _channels.find(ChannelName);
 		if (it ==  _channels.end())
+		{
+			NumericReplies::Error::noSuchChannel(*client, ChannelName);
+			client->updateClientStatus(_epollFd);
 			throw(Server::ChannelNotFound());
+		}
 		std::vector<std::string> ChannelOperator = it ->second->GetOp();
+		stringClientMap MyClients = _channels[ChannelName]->GetClients();
+		if (MyClients.find(client->GetNickname()) == MyClients.end())
+		{
+			NumericReplies::Error::notOnChannel(*client, ChannelName);
+			client->updateClientStatus(_epollFd);
+			throw (NotInTheChannel());
+		}
 		std::vector<std::string>::iterator ToFind =  std::find(ChannelOperator.begin(), ChannelOperator.end(),client->GetNickname());
 		if (ToFind == ChannelOperator.end())
-			std::cout << "client are not operator cannot change user limit" << std::endl;
+		{
+			NumericReplies::Error::chanOpPrivsNeeded(*client, ChannelName);
+			client->updateClientStatus(_epollFd);
+			throw OperatorIsNeeded();
+		}
 		else
 		{
 			for (size_t i = 0; i < args[3].size(); i++)
@@ -163,12 +265,33 @@ void Server::ModeOperator(vectorCommand args, Client *client)
 	if (args[2] == "+o")
 	{
 		if (args.size() != 5)
-			throw(NeedMoreParams());
+		{
+			NumericReplies::Error::needMoreParams(*client, args[0]);
+			client->updateClientStatus(_epollFd);
+			throw (NeedMoreParams());
+		}
 		std::string const ChannelName = processedChannelName(args[1]);
 		channelMap::iterator it = _channels.find(ChannelName);
 		if (it ==  _channels.end())
+		{
+			NumericReplies::Error::noSuchChannel(*client, ChannelName);
+			client->updateClientStatus(_epollFd);
 			throw(Server::ChannelNotFound());
+		}
 		std::vector<std::string> ChannelOperator = it ->second->GetOp();
+		stringClientMap MyClients = _channels[ChannelName]->GetClients();
+		if (MyClients.find(client->GetNickname()) == MyClients.end())
+		{
+			NumericReplies::Error::notOnChannel(*client, ChannelName);
+			client->updateClientStatus(_epollFd);
+			throw (NotInTheChannel());
+		}
+		else if (!_channels[ChannelName]->isOp(client->GetNickname()))
+		{
+			NumericReplies::Error::chanOpPrivsNeeded(*client, ChannelName);
+			client->updateClientStatus(_epollFd);
+			throw OperatorIsNeeded();
+		}
 		std::vector<std::string>::iterator ToFind =  std::find(ChannelOperator.begin(), ChannelOperator.end(),client->GetNickname());
 		std::vector<std::string>::iterator NewOpSearch = std::find(ChannelOperator.begin(), ChannelOperator.end(), args[3]);
 		if (NewOpSearch != ChannelOperator.end())
@@ -190,19 +313,38 @@ void Server::ModeOperator(vectorCommand args, Client *client)
 					_clients[itCM->second]->updateClientStatus(_epollFd);
 				}
 			}
-			else
-				throw (NotInTheChannel());
 			return ;
 		}
 	}
 	else if (args[2] == "-o")
 	{
 		if (args.size() != 5)
-			throw(NeedMoreParams());
+		{
+			NumericReplies::Error::needMoreParams(*client, args[0]);
+			client->updateClientStatus(_epollFd);
+			throw (NeedMoreParams());
+		}
 		std::string const ChannelName = processedChannelName(args[1]);
 		channelMap::iterator it = _channels.find(ChannelName);
 		if (it ==  _channels.end())
+		{
+			NumericReplies::Error::noSuchChannel(*client, ChannelName);
+			client->updateClientStatus(_epollFd);
 			throw(Server::ChannelNotFound());
+		}
+		stringClientMap MyClients = _channels[ChannelName]->GetClients();
+		if (MyClients.find(client->GetNickname()) == MyClients.end())
+		{
+			NumericReplies::Error::notOnChannel(*client, ChannelName);
+			client->updateClientStatus(_epollFd);
+			throw (NotInTheChannel());
+		}
+		else if (!_channels[ChannelName]->isOp(client->GetNickname()))
+		{
+			NumericReplies::Error::chanOpPrivsNeeded(*client, ChannelName);
+			client->updateClientStatus(_epollFd);
+			throw OperatorIsNeeded();
+		}
 		std::vector<std::string> ChannelOperator = it ->second->GetOp();
 		std::vector<std::string>::iterator ToFind =  std::find(ChannelOperator.begin(), ChannelOperator.end(),client->GetNickname());
 		std::vector<std::string>::iterator NewOpSearch = std::find(ChannelOperator.begin(), ChannelOperator.end(), args[3]);
@@ -219,14 +361,11 @@ void Server::ModeOperator(vectorCommand args, Client *client)
 				stringClientMap	ClientChannel = _channels[ChannelName]->GetClients();
 				for (stringClientMap::iterator itCM = ClientChannel.begin(); itCM != ClientChannel.end(); itCM++)
 				{
-					// _clients[itCM->second]->addMessageToSendbox(":localhost MODE #" + ChannelName + " +o" + args[3] + "\r\n");
 					NumericReplies::reply::nameInChannel(*_clients[itCM->second], ChannelName, it->second->GetAllNickname());
 					NumericReplies::reply::endOfName(*_clients[itCM->second], ChannelName);
 					_clients[itCM->second]->updateClientStatus(_epollFd);
 				}
 			}
-			else
-				throw (NotInTheChannel());
 			return ;
 		}
 	}
@@ -238,37 +377,69 @@ void	Server::ModeTopic(vectorCommand args, Client *client)
 	if (args[2] == "+t")
 	{
 		if (args.size() < 4)
-			throw (Server::NeedMoreParams());
+		{
+			NumericReplies::Error::needMoreParams(*client, args[0]);
+			client->updateClientStatus(_epollFd);
+			throw (NeedMoreParams());
+		}
 		std::string const ChannelName = processedChannelName(args[1]);
 		channelMap::iterator it = _channels.find(ChannelName);
 		if (it ==  _channels.end())
+		{
+			NumericReplies::Error::noSuchChannel(*client, ChannelName);
+			client->updateClientStatus(_epollFd);
 			throw(Server::ChannelNotFound());
+		}
+		stringClientMap MyClients = _channels[ChannelName]->GetClients();
+		if (MyClients.find(client->GetNickname()) == MyClients.end())
+		{
+			NumericReplies::Error::notOnChannel(*client, ChannelName);
+			client->updateClientStatus(_epollFd);
+			throw (NotInTheChannel());
+		}
+		else if (!_channels[ChannelName]->isOp(client->GetNickname()))
+		{
+			NumericReplies::Error::chanOpPrivsNeeded(*client, ChannelName);
+			client->updateClientStatus(_epollFd);
+			throw OperatorIsNeeded();
+		}
 		std::vector<std::string> ChannelOperator = it ->second->GetOp();
 		std::vector<std::string>::iterator ToFind =  std::find(ChannelOperator.begin(), ChannelOperator.end(),client->GetNickname());
 		if (ToFind != ChannelOperator.end())
-		{
 			it->second->SetRTopic(true);
-			return ;
-		}
-		else
-			throw (NotInTheChannel());
 	}
 	else if (args[2] == "-t")
 	{
 		if (args.size() < 4)
-			throw (Server::NeedMoreParams());
+		{
+			NumericReplies::Error::needMoreParams(*client, args[0]);
+			client->updateClientStatus(_epollFd);
+			throw (NeedMoreParams());
+		}
 		std::string const ChannelName = processedChannelName(args[1]);
 		channelMap::iterator it = _channels.find(ChannelName);
 		if (it ==  _channels.end())
+		{
+			NumericReplies::Error::noSuchChannel(*client, ChannelName);
+			client->updateClientStatus(_epollFd);
 			throw(Server::ChannelNotFound());
+		}
+		stringClientMap MyClients = _channels[ChannelName]->GetClients();
+		if (MyClients.find(client->GetNickname()) == MyClients.end())
+		{
+			NumericReplies::Error::notOnChannel(*client, ChannelName);
+			client->updateClientStatus(_epollFd);
+			throw (NotInTheChannel());
+		}
+		else if (!_channels[ChannelName]->isOp(client->GetNickname()))
+		{
+			NumericReplies::Error::chanOpPrivsNeeded(*client, ChannelName);
+			client->updateClientStatus(_epollFd);
+			throw OperatorIsNeeded();
+		}
 		std::vector<std::string> ChannelOperator = it ->second->GetOp();
 		std::vector<std::string>::iterator ToFind =  std::find(ChannelOperator.begin(), ChannelOperator.end(),client->GetNickname());
 		if (ToFind != ChannelOperator.end())
-		{
 			it->second->SetRTopic(false);
-			return ;
-		}
-		else
-			throw (NotInTheChannel());
 	}
 }

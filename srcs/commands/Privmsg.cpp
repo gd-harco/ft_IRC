@@ -9,6 +9,8 @@ void Server::privmsg(vectorCommand args, Client *client)
 {
 	if (client->GetUsername().empty() || client->GetNickname().empty() || !client->GetPassword())
 		throw(NotAuthenticate());
+	if (args.size() != 3)
+		throw (NeedMoreParams());
 	if (args[1].find("#") != 0)
 	{
 		try
@@ -17,7 +19,8 @@ void Server::privmsg(vectorCommand args, Client *client)
 		}
 		catch(ClientNotFound &e)
 		{
-			throw ;
+			NumericReplies::Error::noSuchNick(*client, args[1]);
+			client->updateClientStatus(_epollFd);
 		}
 		catch (std::exception &e)
 		{
@@ -32,7 +35,8 @@ void Server::privmsg(vectorCommand args, Client *client)
 		}
 		catch (ChannelNotFound &e)
 		{
-			throw ;
+			NumericReplies::Error::noSuchChannel(*client, processedChannelName(args[1]));
+			client->updateClientStatus(_epollFd);
 		}
 		catch (NotInTheChannel &e)
 		{
