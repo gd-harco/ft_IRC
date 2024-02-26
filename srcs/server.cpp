@@ -56,6 +56,8 @@ void Server::handleExistingConnection(struct epoll_event event, int currFd)
 	if (event.events & EPOLLOUT)
 	{
 		this->sendMsg(event.data.fd);
+		if (_clients[currFd]->_toDestroy)
+			this->RemoveClient(currFd);
 	}
 	if (event.events & EPOLLIN)
 	{
@@ -130,7 +132,7 @@ void Server::SetMap()
 	_commands["PRIVMSG"] = &Server::privmsg;
 	_commands["JOIN"] = &Server::join;
 	_commands["PART"] = &Server::part;
-	// _commands["QUIT"] = &Server::quit;
+	 _commands["QUIT"] = &Server::quit;
 	_commands["PING"] = &Server::ping;
 	_commands["PONG"] = &Server::pong;
 	// _commands["ERROR"] = &Server::error;

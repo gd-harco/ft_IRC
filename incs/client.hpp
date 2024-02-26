@@ -50,6 +50,7 @@ class	Client
 
 		void	receiveMsg();
 		void	handleString(const std::string &toParse);
+		bool		_toDestroy;
 
 	private:
 		int			_fd;
