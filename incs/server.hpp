@@ -35,7 +35,7 @@ class	Server
 
 		//constructor / destructor
 		Server();
-		Server(uint64_t port, std::string password);
+		Server(uint64_t port, const std::string& password);
 		Server(const Server &server);
 		~Server();
 
@@ -49,28 +49,23 @@ class	Server
 
 		//getters
 		fdClientMap			&GetClients();
-		channelMap			& GetChannels();
 		uint64_t			GetPort() const;
 		int					GetEpollFd() const;
 		int					GetScocket() const;
-		struct sockaddr_in	GetSockAddr() const;
-		Client				*findClient(std::string nickName);
+		Client				*findClient(const std::string& nickName);
 
 		//setter
 		void	AddClient(int key, Client *clientToAdd);
-		void	AddChannel(std::string name, Channel *channel);
-
+		void	AddChannel(const std::string& name, Channel *channel);
 		void	RemoveClient(int key);
-		void	RemoveChannel(std::string name);
 
-		void	SetPort(uint64_t port);
 
 		//connection
 		void	NewConnectionRequest(int fd);
 		void	sendMsg(int fd);
 		void	HandleEvent(int fd);
 		bool	HandleCommand(std::string const &msg, Client *client);
-		void	CheckConnection(Client *client);
+		void	CheckConnection(Client *client) const;
 
 		//commands
 		void	pass(vectorCommand args, Client *client);
@@ -171,7 +166,7 @@ class	Server
 		};
 
 		void	deleteClient(fdClientMap::iterator toDelete) const;
-		void	deleteChannel(channelMap::iterator toDelete);
+		static void	deleteChannel(channelMap::iterator toDelete);
 		void	exitservClean();
 
 	private:

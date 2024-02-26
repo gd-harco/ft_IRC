@@ -2,11 +2,11 @@
 #include <unistd.h>
 #include <csignal>
 
-Server::Server()
+Server::Server() : _servEpollEvent(), _port(), _sockaddr(), _socket(), _epollFd()
 {
 }
 
-Server::Server(const Server &server)
+Server::Server(const Server &server) : _servEpollEvent(), _port(), _sockaddr(), _socket(), _epollFd()
 {
 	*this = server;
 }
@@ -80,7 +80,7 @@ void Server::handleEventEpollin(int currFd)
 	}
 }
 
-Server::Server(uint64_t port, std::string password)
+Server::Server(uint64_t port, const std::string& password) : _servEpollEvent(), _sockaddr()
 {
 	int	option = 1;
 	_port = port;
@@ -139,7 +139,7 @@ void Server::SetMap()
 
 void Server::NewConnectionRequest(int fd)
 {
-	struct sockaddr_in	new_addr;
+	struct sockaddr_in	new_addr = {};
 	int					addrLen = sizeof(new_addr);
 
 	int	clientFd = accept(fd, (struct sockaddr*)&new_addr,
@@ -149,7 +149,7 @@ void Server::NewConnectionRequest(int fd)
 	AddClient(clientFd, addedClient);
 }
 
-void Server::CheckConnection(Client *client)
+void Server::CheckConnection(Client *client) const
 {
 
 	if (client->GetPassword() && !client->GetNickname().empty() && !client->GetUsername().empty())
@@ -211,17 +211,10 @@ bool	Server::HandleCommand(std::string const &msg, Client *client)
 			std::cout << ParsMsg.back() << std::endl;
 			ParsMsg.pop_back();
 		}
-		// std::cout << "404 cmd not found" << std::endl;
 		ParsMsg.clear();
 		std::cout << e.what() << std::endl;
 		return (true);
 	}
-	return (true);
-}
-
-channelMap & Server::GetChannels()
-{
-	return (_channels);
 }
 
 fdClientMap & Server::GetClients()
@@ -244,12 +237,8 @@ int Server::GetEpollFd() const
 	return (_epollFd);
 }
 
-sockaddr_in Server::GetSockAddr() const
-{
-	return (_sockaddr);
-}
 
-Client *Server::findClient(std::string nickName)
+Client *Server::findClient(const std::string& nickName)
 {
 	for (fdClientMap::const_iterator it = _clients.begin(); it != _clients.end(); ++it)
 	{
@@ -260,27 +249,15 @@ Client *Server::findClient(std::string nickName)
 	return NULL;
 }
 
-
-void Server::SetPort(uint64_t port)
-{
-	_port = port;
-}
-
-
 void Server::AddClient(int key, Client *clientToAdd)
 {
 	clientToAdd->updateClientStatus(this->_epollFd);
 	_clients[key] = clientToAdd;
 }
 
-void Server::AddChannel(std::string name, Channel *channel)
+void Server::AddChannel(const std::string& name, Channel *channel)
 {
 	_channels[name] = channel;
-}
-
-void	Server::RemoveChannel(std::string name)
-{
-	_channels.erase(name);
 }
 
 void Server::RemoveClient(int key)
