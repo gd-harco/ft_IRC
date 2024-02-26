@@ -46,6 +46,7 @@ public:
 		static void pongNotify(Client &client, const std::string &servname, const std::string &token);
 		static void pingNotify(Client &client, const std::string &token);
 		static void	changeNick(Client &client, const std::string &oldNick, const std::string &newNick, const std::string &name);
+		static void	error(Client &client, const std::string &errMessage);
 	};
 
 	class reply {

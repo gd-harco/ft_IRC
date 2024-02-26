@@ -314,10 +314,16 @@ void NumericReplies::Notification::changeNick(Client &client, const std::string 
 	client.sendNumericReply(reply.str());
 }
 
+void NumericReplies::Notification::error(Client &client, const std::string &errMessage) {
+	std::stringstream reply;
+
+	reply << "Error :" << errMessage << DELIMITER;
+	client.sendNumericReply(reply.str());
+}
+
 
 std::string	NumericReplies::constructNumericReplyHeader(const std::string &numericID, const std::string &hostName) {
 	std::stringstream   result;
-
 	result << ':' << hostName << ' ' << numericID << ' ';
 	return result.str();
 }
