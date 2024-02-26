@@ -1,20 +1,20 @@
 #include "channel.hpp"
 
-Channel::Channel()
+Channel::Channel() : _rTopic(), _rInvite(), _userLimit()
 {}
 
 Channel::~Channel()
 {}
 
-Channel::Channel(const std::string &name, const std::string &opName): _password(""), _topic(""), _name(name), _rTopic(false), _rInvite(false), _userLimit(-1)
+Channel::Channel(const std::string &name, const std::string &opName): _name(name), _rTopic(false), _rInvite(false), _userLimit(-1)
 {
 	this->SetOp(opName);
 }
 
-std::string Channel::GetName() const
-{
-	return (_name);
-}
+//std::string Channel::GetName() const
+//{
+//	return (_name);
+//}
 
 stringClientMap Channel::GetClients() const
 {
@@ -42,20 +42,20 @@ void Channel::SetTopics(std::string const &NewTopic)
 	_topic = NewTopic;
 }
 
-void Channel::SetName(std::string const &NewName)
-{
-	std::stringstream newNameLower;
-	for (size_t i = 0; i < NewName.length(); ++i)
-		newNameLower << tolower(NewName[i]);
-	_name = newNameLower.str();
-}
+//void Channel::SetName(std::string const &NewName)
+//{
+//	std::stringstream newNameLower;
+//	for (size_t i = 0; i < NewName.length(); ++i)
+//		newNameLower << tolower(NewName[i]);
+//	_name = newNameLower.str();
+//}
 
-void Channel::AddClient(std::string key, int value)
+void Channel::AddClient(const std::string& key, int value)
 {
 	_clients.insert(std::make_pair(key, value));
 }
 
-void Channel::RemoveClient(std::string key)
+void Channel::RemoveClient(const std::string& key)
 {
 	std::vector<std::string>::iterator	ToFind = std::find(_op.begin(), _op.end(), key);
 	if (ToFind != _op.end())
@@ -81,7 +81,7 @@ const std::vector<std::string> &Channel::GetOp() const
 	return (_op);
 }
 
-bool Channel::GetRTopic()
+bool Channel::GetRTopic() const
 {
 	return _rTopic;
 }
@@ -111,10 +111,10 @@ void Channel::SetRTopic(bool status)
 	_rTopic = status;
 }
 
-bool Channel::IsRestrictChannel() const
-{
-	return _rTopic;
-}
+//bool Channel::IsRestrictChannel() const
+//{
+//	return _rTopic;
+//}
 
 int Channel::GetUserLimit() const
 {
@@ -149,8 +149,7 @@ void Channel::SetInvite(std::string const &nick)
 		_inviting_users.push_back(nick);
 }
 
-bool Channel::GetRInvite()
+bool Channel::GetRInvite() const
 {
 	return (_rInvite);
 }
-

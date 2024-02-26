@@ -23,32 +23,32 @@ class	Channel
 		//getters
 		std::string		GetPassword() const;
 		std::string		GetTopics() const;
-		std::string		GetName() const;
 		stringClientMap	GetClients() const;
 		std::string		GetAllNickname();
-		bool			GetRTopic();
+		bool			GetRTopic() const;
 		const			std::vector<std::string>		&GetOp() const;
 		bool			IsInChannel(std::string const &user) const;
-		bool			IsRestrictChannel() const;
   		int				GetUserLimit() const;
 		bool			isOp(std::string const &user);
 		bool			IsInvite(std::string const &nick);
-		bool			GetRInvite();
+		bool			GetRInvite() const;
+//		std::string		GetName() const;
+//		bool			IsRestrictChannel() const;
 
 		//setters
 		void	SetPassword(std::string const &NewPassword);
 		void	SetTopics(std::string const &NewTopic);
-		void	SetName(std::string const &NewName);
-		void	SetOp(std::string const &op);
 		void	RemoveOp(std::string const &op);
 		void	SetInvite(std::string const &nick);
 		void	SetRTopic(bool status);
+		void	SetOp(std::string const &op);
 		void	SetUserLimit(int NewLimit);
 		void	SetRInvite(bool status);
+//		void	SetName(std::string const &NewName);
 
 		//members functions
-		void	AddClient(std::string key, int value);
-		void	RemoveClient(std::string key);
+		void	AddClient(const std::string& key, int value);
+		void	RemoveClient(const std::string& key);
 
 	private:
 		stringClientMap				_clients;
