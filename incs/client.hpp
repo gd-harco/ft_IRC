@@ -33,11 +33,10 @@ class	Client
 		int			GetFd() const;
 		std::string	GetNickname() const;
 		std::string	GetUsername() const;
-		std::string		GetRealname() const;
+		std::string	GetRealname() const;
 		std::string	GetPingPongToken() const;
 		bool		GetPassword() const;
 		bool		IsAuthenticate() const;
-		bool		GetAuthor() const;
 
 
 		//setters
@@ -53,7 +52,6 @@ class	Client
 
 	private:
 		int			_fd;
-		bool		_haveAuthor;
 		bool		_isInEpoll;
 		bool		_password;
 		bool		_authenticate;

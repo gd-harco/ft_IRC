@@ -4,18 +4,18 @@
 
 extern Server *serv;
 
-Client::Client() : _fd(), _haveAuthor(), _isInEpoll(), _password(), _authenticate(), _clientEpollevent()
+Client::Client() : _fd(), _isInEpoll(), _password(), _authenticate(), _clientEpollevent()
 {
 }
 
-Client::Client(int fd): _fd(fd), _haveAuthor(false), _isInEpoll(false), _password(false), _authenticate(false), _clientEpollevent()
+Client::Client(int fd): _fd(fd), _isInEpoll(false), _password(false), _authenticate(false), _clientEpollevent()
 {
 	memset(&this->_clientEpollevent, '\0', sizeof (struct epoll_event));
 	this->_clientEpollevent.events = EPOLLIN;
 	this->_clientEpollevent.data.fd = fd;
 }
 
-Client::Client(int fd, const std::string& username, const std::string& nickname): _fd(fd), _haveAuthor(), _clientEpollevent(), _nickname(nickname) ,_username(username)
+Client::Client(int fd, const std::string& username, const std::string& nickname): _fd(fd), _clientEpollevent(), _nickname(nickname) ,_username(username)
 {
 	_isInEpoll = false;
 	_password = true;
@@ -142,11 +142,6 @@ bool Client::GetPassword() const
 int Client::GetFd() const
 {
 	return (_fd);
-}
-
-bool Client::GetAuthor() const
-{
-	return (_haveAuthor);
 }
 
 std::string Client::GetUsername() const
