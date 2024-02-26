@@ -1,6 +1,5 @@
 #include "server.hpp"
 #include "client.hpp"
-#include "channel.hpp"
 
 Server *serv;
 
