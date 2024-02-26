@@ -64,8 +64,8 @@ public:
 
 	class Error {
 	public:
-		static void	noSuchNick(Client &client, const std::string nickname);
-		static void noSuchChannel(Client &client, const std::string channel);
+		static void	noSuchNick(Client &client, const std::string& nickname);
+		static void noSuchChannel(Client &client, const std::string& channel);
 		static void	noNickGiven(Client &client);
 		static void	erroneusNickName(Client &client, const std::string &nickName);
 		static void nickInUse(Client &client, const std::string &nickName);
@@ -74,7 +74,7 @@ public:
 		static void userOnChannel(Client &client, const std::string &nickName, const std::string &channel);
 		static void needMoreParams(Client &client, const std::string &command);
 		static void	alreadyRegistered(Client &client);
-		static void	channelIsFull(Client &client, const std::string channel);
+		static void	channelIsFull(Client &client, const std::string& channel);
 		static void	bannedFromChan(Client &client, const std::string &channName);
 		static void	badChannelKey(Client &client, const std::string &channName);
 		static void chanOpPrivsNeeded(Client &client, const std::string &channName);

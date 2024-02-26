@@ -106,7 +106,7 @@ void NumericReplies::reply::removeModePassword(Client &client, const std::string
 }
 
 //401 <client nick> <nickname> :No such nick/channel
-void NumericReplies::Error::noSuchNick(Client &client, const std::string nickname)
+void NumericReplies::Error::noSuchNick(Client &client, const std::string& nickname)
 {
 	std::stringstream	reply;
 
@@ -115,7 +115,7 @@ void NumericReplies::Error::noSuchNick(Client &client, const std::string nicknam
 }
 
 //403 <client> <channel>: No such channel
-void NumericReplies::Error::noSuchChannel(Client &client, const std::string channel)
+void NumericReplies::Error::noSuchChannel(Client &client, const std::string& channel)
 {
 	std::stringstream reply;
 
@@ -220,7 +220,7 @@ void NumericReplies::Error::alreadyRegistered(Client &client) {
 	client.sendNumericReply(reply.str());
 }
 
-void NumericReplies::Error::channelIsFull(Client &client, const std::string channel)
+void NumericReplies::Error::channelIsFull(Client &client, const std::string& channel)
 {
 	std::stringstream reply;
 
