@@ -20,33 +20,33 @@ class	Client
 	public:
 		//constructor / destructor
 		Client();
-		Client(int fd);
-		Client(int fd, std::string username, std::string nickname);
+		explicit Client(int fd);
+		Client(int fd, const std::string& username, const std::string& nickname);
 		~Client();
 
 		void	updateClientStatus(const int &epollFd);
 		void	addClientToEpoll(const int &epollFd);
 		void	sendNumericReply(const std::string &message);
-		void	addMessageToSendbox(std::string message);
+		void	addMessageToSendbox(const std::string& message);
 
 		//getters
 		int			GetFd() const;
-		bool		GetAuthor() const;
 		std::string	GetNickname() const;
 		std::string	GetUsername() const;
 		std::string		GetRealname() const;
 		std::string	GetPingPongToken() const;
 		bool		GetPassword() const;
 		bool		IsAuthenticate() const;
+//		bool		GetAuthor() const;
 
 
 		//setters
 		void	SetPassword();
-		void	SetPingPongToken(std::string const &token);
 		void	SetUsername(std::string const &username);
 		void	SetNickname(std::string const &nickname);
 		void	SetRealname(std::string const &realname);
 		void	SetAuthenticate(void);
+//		void	SetPingPongToken(std::string const &token);
 
 		void	receiveMsg();
 		void	handleString(const std::string &toParse);

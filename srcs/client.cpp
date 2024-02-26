@@ -4,18 +4,18 @@
 
 extern Server *serv;
 
-Client::Client()
+Client::Client() : _fd(), _haveAuthor(), _isInEpoll(), _password(), _authenticate(), _clientEpollevent()
 {
 }
 
-Client::Client(int fd): _fd(fd), _haveAuthor(false), _isInEpoll(false), _password(false), _authenticate(false)
+Client::Client(int fd): _fd(fd), _haveAuthor(false), _isInEpoll(false), _password(false), _authenticate(false), _clientEpollevent()
 {
 	memset(&this->_clientEpollevent, '\0', sizeof (struct epoll_event));
 	this->_clientEpollevent.events = EPOLLIN;
 	this->_clientEpollevent.data.fd = fd;
 }
 
-Client::Client(int fd, std::string username, std::string nickname): _fd(fd), _nickname(nickname) ,_username(username)
+Client::Client(int fd, const std::string& username, const std::string& nickname): _fd(fd), _haveAuthor(), _clientEpollevent(), _nickname(nickname) ,_username(username)
 {
 	_isInEpoll = false;
 	_password = true;
@@ -31,15 +31,12 @@ Client::~Client()
 
 void	Client::addClientToEpoll(const int &epollFd) {
 	epoll_ctl(epollFd, EPOLL_CTL_ADD, this->_fd, &this->_clientEpollevent);
+	this->_isInEpoll = true;
 }
 
 void	Client::updateClientStatus(const int &epollFd) {
 	if (!_isInEpoll)
-	{
-		epoll_ctl(epollFd, EPOLL_CTL_ADD, this->_fd, &this->_clientEpollevent);
-		_isInEpoll = true;
-		return;
-	}
+		return this->addClientToEpoll(epollFd);
 	if (this->_msgToSend.empty())
 		this->_clientEpollevent.events = EPOLLIN;
 	else
@@ -54,8 +51,8 @@ void Client::sendNumericReply(const std::string &message) {
 	this->_msgToSend.push(message);
 }
 
-void Client::addMessageToSendbox(std::string message) {
-	if (_password == false)
+void Client::addMessageToSendbox(const std::string& message) {
+	if (!_password)
 	{
 		std::cout << "client: " << _fd << " dont have password." << std::endl;
 		return ;
@@ -132,10 +129,10 @@ void Client::SetRealname(std::string const &realname)
 	_realname = realname;
 }
 
-void Client::SetPingPongToken(std::string const &token)
-{
-	_pingPongToken = token;
-}
+//void Client::SetPingPongToken(std::string const &token)
+//{
+//	_pingPongToken = token;
+//}
 
 bool Client::GetPassword() const
 {
@@ -147,10 +144,10 @@ int Client::GetFd() const
 	return (_fd);
 }
 
-bool Client::GetAuthor() const
-{
-	return (_haveAuthor);
-}
+//bool Client::GetAuthor() const
+//{
+//	return (_haveAuthor);
+//}
 
 std::string Client::GetUsername() const
 {
