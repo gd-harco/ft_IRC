@@ -37,7 +37,7 @@ class	Client
 		std::string	GetPingPongToken() const;
 		bool		GetPassword() const;
 		bool		IsAuthenticate() const;
-//		bool		GetAuthor() const;
+		bool		GetAuthor() const;
 
 
 		//setters
@@ -53,10 +53,10 @@ class	Client
 
 	private:
 		int			_fd;
-		bool		_haveAuthor;
 		bool		_isInEpoll;
 		bool		_password;
 		bool		_authenticate;
+		bool		_haveAuthor;
 
 		std::string				_pingPongToken;
 		std::string				_clientBuffer;

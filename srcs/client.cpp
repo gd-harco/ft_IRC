@@ -144,10 +144,10 @@ int Client::GetFd() const
 	return (_fd);
 }
 
-//bool Client::GetAuthor() const
-//{
-//	return (_haveAuthor);
-//}
+bool Client::GetAuthor() const
+{
+	return (_haveAuthor);
+}
 
 std::string Client::GetUsername() const
 {
