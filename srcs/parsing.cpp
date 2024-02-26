@@ -4,9 +4,9 @@
 vectorCommand	ParsCommand(std::string const &msg)
 {
 	vectorCommand		VectorArgs;
-	size_t				FindDoublePoint = msg.find(":");
+	size_t				FindDoublePoint = msg.find(':');
 
-	if (FindDoublePoint != msg.npos)
+	if (FindDoublePoint != std::string::npos)
 	{
 		std::string	PushBackArg;
 
@@ -16,7 +16,7 @@ vectorCommand	ParsCommand(std::string const &msg)
 		while (!SepMsg.eof())
 		{
 			SepMsg >> PushBackArg;
-			if (PushBackArg != "" && PushBackArg != "\r\n")
+			if (!PushBackArg.empty() && PushBackArg != "\r\n")
 				VectorArgs.push_back(PushBackArg);
 			PushBackArg.clear();
 		}
