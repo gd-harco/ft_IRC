@@ -23,6 +23,7 @@ void Server::user(vectorCommand args, Client *client)
 		client->SetRealname(RealName);
 		client->SetUsername(args[1]);
 		std::cout << client->GetNickname() << " " << client->GetUsername() << " " << client->GetFd() << ": " << "have new username" << std::endl;
+		return ;
 	}
 	NumericReplies::Error::needMoreParams(*client, "PASS");
 	client->updateClientStatus(_epollFd);
