@@ -26,6 +26,11 @@ int	main(int argc, char **argv)
     }
 
 	uint64_t port = std::strtol(argv[1], NULL, 10);
+	if (errno == ERANGE || port == 0)
+	{
+		std::cout << "Wrong port value, must be inferior at long max" << std::endl;
+		exit (1);
+	}
 	try {
 		serv = new Server(port, std::string(argv[2]));
 	} catch (std::exception &e){
